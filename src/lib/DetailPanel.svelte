@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { TimelineEvent } from './types'
+  import type { EventDetails, TimelineEvent } from './types'
   import { formatRange } from './dates'
   import { TIER_NAMES } from './tiers'
   import { categoryColor } from './categories'
@@ -15,9 +15,14 @@
     filters: Filters
     /** Shows only events that share this value, or clears that filter if it is the only one on. */
     onfilter: (field: keyof Filters, value: string) => void
+    /** Description, sources and artifacts; null until they have loaded. */
+    details: EventDetails | null
+    /** Why the details could not be loaded, if they couldn't. */
+    detailsError: string | null
+    onretry: () => void
   }
 
-  let { event, byId, backlinks, onselect, onclose, filters, onfilter }: Props = $props()
+  let { event, byId, backlinks, onselect, onclose, filters, onfilter, details, detailsError, onretry }: Props = $props()
 
   const facts = $derived(
     (
@@ -36,7 +41,7 @@
   } as const
 
   // Descriptions are markdown; render them as plain paragraphs for now so no HTML is injected.
-  const paragraphs = $derived((event.description ?? '').split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean))
+  const paragraphs = $derived((details?.description ?? '').split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean))
 
   // Each contribution opens the update form with this event filled in. GitHub only
   // prefills text fields, so the kind of change goes in the title and a starter
@@ -159,8 +164,19 @@
   {/if}
 
   <h3>Sources</h3>
-  <ul class="links sources">
-    {#each event.sources as s (s.url)}
+  {#if detailsError}
+    <p class="load-error" role="alert">
+      Could not load the description and sources for this event.
+      <button class="retry" onclick={onretry}>Try again</button>
+    </p>
+  {:else if !details}
+    <ul class="links sources loading" aria-busy="true" aria-label="Loading sources">
+      <li class="placeholder"></li>
+      <li class="placeholder short"></li>
+    </ul>
+  {/if}
+  <ul class="links sources" hidden={!details}>
+    {#each details?.sources ?? [] as s (s.url)}
       <li class="source">
         <a href={s.url} rel="noopener noreferrer" target="_blank">{s.title}</a>
         <span class="muted">{s.publisher}</span>
@@ -169,10 +185,10 @@
     {/each}
   </ul>
 
-  {#if event.artifacts?.length}
+  {#if details?.artifacts?.length}
     <h3>Artifacts</h3>
     <ul class="links">
-      {#each event.artifacts as a (a.url)}
+      {#each details.artifacts as a (a.url)}
         <li>
           <span class="relation">{a.type}</span>
           <a href={a.url} rel="noopener noreferrer" target="_blank">{a.title}</a>
@@ -197,8 +213,8 @@
         </li>
       {/each}
     </ul>
-    {#if event.issue}
-      <a class="discussion" href="https://github.com/ChrisBuilds/ai-timeline/issues/{event.issue}" target="_blank" rel="noopener noreferrer"
+    {#if details?.issue}
+      <a class="discussion" href="https://github.com/ChrisBuilds/ai-timeline/issues/{details.issue}" target="_blank" rel="noopener noreferrer"
         >Read the discussion for this event</a
       >
     {/if}
@@ -461,6 +477,42 @@
   }
   .sources .source a {
     font-weight: 500;
+  }
+  .sources .placeholder {
+    height: 46px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: linear-gradient(90deg, var(--surface-2) 30%, var(--line) 50%, var(--surface-2) 70%) 0 0 / 300% 100%;
+    animation: shimmer 1.4s linear infinite;
+  }
+  .sources .placeholder.short {
+    width: 70%;
+  }
+  @keyframes shimmer {
+    from {
+      background-position: 100% 0;
+    }
+    to {
+      background-position: 0 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sources .placeholder {
+      animation: none;
+    }
+  }
+  .load-error {
+    font-size: 0.88rem;
+    color: var(--muted);
+  }
+  .retry {
+    font: inherit;
+    color: var(--accent);
+    background: none;
+    border: 0;
+    padding: 0;
+    text-decoration: underline;
+    cursor: pointer;
   }
   .sources .muted {
     font-size: 0.78rem;

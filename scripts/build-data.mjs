@@ -1,18 +1,24 @@
 #!/usr/bin/env node
-// Validates every event in events/ and writes public/data/events.json.
+// Validates every event in events/ and writes the site's data to public/data/:
 //
-//   node scripts/build-data.mjs           validate, then write events.json
+//   index.json          what the timeline loads first: every event without its details
+//   details/<id>.json   one event's description, sources, artifacts and rubric,
+//                       fetched when the event is opened
+//   events.json         every event in full, as a downloadable dataset (not loaded by the site)
+//
+//   node scripts/build-data.mjs           validate, then write the files
 //   node scripts/build-data.mjs --check   validate only (used in PR checks)
 //
 // Exits non-zero on any error. Warnings (possible duplicates) do not fail.
 
-import { readFileSync, readdirSync, statSync, mkdirSync, writeFileSync } from 'node:fs'
+import { readFileSync, readdirSync, statSync, mkdirSync, writeFileSync, rmSync } from 'node:fs'
 import { join, relative, basename, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import Ajv2020 from 'ajv/dist/2020.js'
 import addFormats from 'ajv-formats'
 import YAML from 'yaml'
 import { computeScore, tierOf } from './importance.mjs'
+import { splitEvent } from './split-event.mjs'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const checkOnly = process.argv.includes('--check')
@@ -162,7 +168,19 @@ if (!checkOnly) {
       .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0)),
     removed: Array.isArray(removed) ? removed : [],
   }
-  mkdirSync(join(root, 'public/data'), { recursive: true })
-  writeFileSync(join(root, 'public/data/events.json'), JSON.stringify(out))
-  console.log('Wrote public/data/events.json')
+  const dir = join(root, 'public/data')
+  mkdirSync(dir, { recursive: true })
+  writeFileSync(join(dir, 'events.json'), JSON.stringify(out))
+
+  // Start the details folder fresh, so removed or renamed events leave nothing behind.
+  rmSync(join(dir, 'details'), { recursive: true, force: true })
+  mkdirSync(join(dir, 'details'))
+  const index = []
+  for (const ev of out.events) {
+    const { entry, details } = splitEvent(ev)
+    index.push(entry)
+    writeFileSync(join(dir, 'details', `${ev.id}.json`), JSON.stringify(details))
+  }
+  writeFileSync(join(dir, 'index.json'), JSON.stringify({ generated: out.generated, events: index, removed: out.removed }))
+  console.log('Wrote public/data/index.json, public/data/details/ and public/data/events.json')
 }

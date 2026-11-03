@@ -12,7 +12,7 @@ import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright'
-import { generate } from './synthetic.mjs'
+import { serveSynthetic } from './serve-data.mjs'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const args = process.argv.slice(2)
@@ -88,10 +88,9 @@ function stats(times) {
 }
 
 async function measure(browser, size, device) {
-  const data = JSON.stringify(generate(size, 7))
   const context = await browser.newContext(VIEWPORTS[device])
   const page = await context.newPage()
-  await page.route('**/data/events.json', (route) => route.fulfill({ body: data, contentType: 'application/json' }))
+  const { indexBytes } = await serveSynthetic(page, size)
   await page.addInitScript(instrument)
   const cdp = await context.newCDPSession(page)
   await cdp.send('Emulation.setCPUThrottlingRate', { rate: cpu })
@@ -129,11 +128,14 @@ async function measure(browser, size, device) {
   const selectMs = await page.evaluate(() =>
     window.__untilPaint(() => document.querySelector('.card .card-button')?.click()),
   )
+  // Until the event's sources, fetched on open, are on screen.
+  await page.waitForSelector('.panel .source', { timeout: 10_000 }).catch(() => {})
 
   await context.close()
   return {
     size,
     device,
+    indexMB: indexBytes / 1e6,
     load,
     zoom: stats(zoomIn),
     zoomedNodes,
@@ -161,12 +163,12 @@ const fmt = (n, digits = 0) => (Number.isFinite(n) ? n.toFixed(digits) : '–')
 
 function table(results) {
   const rows = [
-    '| Events | Device | First card (ms) | Long tasks at load (ms) | DOM nodes | Zoom frame p95 / max (ms) | Zoom janky frames | Scroll frame p95 / max (ms) | Scroll janky frames | Filter (ms) | Select (ms) |',
-    '| --: | --- | --: | --: | --: | --: | --: | --: | --: | --: | --: |',
+    '| Events | Device | Index (MB) | First card (ms) | Long tasks at load (ms) | DOM nodes | Zoom frame p95 / max (ms) | Zoom janky frames | Scroll frame p95 / max (ms) | Scroll janky frames | Filter (ms) | Select (ms) |',
+    '| --: | --- | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: |',
   ]
   for (const r of results) {
     rows.push(
-      `| ${r.size} | ${r.device} | ${fmt(r.load.firstCard)} | ${fmt(r.load.longTaskMs)} | ${r.load.domNodes} → ${r.zoomedNodes} | ${fmt(r.zoom.p95)} / ${fmt(r.zoom.max)} | ${r.zoom.janky}/${r.zoom.frames} | ${fmt(r.scroll.p95)} / ${fmt(r.scroll.max)} | ${r.scroll.janky}/${r.scroll.frames} | ${fmt(r.filterMs)} | ${fmt(r.selectMs)} |`,
+      `| ${r.size} | ${r.device} | ${fmt(r.indexMB, 1)} | ${fmt(r.load.firstCard)} | ${fmt(r.load.longTaskMs)} | ${r.load.domNodes} → ${r.zoomedNodes} | ${fmt(r.zoom.p95)} / ${fmt(r.zoom.max)} | ${r.zoom.janky}/${r.zoom.frames} | ${fmt(r.scroll.p95)} / ${fmt(r.scroll.max)} | ${r.scroll.janky}/${r.scroll.frames} | ${fmt(r.filterMs)} | ${fmt(r.selectMs)} |`,
     )
   }
   return rows.join('\n')

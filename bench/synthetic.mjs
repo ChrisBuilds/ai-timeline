@@ -2,7 +2,8 @@
 // seed, shaped like real data: most events are recent, most are minor, and
 // organizations, tags and people repeat with a long tail.
 //
-//   node bench/synthetic.mjs 5000 > /tmp/events.json
+//   node bench/synthetic.mjs 5000 > /tmp/events.json        full data, like data/events.json
+//   node bench/synthetic.mjs 5000 --site public/data        index.json and details/, which the site loads
 
 import { computeScore, tierOf } from '../scripts/importance.mjs'
 
@@ -45,6 +46,10 @@ const pad = (n) => String(n).padStart(2, '0')
  */
 export function generate(count, seed = 1) {
   const r = rng(seed)
+  // Details come from their own stream, so changing them leaves dates and scores as they were.
+  const rd = rng(seed + 1)
+  const sentence = () =>
+    `The ${WORDS[Math.floor(rd() * WORDS.length)]} work showed how ${WORDS[Math.floor(rd() * WORDS.length)]} and ${WORDS[Math.floor(rd() * WORDS.length)]} systems could be combined, and it was widely discussed at the time.`
   const pick = (list, skew = 1.6) => list[Math.floor(Math.pow(r(), skew) * list.length)]
   const orgs = Array.from({ length: Math.max(20, Math.round(count / 15)) }, (_, i) => `Org ${i}`)
   const people = Array.from({ length: Math.max(30, Math.round(count / 6)) }, (_, i) => `Person ${i}`)
@@ -74,7 +79,16 @@ export function generate(count, seed = 1) {
       organizations: [pick(orgs), ...(r() < 0.3 ? [pick(orgs)] : [])].filter((v, j, a) => a.indexOf(v) === j),
       people: r() < 0.4 ? [pick(people)] : undefined,
       tags: [pick(tags), pick(tags), pick(tags)].filter((v, j, a) => a.indexOf(v) === j),
-      sources: [{ url: `https://example.com/${i}`, title: `Source ${i}`, publisher: 'Example', accessed: '2026-11-03' }],
+      // Like real events: most have a paragraph or two of description and two or three sources.
+      description: rd() < 0.8 ? Array.from({ length: 2 + Math.floor(rd() * 3) }, sentence).join(' ') : undefined,
+      sources: Array.from({ length: 1 + Math.floor(rd() * 3) }, (_, k) => ({
+        url: `https://example.com/news/${y}/${i}/synthetic-source-article-${k}`,
+        title: `Report on synthetic event ${i}, part ${k + 1}`,
+        publisher: `Publisher ${Math.floor(rd() * 50)}`,
+        accessed: '2026-11-03',
+      })),
+      artifacts:
+        rd() < 0.25 ? [{ type: 'paper', url: `https://example.org/papers/${i}`, title: `Paper for synthetic event ${i}` }] : undefined,
       importance,
       score,
       tier: tierOf(score),
@@ -86,6 +100,23 @@ export function generate(count, seed = 1) {
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const count = Number(process.argv[2] ?? 1000)
-  process.stdout.write(JSON.stringify(generate(count, Number(process.argv[3] ?? 1))))
+  const args = process.argv.slice(2)
+  const count = Number(args[0] ?? 1000)
+  const siteDir = args.includes('--site') ? args[args.indexOf('--site') + 1] : null
+  const data = generate(count, 7)
+  if (!siteDir) process.stdout.write(JSON.stringify(data))
+  else {
+    const { mkdirSync, rmSync, writeFileSync } = await import('node:fs')
+    const { join } = await import('node:path')
+    const { splitEvent } = await import('../scripts/split-event.mjs')
+    rmSync(join(siteDir, 'details'), { recursive: true, force: true })
+    mkdirSync(join(siteDir, 'details'), { recursive: true })
+    const index = data.events.map((ev) => {
+      const { entry, details } = splitEvent(ev)
+      writeFileSync(join(siteDir, 'details', `${ev.id}.json`), JSON.stringify(details))
+      return entry
+    })
+    writeFileSync(join(siteDir, 'index.json'), JSON.stringify({ ...data, events: index }))
+    console.error(`Wrote ${count} synthetic events to ${siteDir}`)
+  }
 }

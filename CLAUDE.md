@@ -16,7 +16,7 @@ Every change, whether to the site or to content, follows this workflow:
 ## Commands
 
 - `npm run validate`: checks every event against `schema/event.schema.json`, ids, related links, `removed.yaml`, and possible duplicates. Run it before every content PR.
-- `npm run dev`: builds `public/data/events.json` and starts the dev server.
+- `npm run dev`: builds `public/data/` (`index.json`, `details/` and the full `events.json`) and starts the dev server.
 - `npm run check`: type checks the Svelte app.
 - `npm test`: unit tests for the scale, layout, URL and scoring logic.
 - `npm run build`: builds the data and the site into `dist/`.

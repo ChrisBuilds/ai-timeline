@@ -5,8 +5,6 @@ import type { TimelineEvent } from './types'
 const base = {
   date: '2020',
   summary: 'A summary that is long enough to pass.',
-  sources: [],
-  importance: { rubric: { capability: 3, adoption: 3, impact: 3, culture: 3 } },
   score: 50,
   tier: 3 as const,
 }

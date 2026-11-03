@@ -13,8 +13,9 @@ pull request before it reaches the site.
 `bench/synthetic.mjs` makes the data. It is seeded, so every run sees the same
 events: dates skew heavily towards the present, most events are minor, and
 organizations, people and tags repeat with a long tail, like the real data.
-`node bench/synthetic.mjs 5000 > events.json` writes a file you can drop into
-`public/data/` to try a large timeline by hand.
+To try a large timeline by hand, `node bench/synthetic.mjs 5000 --site dist/data`
+after `npm run build` replaces the built site's data, then `npm run preview`.
+(`npm run dev` and `npm run build` rebuild `public/data/` from `events/`.)
 
 ## CI
 
@@ -42,6 +43,12 @@ faster, and only loosen them on purpose, with the reason in the PR.
 - **Eras grow sublinearly.** Past 12 events, an era's height grows with the
   event count to the power 0.4, so 20,000 events make a timeline a few dozen
   screens tall at zoom 1 instead of thousands, and zooming reveals the rest.
+- **The timeline loads a slim index.** `data/index.json` holds what the
+  timeline, search and filters need. Each event's description, sources,
+  artifacts and rubric are in `data/details/<id>.json`, fetched when the event
+  is opened and prefetched when its card is hovered or focused. That makes the
+  first download about a third of the full data. The full `data/events.json` is
+  still published as a dataset, but the site doesn't load it.
 - **The event data is not reactive.** It is loaded with `$state.raw`, because a
   deep reactive proxy taxes every read of every event.
 - **Cheap per-frame work.** Per-event years and scores are plain arrays in event

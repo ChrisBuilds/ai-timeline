@@ -7,7 +7,7 @@ import { spawn } from 'node:child_process'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright'
-import { generate } from './synthetic.mjs'
+import { serveSynthetic } from './serve-data.mjs'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const action = process.argv[2] ?? 'filter'
@@ -18,8 +18,7 @@ await new Promise((r) => server.stdout.on('data', (b) => String(b).includes(Stri
 
 const browser = await chromium.launch()
 const page = await browser.newPage({ viewport: { width: 1280, height: 900 } })
-const data = JSON.stringify(generate(size, 7))
-await page.route('**/data/events.json', (route) => route.fulfill({ body: data, contentType: 'application/json' }))
+await serveSynthetic(page, size)
 const cdp = await page.context().newCDPSession(page)
 await cdp.send('Profiler.enable')
 await cdp.send('Profiler.setSamplingInterval', { interval: 100 })

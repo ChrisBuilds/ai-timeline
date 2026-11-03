@@ -9,8 +9,6 @@ function ev(id: string, title: string, extra: Partial<TimelineEvent> = {}): Time
     date: '2020',
     summary: 'A summary that is long enough to pass.',
     category: 'research',
-    sources: [],
-    importance: { rubric: { capability: 3, adoption: 3, impact: 3, culture: 3 } },
     score: 50,
     tier: 3,
     ...extra,

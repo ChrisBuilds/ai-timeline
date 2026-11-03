@@ -33,7 +33,8 @@ export interface Related {
   source?: string
 }
 
-export interface TimelineEvent {
+/** One event in full, as written in events/ and in data/events.json. */
+export interface EventRecord {
   id: string
   title: string
   date: string
@@ -71,6 +72,17 @@ export interface RemovedEvent {
   removed_at?: string
 }
 
+/** Fields only the detail panel shows, in data/details/<id>.json. Mirrors scripts/split-event.mjs. */
+export type DetailField = 'description' | 'sources' | 'artifacts' | 'importance' | 'submitted_by' | 'issue'
+
+export type EventDetails = Pick<EventRecord, DetailField>
+
+/** An event as the timeline loads it from data/index.json: everything but its details. */
+export type TimelineEvent = Omit<EventRecord, DetailField | 'related'> & {
+  related?: Omit<Related, 'source'>[]
+}
+
+/** data/index.json */
 export interface TimelineData {
   generated: string
   events: TimelineEvent[]
