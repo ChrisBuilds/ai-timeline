@@ -115,6 +115,7 @@
     zoom = state.zoom
     if (!state.event) {
       selectedId = null
+      missingId = null
       return
     }
     const id = aliasTo.get(state.event) ?? state.event
