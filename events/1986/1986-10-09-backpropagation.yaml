@@ -1,0 +1,40 @@
+id: 1986-10-09-backpropagation
+title: Rumelhart, Hinton and Williams popularise backpropagation
+date: "1986-10-09"
+summary: >-
+  David Rumelhart, Geoffrey Hinton and Ronald Williams publish "Learning
+  representations by back-propagating errors" in Nature, a widely cited account of
+  training multi-layer neural networks by backpropagation.
+description: |
+  The paper appeared in *Nature* vol. 323, issue 6088, pp. 533-536, in October
+  1986; the Nature article page gives the publication date as 9 October 1986
+  (read by the maintainer; not opened in the research session). Its title names
+  the idea that networks with hidden layers can learn internal representations by
+  propagating errors backwards and adjusting their weights.
+
+  The method is usually described as popularised rather than invented by this
+  paper, because related ideas appeared earlier (low confidence; additional
+  citation needed). Backpropagation, applied to much larger networks, is the
+  standard way deep learning models are trained today (low confidence; additional
+  citation needed).
+category: research
+organizations: []
+people: [David Rumelhart, Geoffrey Hinton, Ronald Williams]
+tags: [backpropagation, neural networks, deep learning, representation learning]
+sources:
+  - url: https://ui.adsabs.harvard.edu/abs/1986Natur.323..533R/abstract
+    title: "Learning representations by back-propagating errors (NASA ADS record, Nature 323, 533)"
+    publisher: NASA Astrophysics Data System
+    accessed: "2026-11-03"
+  - url: https://api.crossref.org/works/10.1038/323533a0
+    title: Crossref record for DOI 10.1038/323533a0
+    publisher: Crossref
+    accessed: "2026-11-03"
+artifacts:
+  - type: paper
+    url: https://doi.org/10.1038/323533a0
+    title: Rumelhart, Hinton and Williams, Learning representations by back-propagating errors (Nature, 1986)
+importance:
+  rubric: {capability: 4, adoption: 5, impact: 4, culture: 2}
+issue: 34
+submitted_by: ChrisBuilds
