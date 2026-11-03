@@ -436,7 +436,6 @@
     height: 14px;
     background: var(--accent);
     border-color: var(--accent);
-    box-shadow: 0 0 0 4px var(--accent-soft);
   }
   .cluster.match {
     border-style: solid;
@@ -445,6 +444,15 @@
   }
   .cluster-menu button.match {
     font-weight: 600;
+  }
+  /* The open event must still stand out among highlighted matches. */
+  .card.match.selected {
+    box-shadow:
+      0 0 0 3px var(--accent),
+      0 6px 18px rgb(0 0 0 / 0.14);
+  }
+  .dot.match.selected {
+    box-shadow: 0 0 0 5px var(--accent-soft);
   }
   .card.dimmed:hover,
   .card.dimmed:focus-within {
