@@ -17,7 +17,7 @@ export interface Cluster<T> {
   items: T[]
 }
 
-export interface LayoutOptions {
+export interface LayoutOptions<T = unknown> {
   lanes: number
   cardHeight: number
   gap: number
@@ -25,6 +25,12 @@ export interface LayoutOptions {
   anchorOffset: number
   /** Hidden events closer than this merge into one "+N" marker. */
   clusterPx: number
+  /**
+   * An item that must get a card, such as the selected event. Pinning never
+   * changes the layout when the item already has a card; when it doesn't, only
+   * the cards it overlaps in one lane are hidden to make room.
+   */
+  pin?: T
 }
 
 /**
@@ -33,8 +39,9 @@ export interface LayoutOptions {
  * are grouped into clusters by position. Ties in score go to the newer event,
  * which has the smaller y.
  */
-export function layout<T>(items: Positioned<T>[], opts: LayoutOptions) {
+export function layout<T>(items: Positioned<T>[], opts: LayoutOptions<T>) {
   const order = [...items].sort((a, b) => b.score - a.score || a.y - b.y)
+  const scores = new Map(items.map((it) => [it.item, it.score]))
   const lanes: [number, number][][] = Array.from({ length: opts.lanes }, () => [])
   const placed: PlacedCard<T>[] = []
   const hidden: Positioned<T>[] = []
@@ -49,6 +56,34 @@ export function layout<T>(items: Positioned<T>[], opts: LayoutOptions) {
     }
     lanes[lane].push([top - opts.gap, bottom])
     placed.push({ item: it.item, y: it.y, lane, top })
+  }
+
+  const pinned = opts.pin === undefined ? -1 : hidden.findIndex((it) => it.item === opts.pin)
+  if (pinned !== -1) {
+    const it = hidden[pinned]
+    hidden.splice(pinned, 1)
+    const top = it.y - opts.anchorOffset
+    const bottom = top + opts.cardHeight + opts.gap
+    const overlaps = (c: PlacedCard<T>) => !(bottom <= c.top - opts.gap || top >= c.top + opts.cardHeight + opts.gap)
+    // Use the lane where the fewest cards, and then the least important ones, have to go.
+    let best = 0
+    let bestCost = Infinity
+    for (let lane = 0; lane < opts.lanes; lane++) {
+      const blocking = placed.filter((c) => c.lane === lane && overlaps(c))
+      const cost = blocking.length * 1e6 + blocking.reduce((n, c) => n + (scores.get(c.item) ?? 0), 0)
+      if (cost < bestCost) {
+        best = lane
+        bestCost = cost
+      }
+    }
+    for (let i = placed.length - 1; i >= 0; i--) {
+      const c = placed[i]
+      if (c.lane === best && overlaps(c)) {
+        placed.splice(i, 1)
+        hidden.push({ item: c.item, y: c.y, score: scores.get(c.item) ?? 0 })
+      }
+    }
+    placed.push({ item: it.item, y: it.y, lane: best, top })
   }
 
   const clusters: Cluster<T>[] = []
