@@ -29,6 +29,10 @@ Mobile selections move only as far as needed to fit between the sticky toolbar a
 
 Run `npm run test:motion` for the selection browser regression checks; install Playwright Chromium first or set `CHROMIUM_PATH` to an installed executable. The checks sample initial/intermediate/final geometry, rapid reselection, reversing an opening/closing sheet, reduced-motion overrides and deep-link navigation.
 
+The mobile sheet has a fixed 44px drag/tap handle above a separate scrollable content region. A deliberate downward pull or flick dismisses it; short or cancelled pulls settle back. Pointer capture keeps a drag attached to the handle. The handle is also a keyboard-accessible dismissal button. Content uses contained overscroll, with boundary guards for wheel/touch input so the timeline stays still when a gesture reaches either end of the details. Scrolling the uncovered timeline remains available.
+
+The browser checks include native touch scrolling, both content boundaries, fixed handle placement, short/cancelled/dismissal drags, and tap/keyboard activation at phone and 320px widths.
+
 These animations run only during selection. Normal scroll and zoom never trigger per-event motion measurements. `selection-motion.ts` owns the geometry capture, layout animation and minimal scroll calculation.
 
 ## Responsive behavior and performance

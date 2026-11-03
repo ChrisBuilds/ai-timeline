@@ -8,6 +8,7 @@
   import Inline from './Inline.svelte'
   import { cubicOut } from 'svelte/easing'
   import { SELECTION_DURATION } from './selection-motion'
+  import { mobileSheet } from './mobile-sheet'
 
   interface Props {
     event: TimelineEvent
@@ -60,22 +61,22 @@
   const description = $derived(parseDescription(details?.description ?? ''))
 
   // One popover at a time, opened from a marker and placed under it.
-  let panel: HTMLElement | undefined = $state()
+  let content: HTMLDivElement | undefined = $state()
   let popover: { key: string; kind: 'cn' | 'note'; n: number; top: number; left: number } | null = $state(null)
   let popoverEl: HTMLElement | undefined = $state()
 
   function openMarker(marker: { kind: 'cn'; i: number } | { kind: 'note'; n: number }, target: HTMLElement) {
     const key = marker.kind === 'cn' ? `cn-${marker.i}` : `note-${marker.n}`
     if (popover?.key === key) return closePopover()
-    if (!panel) return
-    const box = panel.getBoundingClientRect()
+    if (!content) return
+    const box = content.getBoundingClientRect()
     const at = target.getBoundingClientRect()
     const width = Math.min(300, box.width - 32)
     popover = {
       key,
       kind: marker.kind,
       n: marker.kind === 'note' ? marker.n : marker.i,
-      top: at.bottom - box.top + panel.scrollTop + 6,
+      top: at.bottom - box.top + content.scrollTop + 6,
       left: Math.max(16, Math.min(at.left - box.left - 12, box.width - width - 16)),
     }
   }
@@ -176,8 +177,11 @@
   })
 </script>
 
-<aside transition:panelTransition={{ reduced: reducedMotion }} class="panel" bind:this={panel} aria-labelledby="panel-title" style:--c={categoryColor(event.category)}>
-  <span class="grabber" aria-hidden="true"></span>
+<aside use:mobileSheet={{ content: () => content, reducedMotion: () => reducedMotion, onclose: () => onclose() }} transition:panelTransition={{ reduced: reducedMotion }} class="panel" aria-labelledby="panel-title" style:--c={categoryColor(event.category)}>
+  <button class="grabber" data-sheet-handle aria-label="Dismiss details" title="Drag down or tap to close" onclick={onclose}>
+    <span aria-hidden="true"></span>
+  </button>
+  <div class="panel-content" bind:this={content}>
   <header>
     <p class="meta">
       <time datetime={event.date}>{formatRange(event.date, event.end_date)}</time>
@@ -361,6 +365,7 @@
       >
     {/if}
   </section>
+  </div>
 </aside>
 
 <style>
@@ -371,15 +376,24 @@
     right: 0;
     bottom: 0;
     width: min(420px, 100vw);
-    overflow-y: auto;
-    padding: 22px 24px 40px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    overscroll-behavior: contain;
     background: var(--surface);
     border-left: 1px solid var(--line);
     box-shadow: var(--shadow-lg);
   }
   @media (min-width: 720px) and (max-width: 1099px) { .panel { width: 340px; } }
-  .panel > :global(*) {
+  .panel-content {
     position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    touch-action: pan-y pinch-zoom;
+    -webkit-overflow-scrolling: touch;
+    padding: 22px 24px 40px;
   }
   .grabber {
     display: none;
@@ -390,19 +404,26 @@
       left: 0;
       width: 100%;
       max-height: 55vh;
-      padding: 10px 20px calc(32px + env(safe-area-inset-bottom));
       border-left: none;
       border-top: 1px solid var(--line);
       border-radius: 20px 20px 0 0;
     }
+    .panel-content { padding: 0 20px calc(32px + env(safe-area-inset-bottom)); }
     .grabber {
-      display: block;
-      width: 40px;
-      height: 4px;
-      margin: 0 auto 12px;
-      border-radius: 999px;
-      background: var(--line-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 44px;
+      width: 100%;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      touch-action: none;
+      cursor: grab;
     }
+    .grabber span { width: 40px; height: 4px; border-radius: 999px; background: var(--line-strong); }
+    .panel:global([data-dragging]) .grabber { cursor: grabbing; }
+    .grabber:focus-visible { outline: 2px solid var(--context-accent); outline-offset: -4px; }
   }
 
   header {
