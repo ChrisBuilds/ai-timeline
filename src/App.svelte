@@ -265,7 +265,7 @@
   }
 
   async function select(id: string | null, scroll = true, animate = ready && !reducedMotion) {
-    if (id === selectedId) {
+    if (id === selectedId && (id === null || !scroll)) {
       missingId = null
       return
     }

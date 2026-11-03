@@ -109,6 +109,25 @@ for (const {os,pref,expectMotion} of [
  assert.equal(count>0,expectMotion,`motion preference failed ${os}/${pref}`)
  await page.close()
 }
+// Reselecting the same event must still navigate after scrolling away or changing zoom.
+{
+ const page = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' })
+ page.on('pageerror', e => errors.push(String(e)))
+ await page.goto(base + `#e=${id}&z=4`)
+ await page.locator('.card.selected').waitFor()
+ await page.evaluate(() => scrollBy(0, 1000))
+ await page.getByRole('combobox', { name: 'Search events' }).fill('OpenAI o1')
+ await page.getByRole('combobox', { name: 'Search events' }).press('Enter')
+ await page.locator('.card.selected').waitFor()
+ await page.waitForTimeout(80)
+ let top = await page.locator('.card.selected').evaluate(e => e.getBoundingClientRect().top)
+ assert(top >= 70 && top < 150, 'reselecting the current event from search did not navigate')
+ await page.evaluate(id => { scrollBy(0, 1000); location.hash = `#e=${id}&z=2` }, id)
+ await page.waitForTimeout(100)
+ top = await page.locator('.card.selected').evaluate(e => e.getBoundingClientRect().top)
+ assert(top >= 70 && top < 150, 'same-event hash navigation did not re-anchor after zoom')
+ await page.close()
+}
 assert.deepEqual(errors,[])
 console.log('Selection motion browser checks passed: mobile/desktop geometry, intermediate frames, rapid reselection, reversal, reduced motion and deep links.')
 } finally {
