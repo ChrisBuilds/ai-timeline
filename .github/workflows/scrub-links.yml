@@ -1,0 +1,76 @@
+name: Scrub private Claude links
+
+# Removes links to private Claude sessions, project threads and conversations
+# from issues, pull requests, comments and reviews when they are posted or
+# edited. Edits made here use GITHUB_TOKEN, so they don't trigger this again.
+on:
+  issues:
+    types: [opened, edited]
+  issue_comment:
+    types: [created, edited]
+  pull_request_target:
+    types: [opened, edited, reopened]
+  pull_request_review:
+    types: [submitted, edited]
+  pull_request_review_comment:
+    types: [created, edited]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: scrub-${{ github.event_name }}-${{ github.event.comment.id || github.event.review.id || github.event.issue.number || github.event.pull_request.number }}
+
+jobs:
+  scrub:
+    runs-on: ubuntu-latest
+    steps:
+      # Checks out the default branch only, so the script is never PR code.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          sparse-checkout: scripts/scrub-links.mjs
+          sparse-checkout-cone-mode: false
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const { hasPrivateLink, scrub } = await import(`${process.env.GITHUB_WORKSPACE}/scripts/scrub-links.mjs`)
+            const { owner, repo } = context.repo
+            const p = context.payload
+            let target, body, update
+            switch (context.eventName) {
+              case 'issues':
+                target = `issue #${p.issue.number}`
+                body = p.issue.body
+                update = (b) => github.rest.issues.update({ owner, repo, issue_number: p.issue.number, body: b })
+                break
+              case 'pull_request_target':
+                target = `PR #${p.pull_request.number}`
+                body = p.pull_request.body
+                update = (b) => github.rest.pulls.update({ owner, repo, pull_number: p.pull_request.number, body: b })
+                break
+              case 'issue_comment':
+                target = `comment ${p.comment.id}`
+                body = p.comment.body
+                update = (b) => github.rest.issues.updateComment({ owner, repo, comment_id: p.comment.id, body: b })
+                break
+              case 'pull_request_review':
+                target = `review ${p.review.id}`
+                body = p.review.body
+                update = (b) =>
+                  github.rest.pulls.updateReview({ owner, repo, pull_number: p.pull_request.number, review_id: p.review.id, body: b })
+                break
+              case 'pull_request_review_comment':
+                target = `review comment ${p.comment.id}`
+                body = p.comment.body
+                update = (b) => github.rest.pulls.updateReviewComment({ owner, repo, comment_id: p.comment.id, body: b })
+                break
+            }
+            if (!hasPrivateLink(body)) {
+              core.info(`No private links in ${target}.`)
+              return
+            }
+            await update(scrub(body))
+            core.notice(`Removed private Claude links from ${target}.`)

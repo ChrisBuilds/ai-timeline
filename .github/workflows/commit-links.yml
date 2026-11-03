@@ -1,0 +1,33 @@
+name: Commit message links
+
+# Commit messages can't be edited once pushed, so flag private Claude links in
+# a PR's commits before they reach main. Squash merges should also leave out
+# any "Claude-Session:" trailer.
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts/scrub-links.mjs
+          sparse-checkout-cone-mode: false
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const { hasPrivateLink } = await import(`${process.env.GITHUB_WORKSPACE}/scripts/scrub-links.mjs`)
+            const commits = await github.paginate(github.rest.pulls.listCommits, {
+              ...context.repo,
+              pull_number: context.payload.pull_request.number,
+              per_page: 100,
+            })
+            const bad = commits.filter((c) => hasPrivateLink(c.commit.message))
+            for (const c of bad) core.error(`${c.sha.slice(0, 7)} "${c.commit.message.split('\n')[0]}" has a private Claude link in its message.`)
+            if (bad.length) core.setFailed('Reword these commits (git rebase -i, then reword) to remove the links, then force-push the branch.')
+            else core.info(`Checked ${commits.length} commits.`)
