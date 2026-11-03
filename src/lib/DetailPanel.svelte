@@ -4,6 +4,8 @@
   import { TIER_NAMES } from './tiers'
   import { categoryColor } from './categories'
   import type { Filters } from './filters'
+  import { parseDescription } from './markdown'
+  import Inline from './Inline.svelte'
 
   interface Props {
     event: TimelineEvent
@@ -40,8 +42,80 @@
     supersedes: 'Supersedes',
   } as const
 
-  // Descriptions are markdown; render them as plain paragraphs for now so no HTML is injected.
-  const paragraphs = $derived((details?.description ?? '').split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean))
+  // Descriptions are a safe subset of markdown, with {citation needed} and {note: …}
+  // markers shown as superscripts (see markdown.ts and scripts/notes.mjs).
+  const description = $derived(parseDescription(details?.description ?? ''))
+
+  // One popover at a time, opened from a marker and placed under it.
+  let panel: HTMLElement | undefined = $state()
+  let popover: { key: string; kind: 'cn' | 'note'; n: number; top: number; left: number } | null = $state(null)
+  let popoverEl: HTMLElement | undefined = $state()
+
+  function openMarker(marker: { kind: 'cn'; i: number } | { kind: 'note'; n: number }, target: HTMLElement) {
+    const key = marker.kind === 'cn' ? `cn-${marker.i}` : `note-${marker.n}`
+    if (popover?.key === key) return closePopover()
+    if (!panel) return
+    const box = panel.getBoundingClientRect()
+    const at = target.getBoundingClientRect()
+    const width = Math.min(300, box.width - 32)
+    popover = {
+      key,
+      kind: marker.kind,
+      n: marker.kind === 'note' ? marker.n : marker.i,
+      top: at.bottom - box.top + panel.scrollTop + 6,
+      left: Math.max(16, Math.min(at.left - box.left - 12, box.width - width - 16)),
+    }
+  }
+
+  function closePopover(refocus = false) {
+    const key = popover?.key
+    popover = null
+    if (refocus && key) document.getElementById(key.replace('-', '-ref-'))?.focus()
+  }
+
+  $effect(() => {
+    // A new event closes any open popover.
+    void event.id
+    popover = null
+  })
+
+  $effect(() => {
+    if (!popover) return
+    const onkey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation()
+        closePopover(true)
+      }
+    }
+    const onpointer = (e: PointerEvent) => {
+      const t = e.target as HTMLElement
+      if (!popoverEl?.contains(t) && !t.closest('.marker')) closePopover()
+    }
+    addEventListener('keydown', onkey, true)
+    addEventListener('pointerdown', onpointer)
+    return () => {
+      removeEventListener('keydown', onkey, true)
+      removeEventListener('pointerdown', onpointer)
+    }
+  })
+
+  let notesList: HTMLOListElement | undefined = $state()
+  function showNote(n: number) {
+    closePopover()
+    const item = notesList?.children[n - 1] as HTMLElement | undefined
+    item?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+    item?.focus({ preventScroll: true })
+  }
+  function backToText(n: number) {
+    const ref = document.getElementById(`note-ref-${n}`)
+    ref?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+    ref?.focus({ preventScroll: true })
+  }
+
+  const addSource = {
+    kind: 'add source',
+    prompt: 'Source for a detail marked "citation needed", and what it confirms:\n',
+  }
 
   // Each contribution opens the update form with this event filled in. GitHub only
   // prefills text fields, so the kind of change goes in the title and a starter
@@ -89,7 +163,7 @@
   })
 </script>
 
-<aside class="panel" aria-labelledby="panel-title" style:--c={categoryColor(event.category)}>
+<aside class="panel" bind:this={panel} aria-labelledby="panel-title" style:--c={categoryColor(event.category)}>
   <span class="grabber" aria-hidden="true"></span>
   <header>
     <p class="meta">
@@ -119,9 +193,57 @@
   {/if}
 
   <p class="summary">{event.summary}</p>
-  {#each paragraphs as p, i (i)}
-    <p>{p}</p>
-  {/each}
+  <div class="prose">
+    {#each description.blocks as block, i (i)}
+      {#if block.kind === 'p'}
+        <p><Inline nodes={block.content} onmarker={openMarker} open={popover?.key} /></p>
+      {:else if block.kind === 'quote'}
+        <blockquote><Inline nodes={block.content} onmarker={openMarker} open={popover?.key} /></blockquote>
+      {:else if block.kind === 'ul'}
+        <ul>
+          {#each block.items as item, j (j)}<li><Inline nodes={item} onmarker={openMarker} open={popover?.key} /></li>{/each}
+        </ul>
+      {:else if block.kind === 'ol'}
+        <ol>
+          {#each block.items as item, j (j)}<li><Inline nodes={item} onmarker={openMarker} open={popover?.key} /></li>{/each}
+        </ol>
+      {/if}
+    {/each}
+  </div>
+
+  {#if description.notes.length}
+    <h3 id="notes-heading">Notes</h3>
+    <ol class="notes" aria-labelledby="notes-heading" bind:this={notesList}>
+      {#each description.notes as note, i (i)}
+        <li tabindex="-1">
+          <Inline nodes={note} />
+          <button class="back" onclick={() => backToText(i + 1)} aria-label="Back to note {i + 1} in the text">↑</button>
+        </li>
+      {/each}
+    </ol>
+  {/if}
+
+  {#if popover}
+    <div
+      class="popover"
+      class:cn={popover.kind === 'cn'}
+      role="dialog"
+      aria-label={popover.kind === 'cn' ? 'Citation needed' : `Note ${popover.n}`}
+      bind:this={popoverEl}
+      style:top="{popover.top}px"
+      style:left="{popover.left}px"
+    >
+      {#if popover.kind === 'cn'}
+        <p class="popover-title">Citation needed</p>
+        <p>This detail has low confidence. It is kept because it is useful, but it needs another source.</p>
+        <a class="popover-action" href={updateUrl(addSource)} target="_blank" rel="noopener noreferrer">Suggest a source</a>
+      {:else}
+        <p class="popover-title">Note {popover.n}</p>
+        <p><Inline nodes={description.notes[popover.n - 1]} /></p>
+        <button class="popover-action" onclick={() => showNote(popover!.n)}>Show in notes</button>
+      {/if}
+    </div>
+  {/if}
 
   {#if facts.length}
     <dl class="facts">
@@ -164,6 +286,13 @@
   {/if}
 
   <h3>Sources</h3>
+  {#if description.citationsNeeded}
+    <p class="needs-source">
+      {description.citationsNeeded === 1 ? 'One detail' : `${description.citationsNeeded} details`} in this description
+      {description.citationsNeeded === 1 ? 'needs' : 'need'} another source.
+      <a href={updateUrl(addSource)} target="_blank" rel="noopener noreferrer">Suggest one</a>
+    </p>
+  {/if}
   {#if detailsError}
     <p class="load-error" role="alert">
       Could not load the description and sources for this event.
@@ -377,6 +506,137 @@
     font-size: 1.05rem;
     font-weight: 500;
     line-height: 1.55;
+  }
+
+  .prose :global(code) {
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.86em;
+    padding: 1px 5px;
+    border-radius: 5px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+  }
+  .prose :global(a),
+  .notes :global(a),
+  .popover :global(a:not(.popover-action)) {
+    color: var(--accent);
+    text-underline-offset: 2px;
+  }
+  .prose ul,
+  .prose ol {
+    padding-left: 22px;
+    line-height: 1.6;
+  }
+  .prose li + li {
+    margin-top: 4px;
+  }
+  blockquote {
+    margin: 14px 0;
+    padding: 4px 0 4px 14px;
+    border-left: 3px solid color-mix(in srgb, var(--c) 60%, var(--line));
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  .notes {
+    margin: 0;
+    padding: 0 0 0 22px;
+    font-size: 0.84rem;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+  .notes li {
+    padding: 2px 4px;
+    border-radius: 6px;
+    scroll-margin: 24px;
+  }
+  .notes li + li {
+    margin-top: 4px;
+  }
+  .notes li:focus {
+    outline: none;
+    background: var(--accent-soft);
+    color: var(--text);
+  }
+  .back {
+    all: unset;
+    cursor: pointer;
+    margin-left: 4px;
+    padding: 0 4px;
+    border-radius: 4px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .back:hover,
+  .back:focus-visible {
+    background: var(--accent-soft);
+  }
+
+  .popover {
+    position: absolute;
+    z-index: 5;
+    width: min(300px, calc(100% - 32px));
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--line-strong);
+    border-top: 3px solid var(--accent);
+    background: var(--surface);
+    box-shadow: var(--shadow-lg);
+    font-size: 0.86rem;
+    line-height: 1.5;
+    animation: pop 120ms ease-out;
+  }
+  .popover.cn {
+    border-top-color: var(--warn);
+  }
+  .popover p {
+    margin: 0 0 8px;
+    line-height: 1.5;
+  }
+  .popover-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .popover-action {
+    all: unset;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .popover.cn .popover-action {
+    color: var(--warn);
+  }
+  .popover-action:hover,
+  .popover-action:focus-visible {
+    text-decoration: underline;
+  }
+  @keyframes pop {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .popover {
+      animation: none;
+    }
+  }
+
+  .needs-source {
+    font-size: 0.84rem;
+    margin: 0 0 8px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px dashed color-mix(in srgb, var(--warn) 60%, var(--line));
+    color: var(--muted);
+  }
+  .needs-source a {
+    color: var(--warn);
+    font-weight: 600;
   }
 
   .notice {

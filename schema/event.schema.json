@@ -37,7 +37,7 @@
     },
     "description": {
       "type": "string",
-      "description": "Markdown shown in the detail panel."
+      "description": "Shown in the detail panel. Supports *italic*, **bold**, `code`, [links](https://...), lists, > quotes, {citation needed} and {note: ...}. See CONTRIBUTING.md."
     },
     "category": {
       "enum": [
