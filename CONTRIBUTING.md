@@ -26,6 +26,10 @@ description: |
   It is the standard way networks are trained today.{citation needed}
 ```
 
+## Formatting descriptions
+
+The `description` supports a small, safe set of markdown: `*italic*` (for journal and book titles), `**bold**`, `` `code` ``, `[links](https://…)`, lists starting with `- ` or `1. `, and quotes starting with `> `. Leave a blank line between paragraphs. HTML is shown as plain text.
+
 ## Work on the site
 
 1. Open or pick an issue labelled `site`.
