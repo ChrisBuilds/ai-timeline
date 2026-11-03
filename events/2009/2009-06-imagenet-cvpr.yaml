@@ -31,10 +31,6 @@ artifacts:
   - type: paper
     url: https://doi.org/10.1109/CVPR.2009.5206848
     title: "ImageNet: A Large-Scale Hierarchical Image Database"
-related:
-  - id: 2012-09-30-alexnet-imagenet
-    relation: builds_on
-    source: https://proceedings.neurips.cc/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf
 importance:
   rubric: {capability: 3, adoption: 4, impact: 4, culture: 2}
 issue: 38
