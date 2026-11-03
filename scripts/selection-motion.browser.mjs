@@ -63,6 +63,15 @@ for (const viewport of [{width:390,height:844},{width:320,height:740},{width:128
    assert(middle.panel.left>end.panel.left && middle.panel.left<viewport.width,'sidebar did not slide')
  }
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false)
+ if (viewport.width === 1280) {
+   const background = await page.evaluate(() => scrollY)
+   await page.locator('.panel-content').evaluate(e => { e.scrollTop = e.scrollHeight })
+   await page.mouse.move(viewport.width - 100, viewport.height / 2)
+   await page.mouse.wheel(0, 300)
+   await page.waitForTimeout(100)
+   assert(Math.abs(await page.evaluate(() => scrollY) - background) < 1, 'desktop details chained scrolling to the timeline')
+ }
+
  // Rapid keyboard reselection cancels obsolete layout/scroll work.
  await page.keyboard.press('j')
  await page.waitForTimeout(40)
@@ -128,8 +137,94 @@ for (const {os,pref,expectMotion} of [
  assert(top >= 70 && top < 150, 'same-event hash navigation did not re-anchor after zoom')
  await page.close()
 }
+// Native touch input verifies sheet scrolling and the actual mobile drag affordance.
+for (const viewport of [{ width: 390, height: 844 }, { width: 320, height: 740 }]) {
+ const page = await browser.newPage({ viewport, isMobile: true, hasTouch: true,
+   reducedMotion: viewport.width === 390 ? 'reduce' : 'no-preference' })
+ page.on('pageerror', e => errors.push(String(e)))
+ await page.goto(base + '#z=4')
+ await page.getByRole('combobox', { name: 'Search events' }).fill('OpenAI o1')
+ await page.getByRole('combobox', { name: 'Search events' }).press('Enter')
+ await page.locator('.panel .source').first().waitFor()
+ await page.waitForTimeout(450)
+ const cdp = await page.context().newCDPSession(page)
+ const swipe = async (x, from, to, beforeRelease, cancel = false) => {
+   await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y: from, id: 1 }] })
+   for (let step = 1; step <= 12; step++) {
+     await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x, y: from + (to - from) * step / 12, id: 1 }] })
+     await page.waitForTimeout(20)
+   }
+   if (beforeRelease) await beforeRelease()
+   await cdp.send('Input.dispatchTouchEvent', { type: cancel ? 'touchCancel' : 'touchEnd', touchPoints: [] })
+   await page.waitForTimeout(100)
+ }
+ const initial = await page.locator('.panel').boundingBox()
+ const timelineY = await page.evaluate(() => scrollY)
+ const scrollArea = page.locator('.panel-content')
+ const handle = page.locator('[data-sheet-handle]')
+ const bar = await handle.boundingBox()
+ const x = viewport.width / 2
+ const mid = initial.y + initial.height * 0.6
+ await swipe(x, mid + 60, mid - 60)
+ assert(await scrollArea.evaluate(e => e.scrollTop) > 50, 'touch scroll did not move sheet content')
+ assert(Math.abs(await page.evaluate(() => scrollY) - timelineY) < 1, 'content scrolling moved the background timeline')
+ assert(Math.abs((await handle.boundingBox()).y - bar.y) < 1, 'handle scrolled out of reach')
+ // Both edges, including continued scrolling past the content, must stay contained.
+ for (const bottom of [false, true]) {
+   await scrollArea.evaluate((e, bottom) => { e.scrollTop = bottom ? e.scrollHeight : 0 }, bottom)
+   await swipe(x, bottom ? mid + 60 : mid - 60, bottom ? mid - 60 : mid + 60)
+   assert(Math.abs(await page.evaluate(() => scrollY) - timelineY) < 1, 'touch overscroll escaped the sheet')
+ }
+ await scrollArea.evaluate(e => { e.scrollTop = 0 })
+ await page.mouse.move(x, mid)
+ await page.mouse.wheel(0, 180)
+ await page.waitForTimeout(100)
+ assert(await scrollArea.evaluate(e => e.scrollTop) > 50, 'wheel scroll did not move sheet content')
+ await scrollArea.evaluate(e => { e.scrollTop = e.scrollHeight })
+ await page.mouse.wheel(0, 300)
+ await page.waitForTimeout(100)
+ assert(Math.abs(await page.evaluate(() => scrollY) - timelineY) < 1, 'wheel overscroll escaped the sheet')
+ const handleBox = await handle.boundingBox()
+ const handleY = handleBox.y + handleBox.height / 2
+ await swipe(x, handleY, handleY + 35, async () => {
+   assert((await page.locator('.panel').boundingBox()).y > initial.y + 25, 'sheet did not follow the handle')
+ })
+ await page.waitForTimeout(220)
+ assert.equal(await page.locator('.panel').count(), 1, 'a short drag dismissed the sheet')
+ assert(Math.abs((await page.locator('.panel').boundingBox()).y - initial.y) < 1, 'short drag did not settle back')
+ await swipe(x, handleY, handleY + 160, undefined, true)
+ await page.waitForTimeout(220)
+ assert.equal(await page.locator('.panel').count(), 1, 'cancelled drag dismissed the sheet')
+ assert(Math.abs((await page.locator('.panel').boundingBox()).y - initial.y) < 1, 'cancelled drag did not settle back')
+ await swipe(x, handleY, handleY + 160)
+ await page.waitForTimeout(450)
+ assert.equal(await page.locator('.panel').count(), 0, 'downward handle drag did not dismiss')
+ await page.getByRole('combobox', { name: 'Search events' }).fill('OpenAI o1')
+ await page.getByRole('combobox', { name: 'Search events' }).press('Enter')
+ await page.waitForTimeout(450)
+ await page.getByRole('button', { name: 'Dismiss details', exact: true }).focus()
+ await page.keyboard.press('Enter')
+ await page.waitForTimeout(450)
+ assert.equal(await page.locator('.panel').count(), 0, 'handle cannot be activated with the keyboard')
+ await page.getByRole('combobox', { name: 'Search events' }).fill('OpenAI o1')
+ await page.getByRole('combobox', { name: 'Search events' }).press('Enter')
+ await page.waitForTimeout(450)
+ if (viewport.width === 320) {
+   const box = await handle.boundingBox()
+   const y = box.y + box.height / 2
+   await swipe(x, y, y + 160)
+   await page.getByRole('combobox', { name: 'Search events' }).fill('OpenAI o1')
+   await page.getByRole('combobox', { name: 'Search events' }).press('Enter')
+   await page.waitForTimeout(450)
+   assert(Math.abs((await page.locator('.panel').boundingBox()).y - initial.y) < 1, 'reopening a dragged sheet retained its dismissed offset')
+ }
+ await page.getByRole('button', { name: 'Dismiss details', exact: true }).tap()
+ await page.waitForTimeout(450)
+ assert.equal(await page.locator('.panel').count(), 0, 'handle cannot be activated by tapping')
+ await page.close()
+}
 assert.deepEqual(errors,[])
-console.log('Selection motion browser checks passed: mobile/desktop geometry, intermediate frames, rapid reselection, reversal, reduced motion and deep links.')
+console.log('Selection motion browser checks passed: mobile/desktop geometry, intermediate frames, rapid reselection, reversal, reduced motion, deep links, native touch scrolling and drag dismissal.')
 } finally {
  await browser?.close()
  server.kill()
