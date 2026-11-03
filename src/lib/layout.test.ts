@@ -98,4 +98,12 @@ describe('pinned items', () => {
     expect(kept('d')).toEqual(was('d'))
     expect(kept('a')!.lane).toBe(was('c')!.lane)
   })
+
+  it('keeps cards and pinned items off reserved spans when another lane is free', () => {
+    const reserved = [{ lane: 0, top: 90, bottom: 130 }]
+    const { placed } = layout([{ item: 'x', y: 120, score: 10 }], { ...two, reserved })
+    expect(placed[0].lane).toBe(1)
+    const one = layout([{ item: 'x', y: 120, score: 10 }], { ...opts, lanes: 1, reserved })
+    expect(one.placed).toEqual([])
+  })
 })

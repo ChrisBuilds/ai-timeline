@@ -14,6 +14,8 @@
 
   const CARD_HEIGHT = 84
   const ANCHOR_OFFSET = 18
+  // Where each era's name sits in the strip at the top of its band (see DEFAULT_SCALE.headerPx).
+  const LABEL_TOP = 14
   const ZOOM_STEP = 1.5
 
   let data = $state<TimelineData | null>(null)
@@ -25,6 +27,7 @@
   let timelineEl: HTMLDivElement | undefined = $state()
   let toolbar: ReturnType<typeof Toolbar> | undefined = $state()
   let toolbarHeight = $state(0)
+  let labelHeights = $state<number[]>([])
   let filters = $state<Filters>({ ...NO_FILTERS })
   let prefs = $state<Prefs>(loadPrefs())
   // The URL is only written once the link we were opened with has been applied.
@@ -73,6 +76,12 @@
         clusterPx: 28,
         // The selected event always gets a card, without moving any card that is already shown.
         pin: selectedId ? byId.get(selectedId) : undefined,
+        // Keep cards off each era's name, which sits on the left of the spine on wide screens.
+        reserved: scale.bands.map((b, i) => ({
+          lane: wide ? 1 : 0,
+          top: b.top - 2,
+          bottom: b.top + LABEL_TOP + (labelHeights[i] || 36) + 4,
+        })),
       },
     ),
   )
@@ -302,6 +311,8 @@
         matchIds={filtering ? matchIds : NONE}
         onselect={(id) => select(id === selectedId ? null : id, false)}
         onexpand={expand}
+        labelTop={LABEL_TOP}
+        bind:labelHeights
       />
     </div>
   {/if}
