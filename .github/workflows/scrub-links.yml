@@ -1,0 +1,74 @@
+name: Scrub private Claude links
+
+# Removes links to private Claude sessions, project threads and conversations
+# from issues, pull requests, comments and reviews when they are posted or
+# edited. Edits made here use GITHUB_TOKEN, so they don't trigger this again.
+on:
+  issues:
+    types: [opened, edited]
+  issue_comment:
+    types: [created, edited]
+  pull_request_target:
+    types: [opened, edited, reopened]
+  pull_request_review:
+    types: [submitted, edited]
+  pull_request_review_comment:
+    types: [created, edited]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: scrub-${{ github.event_name }}-${{ github.event.comment.id || github.event.review.id || github.event.issue.number || github.event.pull_request.number }}
+
+jobs:
+  scrub:
+    runs-on: ubuntu-latest
+    steps:
+      # The default ref for each event is wherever this workflow file itself came
+      # from: the default branch for issue, comment and pull_request_target events,
+      # and the PR for review events. So the script is never less trusted than the
+      # workflow running it, and pull_request_target never runs PR code.
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: scripts/scrub-links.mjs
+          sparse-checkout-cone-mode: false
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const { hasPrivateLink, scrub } = await import(`${process.env.GITHUB_WORKSPACE}/scripts/scrub-links.mjs`)
+            const { owner, repo } = context.repo
+            const p = context.payload
+            // Each case reads the current text rather than the event's copy, so an edit
+            // made while this run was queued is never overwritten with older text.
+            const pr = p.pull_request?.number
+            const cases = {
+              issues: [`issue #${p.issue?.number}`,
+                async () => (await github.rest.issues.get({ owner, repo, issue_number: p.issue.number })).data.body,
+                (body) => github.rest.issues.update({ owner, repo, issue_number: p.issue.number, body })],
+              pull_request_target: [`PR #${pr}`,
+                async () => (await github.rest.pulls.get({ owner, repo, pull_number: pr })).data.body,
+                (body) => github.rest.pulls.update({ owner, repo, pull_number: pr, body })],
+              issue_comment: [`comment ${p.comment?.id}`,
+                async () => (await github.rest.issues.getComment({ owner, repo, comment_id: p.comment.id })).data.body,
+                (body) => github.rest.issues.updateComment({ owner, repo, comment_id: p.comment.id, body })],
+              pull_request_review: [`review ${p.review?.id}`,
+                async () => (await github.rest.pulls.getReview({ owner, repo, pull_number: pr, review_id: p.review.id })).data.body,
+                (body) => github.rest.pulls.updateReview({ owner, repo, pull_number: pr, review_id: p.review.id, body })],
+              pull_request_review_comment: [`review comment ${p.comment?.id}`,
+                async () => (await github.rest.pulls.getReviewComment({ owner, repo, comment_id: p.comment.id })).data.body,
+                (body) => github.rest.pulls.updateReviewComment({ owner, repo, comment_id: p.comment.id, body })],
+            }
+            const [target, get, update] = cases[context.eventName]
+            const body = await get()
+            if (!hasPrivateLink(body)) {
+              core.info(`No private links in ${target}.`)
+              return
+            }
+            // GitHub rejects an empty comment, so a comment that was only a link gets a note instead.
+            const clean = scrub(body).trim() ? scrub(body) : '_A private Claude link was removed._'
+            await update(clean)
+            core.notice(`Removed private Claude links from ${target}.`)
