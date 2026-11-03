@@ -1,5 +1,5 @@
 name: Update an event
-description: Fix a source, add an artifact, correct a fact, or argue for a different importance.
+description: Add a source, an artifact or more detail, correct a fact, or argue for a different importance.
 title: "Update: "
 labels: [content, "type:update"]
 body:
@@ -16,8 +16,10 @@ body:
       label: What needs changing?
       multiple: true
       options:
+        - Add a source
         - Fix or replace a source
         - Add a supporting artifact (paper, repo, model card, video, dataset)
+        - Add details or context (what happened, who was involved, what followed)
         - Correct a fact (date, title, organization, summary)
         - Change importance
         - Link a directly related event
@@ -27,11 +29,11 @@ body:
     id: proposed
     attributes:
       label: The proposed change
-      description: For importance changes, explain why the event matters more or less than its current placement.
+      description: For new details, say what the event should add. For importance changes, explain why the event matters more or less than its current placement.
     validations:
       required: true
   - type: textarea
     id: evidence
     attributes:
       label: Evidence
-      description: Links that support the change, one per line. Required for sources, artifacts and facts.
+      description: Links that support the change, one per line. Required for sources, artifacts, details and facts.
