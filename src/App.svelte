@@ -43,7 +43,6 @@
   const byId = $derived(new Map(events.map((e) => [e.id, e])))
   const aliasTo = $derived(new Map(events.flatMap((e) => (e.aliases ?? []).map((a) => [a, e.id] as const))))
   const years = $derived(new Map(events.map((e) => [e.id, toYear(e.date)])))
-  const firstYear = $derived(Math.floor(Math.min(...years.values(), now)))
 
   const wide = $derived(width >= 720)
   const spineX = $derived(wide ? Math.round(width / 2) : 20)
@@ -244,17 +243,6 @@
 <header class="site-header">
   <p class="eyebrow"><span class="live" aria-hidden="true"></span>Open, sourced and community-reviewed</p>
   <h1><span class="grad">AI</span> Timeline</h1>
-  <p class="lede">
-    Artificial intelligence from the 1956 Dartmouth workshop to now. Every event is sourced, and every change is reviewed in
-    the open.
-  </p>
-  {#if data}
-    <ul class="stats" aria-label="At a glance">
-      <li><span class="n">{data.events.length}</span><span class="l">events</span></li>
-      <li><span class="n">{ERAS.length}</span><span class="l">eras</span></li>
-      <li><span class="n">{Math.round(now) - firstYear}</span><span class="l">years covered</span></li>
-    </ul>
-  {/if}
   <p class="help">
     Scroll back in time. Zoom with <kbd>Ctrl</kbd> + scroll, a pinch, or <kbd>+</kbd> <kbd>−</kbd>. Press <kbd>/</kbd> to
     search. Missing something?
