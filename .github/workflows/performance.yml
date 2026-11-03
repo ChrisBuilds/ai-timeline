@@ -1,0 +1,58 @@
+name: Performance
+
+# Benchmarks the timeline with synthetic data (1,000 to 20,000 events) on a CPU
+# slowed 4x, and fails when a metric goes over its budget in bench/budgets.json.
+# Results are in the run summary and in the bench-results artifact.
+on:
+  pull_request:
+    paths: ['src/**', 'bench/**', 'index.html', 'vite.config.ts', 'package.json', 'package-lock.json', '.github/workflows/performance.yml']
+  push:
+    branches: [main]
+    paths: ['src/**', 'bench/**', 'index.html', 'vite.config.ts', 'package.json', 'package-lock.json']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: performance-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - name: Micro-benchmarks
+        run: |
+          npx vitest bench --run --outputJson bench-core.json | tee bench-core.txt
+      - name: Browser benchmark
+        run: |
+          set -o pipefail
+          node bench/browser.mjs --budgets --json bench-browser.json | tee bench-browser.md
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo '## Browser benchmark'
+            cat bench-browser.md 2>/dev/null || echo 'No results.'
+            echo
+            echo '## Micro-benchmarks (mean ms per run)'
+            node bench/summarize-core.mjs bench-core.json 2>/dev/null || echo 'No results.'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bench-results
+          path: |
+            bench-core.json
+            bench-browser.json
+            bench-browser.md

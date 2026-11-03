@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { layout, type LayoutOptions } from './layout'
+import { layout, priorityOrder, type LayoutOptions } from './layout'
 
 const opts: LayoutOptions<string> = { lanes: 1, cardHeight: 80, gap: 10, anchorOffset: 10, clusterPx: 30 }
 
@@ -105,5 +105,27 @@ describe('pinned items', () => {
     expect(placed[0].lane).toBe(1)
     const one = layout([{ item: 'x', y: 120, score: 10 }], { ...opts, lanes: 1, reserved })
     expect(one.placed).toEqual([])
+  })
+})
+
+describe('at scale', () => {
+  // Deterministic pseudo-random items.
+  let seed = 3
+  const rand = () => ((seed = (seed * 16807) % 2147483647) / 2147483647)
+  const items = Array.from({ length: 3000 }, (_, i) => ({ item: `e${i}`, y: rand() * 40000, score: Math.floor(rand() * 100) }))
+  const two = { ...opts, lanes: 2, reserved: [{ lane: 1, top: 5000, bottom: 5060 }] }
+
+  it('never overlaps two cards in a lane, or a card and a reserved span', () => {
+    const { placed, clusters } = layout(items, two)
+    for (const lane of [0, 1]) {
+      const cards = placed.filter((c) => c.lane === lane).sort((a, b) => a.top - b.top)
+      for (let i = 1; i < cards.length; i++) expect(cards[i].top).toBeGreaterThanOrEqual(cards[i - 1].top + opts.cardHeight + opts.gap)
+    }
+    for (const c of placed.filter((c) => c.lane === 1)) expect(c.top + opts.cardHeight + opts.gap <= 5000 || c.top >= 5060).toBe(true)
+    expect(placed.length + clusters.reduce((n, c) => n + c.items.length, 0)).toBe(items.length)
+  })
+
+  it('gives the same result with a precomputed order', () => {
+    expect(layout(items, { ...two, order: priorityOrder(items) })).toEqual(layout(items, two))
   })
 })
