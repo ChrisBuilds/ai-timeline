@@ -14,6 +14,10 @@ Please search the open issues first. If someone has already suggested the event,
 
 Every event is researched against its sources and reviewed by a maintainer before it goes live, so it can take a few days. Events are removed only when they are false, duplicated or out of scope, never because they are unflattering.
 
+## Unverified details
+
+If you are unsure of a detail in an event, drop it. If it is still worth keeping, mark it in the description as low confidence with "additional citation needed", and say so in the pull request, so a reviewer can find a source. If the exact day is unconfirmed, use the month.
+
 ## Work on the site
 
 1. Open or pick an issue labelled `site`.

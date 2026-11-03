@@ -60,6 +60,7 @@ Before researching anything:
 - File: `events/<year>/<id>.yaml`. The id is the date (as precise as known) plus a short slug.
 - `summary`: one plain sentence under 280 characters, written neutrally. No hype words.
 - `sources`: primary source first. Set `accessed` to today.
+- Unverified details: if you are unsure of a detail, drop it. Keep it only if it is worth having, and then mark it in the `description` as low confidence with "additional citation needed", and list it in the PR research note. Never state an unverified detail as fact. If the exact day is unconfirmed, use a month-precision date and say so in the note.
 - `importance.rubric`: rate capability leap, adoption, industry or policy impact, and cultural reach, each 1 to 5. Only a maintainer sets `override`, and it always needs `override_reason`.
   Until measured signals exist, the score is computed from the rubric alone by `scripts/importance.mjs`: half the average rating plus half the highest rating, scaled to 0 to 100. Tiers: 85 and above is a landmark, 65 a major event, 40 notable, below that detail.
 - `related`: at most 3 links, each direct and stated by a source, with that source in `source`. Types are `builds_on`, `responds_to` and `supersedes`. Never link two events only because they share a topic.
