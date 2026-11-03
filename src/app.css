@@ -87,6 +87,18 @@ kbd {
   margin: 16px 0;
 }
 
+.dismiss {
+  font: inherit;
+  font-size: 0.85rem;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
 .zoom {
   position: fixed;
   z-index: 10;
