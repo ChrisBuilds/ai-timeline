@@ -1,0 +1,21 @@
+id: 2022-01-28-chain-of-thought-prompting
+title: Chain-of-thought prompting elicits reasoning in language models
+date: "2022-01-28"
+summary: >-
+  Google researchers show that prompting a large model to write out intermediate
+  reasoning steps sharply improves its results on math and logic problems.
+category: research
+organizations: [Google Research]
+people: [Jason Wei]
+tags: [reasoning, chain of thought, prompting]
+sources:
+  - url: https://arxiv.org/abs/2201.11903
+    title: Chain-of-Thought Prompting Elicits Reasoning in Large Language Models
+    publisher: arXiv
+    accessed: "2026-11-03"
+artifacts:
+  - type: paper
+    url: https://arxiv.org/abs/2201.11903
+    title: Chain-of-Thought Prompting (arXiv)
+importance:
+  rubric: {capability: 4, adoption: 4, impact: 4, culture: 2}

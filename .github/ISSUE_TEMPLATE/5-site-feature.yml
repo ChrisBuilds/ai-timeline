@@ -1,0 +1,15 @@
+name: Site feature
+description: Suggest an improvement to the website itself.
+title: "Site: "
+labels: [site, enhancement]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What would you like the site to do?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why would it help?

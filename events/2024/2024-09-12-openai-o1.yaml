@@ -1,0 +1,20 @@
+id: 2024-09-12-openai-o1
+title: OpenAI releases o1, its first reasoning model
+date: "2024-09-12"
+summary: >-
+  o1 spends extra compute thinking through a chain of thought before it answers,
+  and posts large gains on math, coding and science benchmarks.
+category: model release
+organizations: [OpenAI]
+tags: [reasoning, chain of thought, test-time compute]
+sources:
+  - url: https://openai.com/index/learning-to-reason-with-llms/
+    title: Learning to reason with LLMs
+    publisher: OpenAI
+    accessed: "2026-11-03"
+related:
+  - id: 2022-01-28-chain-of-thought-prompting
+    relation: builds_on
+    source: https://openai.com/index/learning-to-reason-with-llms/
+importance:
+  rubric: {capability: 5, adoption: 4, impact: 4, culture: 4}
