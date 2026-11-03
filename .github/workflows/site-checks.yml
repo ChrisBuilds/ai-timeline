@@ -1,0 +1,22 @@
+name: Site checks
+
+# Full type check and build for changes to the site itself.
+on:
+  pull_request:
+    paths-ignore: ['events/**', 'removed.yaml']
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: npm run build

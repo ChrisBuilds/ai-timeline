@@ -1,0 +1,10 @@
+# Events removed from the timeline. Old links to these ids show a short note
+# instead of a broken page. See CLAUDE.md, "Removing events".
+#
+# - id: 2024-01-01-example-event
+#   reason: duplicate        # duplicate | hoax | unverified | out-of-scope
+#   duplicate_of: 2024-01-02-example-event   # only for duplicates
+#   note: Merged into the better-sourced entry.
+#   issue: 123
+#   removed_at: 2026-11-03
+[]

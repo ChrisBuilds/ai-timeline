@@ -1,0 +1,80 @@
+name: Suggest an event
+description: Add something that happened in AI to the timeline.
+title: "Event: "
+labels: [content, "type:new"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing. Before submitting, please [search open issues](https://github.com/ChrisBuilds/ai-timeline/issues?q=is%3Aissue+label%3Acontent) and the timeline itself. If the event is already there, add a 👍 and any new sources to that issue instead.
+  - type: input
+    id: title
+    attributes:
+      label: What happened?
+      description: A short title, for example "OpenAI releases o1, its first reasoning model".
+    validations:
+      required: true
+  - type: input
+    id: date
+    attributes:
+      label: Date
+      description: YYYY-MM-DD if known, otherwise YYYY-MM or YYYY.
+      placeholder: "2024-09-12"
+    validations:
+      required: true
+  - type: checkboxes
+    id: approximate
+    attributes:
+      label: Date precision
+      options:
+        - label: The date is approximate
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - research
+        - model release
+        - product
+        - company and funding
+        - policy and regulation
+        - safety and security incident
+        - hardware and compute
+        - benchmark milestone
+        - open source
+        - culture and society
+        - not sure
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: One-sentence summary
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it matters
+      description: What changed because of this event?
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Sources
+      description: One link per line. The official announcement, paper or filing is best.
+    validations:
+      required: true
+  - type: textarea
+    id: related
+    attributes:
+      label: Directly related events (optional)
+      description: Earlier events this one directly builds on, responds to or replaces, with a source that says so.
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmation
+      options:
+        - label: The sources are public and I have checked that they support the event.
+          required: true

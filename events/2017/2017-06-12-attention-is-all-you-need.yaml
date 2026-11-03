@@ -1,0 +1,21 @@
+id: 2017-06-12-attention-is-all-you-need
+title: '"Attention Is All You Need" introduces the Transformer'
+date: "2017-06-12"
+summary: >-
+  Researchers at Google propose the Transformer, an architecture built entirely on
+  attention that becomes the foundation of modern large language models.
+category: research
+organizations: [Google Brain, Google Research]
+people: [Ashish Vaswani, Noam Shazeer, Niki Parmar]
+tags: [transformer, attention, architecture]
+sources:
+  - url: https://arxiv.org/abs/1706.03762
+    title: Attention Is All You Need
+    publisher: arXiv
+    accessed: "2026-11-03"
+artifacts:
+  - type: paper
+    url: https://arxiv.org/abs/1706.03762
+    title: Attention Is All You Need (arXiv)
+importance:
+  rubric: {capability: 5, adoption: 5, impact: 5, culture: 3}

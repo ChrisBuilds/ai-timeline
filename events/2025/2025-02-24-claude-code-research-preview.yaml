@@ -1,0 +1,16 @@
+id: 2025-02-24-claude-code-research-preview
+title: Anthropic releases Claude Code as a research preview
+date: "2025-02-24"
+summary: >-
+  Alongside Claude 3.7 Sonnet, Anthropic introduces Claude Code, its first agentic
+  coding tool, which works on codebases directly from the terminal.
+category: product
+organizations: [Anthropic]
+tags: [coding agent, agents, developer tools]
+sources:
+  - url: https://www.anthropic.com/news/claude-3-7-sonnet
+    title: Claude 3.7 Sonnet and Claude Code
+    publisher: Anthropic
+    accessed: "2026-11-03"
+importance:
+  rubric: {capability: 4, adoption: 4, impact: 4, culture: 3}
