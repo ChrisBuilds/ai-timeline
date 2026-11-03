@@ -1,0 +1,21 @@
+id: 2012-09-30-alexnet-imagenet
+title: AlexNet wins ImageNet and starts the deep learning era
+date: "2012-09-30"
+summary: >-
+  A GPU-trained convolutional network by Krizhevsky, Sutskever and Hinton wins the
+  ImageNet 2012 challenge with 15.3% top-5 error, more than 10 points ahead of the runner-up.
+description: |
+  The entry was submitted on September 30, 2012. Its margin over traditional
+  computer vision methods convinced much of the field to switch to deep neural
+  networks trained on GPUs.
+category: research
+organizations: [University of Toronto]
+people: [Alex Krizhevsky, Ilya Sutskever, Geoffrey Hinton]
+tags: [deep learning, computer vision, convolutional neural networks, GPU]
+sources:
+  - url: https://en.wikipedia.org/wiki/AlexNet
+    title: AlexNet
+    publisher: Wikipedia
+    accessed: "2026-11-03"
+importance:
+  rubric: {capability: 5, adoption: 5, impact: 5, culture: 3}

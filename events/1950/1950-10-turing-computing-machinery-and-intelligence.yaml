@@ -1,0 +1,21 @@
+id: 1950-10-turing-computing-machinery-and-intelligence
+title: Turing asks "Can machines think?"
+date: "1950-10"
+summary: >-
+  Alan Turing's paper "Computing Machinery and Intelligence" proposes the imitation
+  game, later called the Turing test, as a practical stand-in for machine thinking.
+description: |
+  Published in the journal *Mind* (vol. LIX, no. 236), the paper replaces the vague
+  question "Can machines think?" with whether a digital computer could play the
+  imitation game well enough to be indistinguishable from a human, and answers the
+  main objections to that possibility.
+category: research
+people: [Alan Turing]
+tags: [turing test, foundations, philosophy of mind]
+sources:
+  - url: https://en.wikipedia.org/wiki/Computing_Machinery_and_Intelligence
+    title: Computing Machinery and Intelligence
+    publisher: Wikipedia
+    accessed: "2026-11-03"
+importance:
+  rubric: {capability: 2, adoption: 2, impact: 5, culture: 5}

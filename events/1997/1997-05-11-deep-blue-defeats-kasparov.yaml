@@ -1,0 +1,17 @@
+id: 1997-05-11-deep-blue-defeats-kasparov
+title: IBM's Deep Blue defeats world chess champion Garry Kasparov
+date: "1997-05-11"
+summary: >-
+  Deep Blue wins the sixth and final game of their rematch in New York, beating
+  Kasparov 3½–2½, the first match loss by a reigning world champion to a computer.
+category: benchmark milestone
+organizations: [IBM]
+people: [Garry Kasparov]
+tags: [chess, game playing, search]
+sources:
+  - url: https://en.wikipedia.org/wiki/Deep_Blue_versus_Garry_Kasparov
+    title: Deep Blue versus Garry Kasparov
+    publisher: Wikipedia
+    accessed: "2026-11-03"
+importance:
+  rubric: {capability: 3, adoption: 2, impact: 4, culture: 5}
