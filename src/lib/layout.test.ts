@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { layout, type LayoutOptions } from './layout'
 
-const opts: LayoutOptions = { lanes: 1, cardHeight: 80, gap: 10, anchorOffset: 10, clusterPx: 30 }
+const opts: LayoutOptions<string> = { lanes: 1, cardHeight: 80, gap: 10, anchorOffset: 10, clusterPx: 30 }
 
 describe('layout', () => {
   it('keeps the most important of two colliding events', () => {
@@ -68,5 +68,34 @@ describe('layout', () => {
       opts,
     )
     expect(placed.map((p) => p.item)).toEqual(['newer'])
+  })
+})
+
+describe('pinned items', () => {
+  const two = { ...opts, lanes: 2 }
+  const items = [
+    { item: 'a', y: 100, score: 50 },
+    { item: 'b', y: 120, score: 90 },
+    { item: 'c', y: 140, score: 70 },
+    { item: 'd', y: 400, score: 30 },
+  ]
+
+  it('changes nothing when the pinned item already has a card', () => {
+    const base = layout(items, two)
+    for (const pin of ['b', 'c', 'd']) expect(layout(items, { ...two, pin })).toEqual(base)
+  })
+
+  it('shows a hidden pinned item, hiding only what it overlaps in one lane', () => {
+    const base = layout(items, two)
+    expect(base.clusters.flatMap((c) => c.items)).toEqual(['a'])
+    const { placed, clusters } = layout(items, { ...two, pin: 'a' })
+    expect(placed.map((p) => p.item).sort()).toEqual(['a', 'b', 'd'])
+    // c is the less important of the two cards a could replace.
+    expect(clusters.flatMap((c) => c.items)).toEqual(['c'])
+    const kept = (id: string) => placed.find((p) => p.item === id)
+    const was = (id: string) => base.placed.find((p) => p.item === id)
+    expect(kept('b')).toEqual(was('b'))
+    expect(kept('d')).toEqual(was('d'))
+    expect(kept('a')!.lane).toBe(was('c')!.lane)
   })
 })

@@ -62,8 +62,8 @@
       events.map((e) => ({
         item: e,
         y: scale.y(years.get(e.id)!),
-        // The selected event always gets a card, and matching events win cards over faded ones.
-        score: e.id === selectedId ? Infinity : e.score + (filtering && matchIds.has(e.id) ? 1000 : 0),
+        // Matching events win cards over faded ones.
+        score: e.score + (filtering && matchIds.has(e.id) ? 1000 : 0),
       })),
       {
         lanes: wide ? 2 : 1,
@@ -71,6 +71,8 @@
         gap: 10,
         anchorOffset: ANCHOR_OFFSET,
         clusterPx: 28,
+        // The selected event always gets a card, without moving any card that is already shown.
+        pin: selectedId ? byId.get(selectedId) : undefined,
       },
     ),
   )
