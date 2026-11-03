@@ -153,10 +153,10 @@
   {#each scale.bands as band, i (band.era.id)}
     <section
       class="band"
-      class:alt={i % 2 === 1}
       style:top="{band.top}px"
       style:height="{band.height}px"
       style:--h={band.era.hue ?? 220}
+      style:--era-art={`url("${import.meta.env.BASE_URL}art/${band.era.id}.svg")`}
       aria-label={band.era.name}
     >
       <h2 class="era-label" bind:clientHeight={labelHeights[i]}>
@@ -306,14 +306,32 @@
     left: 0;
     right: 0;
     border-top: 1px solid var(--line);
-    background: linear-gradient(
-      180deg,
-      hsl(var(--h) 75% 55% / var(--band-alpha)) 0,
-      hsl(var(--h) 75% 55% / calc(var(--band-alpha) * 0.35)) 100%
-    );
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--bg);
+    --era-ink: light-dark(hsl(var(--h) 46% 34%), hsl(var(--h) 44% 72%));
   }
-  .band.alt {
-    border-top-style: dashed;
+  /* A single masked image per band keeps decorative geometry outside the DOM.
+     Uniform scaling preserves circles and angles in compressed eras; no animation or blur. */
+  .band::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: var(--era-ink);
+    opacity: var(--era-art-opacity);
+    mask-image: var(--era-art);
+    mask-size: auto min(640px, 100%);
+    mask-position: center top;
+    mask-repeat: repeat;
+  }
+  @media (max-width: 600px) {
+    .band::before {
+      mask-size: auto min(448px, 100%);
+      mask-position: left top;
+      opacity: calc(var(--era-art-opacity) * 0.85);
+    }
   }
   /* Era names sit in a strip at the top of their band that cards stay out of. */
   .era-label {
@@ -327,13 +345,11 @@
     gap: 0 10px;
     margin: 0;
     left: var(--label-pad);
-    padding: 4px 12px 5px;
-    border: 1px solid hsl(var(--h) 60% 50% / 0.22);
-    border-radius: 12px;
-    background: var(--glass);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    box-shadow: var(--shadow-sm);
+    padding: 9px 12px 10px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--era-ink);
+    border-radius: 2px 8px 8px 2px;
+    background: var(--surface);
     pointer-events: none;
   }
   .era-name {
@@ -342,15 +358,7 @@
     font-weight: 600;
     letter-spacing: -0.01em;
     line-height: 1.15;
-    color: hsl(var(--h) 45% 38%);
-  }
-  :global(:root[data-theme='dark']) .era-name {
-    color: hsl(var(--h) 70% 78%);
-  }
-  @media (prefers-color-scheme: dark) {
-    :global(:root:not([data-theme='light'])) .era-name {
-      color: hsl(var(--h) 70% 78%);
-    }
+    color: var(--text);
   }
   .era-years {
     font-size: 0.72rem;
@@ -368,7 +376,7 @@
     left: calc(var(--spine) - 1px);
     width: 2px;
     border-radius: 2px;
-    background: linear-gradient(180deg, var(--accent) 0, var(--accent-2) 18%, var(--line-strong) 45%, var(--line) 100%);
+    background: var(--line-strong);
   }
 
   .now {
@@ -385,7 +393,7 @@
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    background: var(--accent);
     box-shadow: 0 0 0 4px var(--bg);
   }
   .pulse {
@@ -637,7 +645,7 @@
     contain: strict;
     background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: 12px;
+    border-radius: 8px;
     overflow: hidden;
     box-shadow: var(--shadow-sm);
     transition:
@@ -663,7 +671,7 @@
     opacity: 1;
   }
   .card.tier-1 {
-    background: linear-gradient(100deg, color-mix(in srgb, var(--c) 9%, var(--surface)) 0, var(--surface) 55%);
+    background: var(--surface);
   }
   .card:hover,
   li:has(.connector:hover, .dot:hover) .card {
