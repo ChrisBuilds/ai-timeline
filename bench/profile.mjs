@@ -16,7 +16,7 @@ const port = 4319
 const server = spawn(process.execPath, [join(root, 'node_modules/vite/bin/vite.js'), 'preview', '--port', String(port), '--strictPort'], { cwd: root, stdio: ['ignore', 'pipe', 'inherit'] })
 await new Promise((r) => server.stdout.on('data', (b) => String(b).includes(String(port)) && r()))
 
-const browser = await chromium.launch()
+const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined })
 const page = await browser.newPage({ viewport: { width: 1280, height: 900 } })
 await serveSynthetic(page, size)
 const cdp = await page.context().newCDPSession(page)

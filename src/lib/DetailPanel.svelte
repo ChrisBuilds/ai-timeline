@@ -365,16 +365,7 @@
     box-shadow: var(--shadow-lg);
     animation: slide-in 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
-  .panel::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 120px;
-    background: linear-gradient(180deg, color-mix(in srgb, var(--c) 16%, transparent), transparent);
-    pointer-events: none;
-  }
+  @media (min-width: 720px) and (max-width: 1099px) { .panel { width: 340px; } }
   .panel > :global(*) {
     position: relative;
   }
@@ -393,7 +384,7 @@
       top: auto;
       left: 0;
       width: 100%;
-      max-height: 72vh;
+      max-height: 55vh;
       padding: 10px 20px calc(32px + env(safe-area-inset-bottom));
       border-left: none;
       border-top: 1px solid var(--line);

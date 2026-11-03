@@ -336,3 +336,33 @@ footer {
   .eyebrow { font-size: 0.6rem; letter-spacing: 0.045em; }
   .help { font-size: 0.8rem; line-height: 1.8; margin-top: 14px; }
 }
+
+/* Focus + context: state color is independent of category and ribbon density. */
+:root {
+  --focus-surface: light-dark(#232b32, #f5f1e8);
+  --focus-text: light-dark(#fffdf8, #19242b);
+  --focus-muted: light-dark(#c3cbd0, #526069);
+  --focus-badge: #a9dfc9;
+  --context-accent: light-dark(#287c76, #a9dfc9);
+  --ribbon-ink: light-dark(#a6b0b4, #647480);
+}
+@media (min-width: 1100px) {
+  main.has-selection { margin-right: 444px; }
+  .zoom.has-selection { right: 440px; }
+}
+@media (min-width: 720px) and (max-width: 1099px) {
+  main.has-selection { margin-right: 360px; }
+  .zoom.has-selection { right: 356px; }
+}
+@media (max-width: 719px) {
+  main.has-selection { padding-bottom: 58vh; }
+  .zoom.has-selection { bottom: calc(55vh + 12px); }
+}
+
+.ribbon-help { display: block; font-size: 0.76rem; color: var(--muted); }
+
+@media (max-width: 719px) {
+  .zoom.has-selection { left: 4px; right: auto; flex-direction: column; gap: 0; }
+  .zoom.has-selection button { width: 26px; height: 26px; }
+  .zoom.has-selection .zoom-level { min-width: 26px; font-size: 0.58rem; }
+}

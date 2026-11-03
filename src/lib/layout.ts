@@ -20,6 +20,8 @@ export interface Cluster<T> {
 export interface LayoutOptions<T = unknown> {
   lanes: number
   cardHeight: number
+  /** Optional height for each event state. */
+  heightFor?: (item: T) => number
   gap: number
   /** How far above its date marker a card starts. */
   anchorOffset: number
@@ -96,11 +98,12 @@ export function layout<T>(items: Positioned<T>[], opts: LayoutOptions<T>) {
   // every event, so it avoids allocating per item.
   const laneOf = new Int8Array(n).fill(-1)
   const tops = new Float64Array(n)
+  const heights = Float64Array.from(items, (it) => opts.heightFor?.(it.item) ?? opts.cardHeight)
 
   for (let k = 0; k < order.length; k++) {
     const i = order[k]
     const top = items[i].y - opts.anchorOffset
-    const bottom = top + opts.cardHeight + opts.gap
+    const bottom = top + heights[i] + opts.gap
     for (let lane = 0; lane < lanes.length; lane++) {
       if (isFree(lanes[lane], top, bottom)) {
         occupy(lanes[lane], top - opts.gap, bottom)
@@ -114,8 +117,8 @@ export function layout<T>(items: Positioned<T>[], opts: LayoutOptions<T>) {
   const pinned = opts.pin === undefined ? -1 : items.findIndex((it) => it.item === opts.pin)
   if (pinned !== -1 && laneOf[pinned] === -1) {
     const top = items[pinned].y - opts.anchorOffset
-    const bottom = top + opts.cardHeight + opts.gap
-    const overlaps = (j: number) => !(bottom <= tops[j] - opts.gap || top >= tops[j] + opts.cardHeight + opts.gap)
+    const bottom = top + heights[pinned] + opts.gap
+    const overlaps = (j: number) => !(bottom <= tops[j] - opts.gap || top >= tops[j] + heights[j] + opts.gap)
     const shown: number[] = []
     for (let j = 0; j < n; j++) if (laneOf[j] !== -1 && overlaps(j)) shown.push(j)
     // Use the lane where the fewest cards, and then the least important ones, have to go.

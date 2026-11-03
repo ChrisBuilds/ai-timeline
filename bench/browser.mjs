@@ -195,7 +195,7 @@ function overBudget(results) {
 }
 
 const server = await startServer()
-const browser = await chromium.launch()
+const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined })
 const results = []
 try {
   for (const size of sizes) {
