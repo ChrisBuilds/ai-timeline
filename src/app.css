@@ -1,10 +1,13 @@
 :root {
   --bg: #fbfaf7;
   --surface: #ffffff;
+  --band: #f3f1ec;
   --text: #1d1d1b;
   --muted: #6b6a66;
-  --line: #dddad2;
+  --line: #e2dfd7;
+  --line-strong: #c9c5bb;
   --accent: #3b5bdb;
+  --accent-soft: rgb(59 91 219 / 0.25);
   --warn: #b35c00;
   color-scheme: light dark;
   font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -14,16 +17,21 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #161615;
-    --surface: #1f1f1d;
+    --surface: #201f1d;
+    --band: #1b1b19;
     --text: #ecebe6;
     --muted: #a3a29c;
-    --line: #3a3935;
+    --line: #34332f;
+    --line-strong: #4a4943;
     --accent: #8ea4ff;
+    --accent-soft: rgb(142 164 255 / 0.3);
     --warn: #f0a656;
   }
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
@@ -32,76 +40,110 @@ body {
 }
 
 #app {
-  max-width: 44rem;
+  max-width: 1080px;
   margin: 0 auto;
-  padding: 2rem 1rem 4rem;
+  padding: 0 16px 96px;
 }
 
-a { color: var(--accent); }
-h1 { margin: 0 0 0.25rem; font-size: 2rem; }
-.lede { margin: 0; color: var(--muted); }
-.contribute { margin: 0.5rem 0 2rem; }
-.muted { color: var(--muted); }
-
-.now {
-  font-weight: 600;
-  padding-left: 1.5rem;
-  position: relative;
-}
-.now::before {
-  content: '';
-  position: absolute;
-  left: 0.25rem;
-  top: 0.4rem;
-  width: 0.75rem;
-  height: 0.75rem;
-  border-radius: 50%;
-  background: var(--accent);
+a {
+  color: var(--accent);
 }
 
-.timeline, .timeline ol {
-  list-style: none;
+.site-header {
+  padding: 32px 0 8px;
+  max-width: 44rem;
+}
+.site-header h1 {
+  margin: 0 0 4px;
+  font-size: 2rem;
+}
+.lede {
   margin: 0;
-  padding: 0;
-}
-
-.timeline {
-  border-left: 2px solid var(--line);
-  margin-left: 0.55rem;
-  padding-left: 1.25rem;
-}
-
-.year h2 {
-  font-size: 1rem;
   color: var(--muted);
-  margin: 1.5rem 0 0.5rem;
+}
+.help {
+  margin: 8px 0 0;
+  font-size: 0.9rem;
 }
 
-article {
+kbd {
+  font: inherit;
+  font-size: 0.8em;
+  padding: 0 5px;
+  border: 1px solid var(--line-strong);
+  border-bottom-width: 2px;
+  border-radius: 4px;
   background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
-  margin-bottom: 0.75rem;
-  scroll-margin: 2rem;
 }
-article.selected { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
-article h3 { margin: 0.25rem 0; font-size: 1.05rem; }
-article h3 a { color: inherit; text-decoration: none; }
-article h3 a:hover { text-decoration: underline; }
-article p { margin: 0.25rem 0; }
 
-.meta { font-size: 0.85rem; color: var(--muted); display: flex; gap: 0.5rem; flex-wrap: wrap; }
-.category { text-transform: capitalize; }
-.badge { border: 1px solid currentColor; border-radius: 999px; padding: 0 0.5rem; }
-.badge.warn { color: var(--warn); }
-.sources { font-size: 0.85rem; }
+.muted {
+  color: var(--muted);
+}
 
 .notice {
   border: 1px solid var(--warn);
   border-radius: 8px;
-  padding: 0.75rem 1rem;
-  margin-bottom: 1rem;
+  padding: 10px 14px;
+  margin: 16px 0;
 }
 
-footer { margin-top: 3rem; font-size: 0.85rem; }
+.dismiss {
+  font: inherit;
+  font-size: 0.85rem;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.zoom {
+  position: fixed;
+  z-index: 10;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: 0 4px 16px rgb(0 0 0 / 0.08);
+}
+.zoom button {
+  font: inherit;
+  font-size: 1.2rem;
+  line-height: 1;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+.zoom button:hover:not(:disabled),
+.zoom button:focus-visible {
+  background: var(--band);
+}
+.zoom button:disabled {
+  color: var(--line-strong);
+  cursor: default;
+}
+.zoom .reset {
+  font-size: 0.8rem;
+}
+.zoom-level {
+  font-size: 0.7rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+footer {
+  margin-top: 32px;
+  font-size: 0.85rem;
+}

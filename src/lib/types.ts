@@ -57,6 +57,9 @@ export interface TimelineEvent {
   developing?: { since: string; recheck: string; issue?: number }
   submitted_by?: string
   issue?: number
+  /** Computed at build time by scripts/importance.mjs. */
+  score: number
+  tier: 1 | 2 | 3 | 4
 }
 
 export interface RemovedEvent {
