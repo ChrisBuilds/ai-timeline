@@ -1,0 +1,40 @@
+id: 1958-07-rosenblatt-perceptron
+title: Rosenblatt demonstrates the perceptron, a machine that learns
+date: "1958-07"
+summary: >-
+  The US Office of Naval Research unveiled Frank Rosenblatt's perceptron, a program run on an
+  IBM 704 that taught itself to tell punch cards marked on the left from cards marked on the right.
+description: |
+  Frank Rosenblatt of the Cornell Aeronautical Laboratory developed the perceptron, a
+  simple model of a neuron whose connection strengths are adjusted from examples. In
+  July 1958 the US Office of Naval Research, which funded the work, showed it running
+  on an IBM 704. After about 50 trials it learned to tell punch cards marked on the
+  left from cards marked on the right. The New York Times headlined its report "New
+  Navy Device Learns by Doing", and the claims made for the machine drew wide attention.
+
+  Rosenblatt described the model in "The Perceptron: A Probabilistic Model for
+  Information Storage and Organization in the Brain", received by *Psychological
+  Review* on April 23, 1958 and published in volume 65, issue 6 of that year. It
+  reports experiments simulating the perceptron on the IBM 704. A hardware version,
+  the Mark I Perceptron, was built later, in 1959.
+category: research
+organizations: [Office of Naval Research, Cornell Aeronautical Laboratory]
+people: [Frank Rosenblatt]
+tags: [perceptron, neural networks, machine learning, connectionism]
+sources:
+  - url: https://homepages.math.uic.edu/~lreyzin/papers/rosenblatt58.pdf
+    title: "The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain (Psychological Review, vol. 65, no. 6, pp. 386-408)"
+    publisher: American Psychological Association
+    accessed: "2026-11-03"
+  - url: https://nbb.cornell.edu/news/professors-perceptron-paved-way-ai-60-years-too-soon
+    title: Professor's perceptron paved the way for AI - 60 years too soon
+    publisher: Cornell University
+    accessed: "2026-11-03"
+artifacts:
+  - type: paper
+    url: https://homepages.math.uic.edu/~lreyzin/papers/rosenblatt58.pdf
+    title: Rosenblatt, The Perceptron (Psychological Review, 1958)
+importance:
+  rubric: {capability: 3, adoption: 2, impact: 4, culture: 4}
+issue: 31
+submitted_by: ChrisBuilds
