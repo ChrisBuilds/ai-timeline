@@ -14,6 +14,8 @@
     anchorOffset: number
     selectedId: string | null
     highlightIds: Set<string>
+    /** Events that don't match the active filters. */
+    dimIds: Set<string>
     onselect: (id: string) => void
     onexpand: (cluster: Cluster<TimelineEvent>) => void
   }
@@ -28,6 +30,7 @@
     anchorOffset,
     selectedId,
     highlightIds,
+    dimIds,
     onselect,
     onexpand,
   }: Props = $props()
@@ -86,6 +89,7 @@
     <div class="cluster-wrap" style:top="{cluster.y}px">
       <button
         class="cluster"
+        class:dimmed={cluster.items.every((e) => dimIds.has(e.id))}
         onclick={() => (openCluster = openCluster === key ? null : key)}
         aria-expanded={openCluster === key}
         aria-label="{cluster.items.length} more event{cluster.items.length === 1 ? '' : 's'} here"
@@ -97,6 +101,7 @@
           {#each cluster.items as ev (ev.id)}
             <button
               role="menuitem"
+              class:dimmed={dimIds.has(ev.id)}
               onclick={() => {
                 openCluster = null
                 onselect(ev.id)
@@ -127,6 +132,7 @@
         <span
           class="dot tier-{ev.tier}"
           class:selected={selectedId === ev.id}
+          class:dimmed={dimIds.has(ev.id) && selectedId !== ev.id}
           style:top="{card.y}px"
           aria-hidden="true"
         ></span>
@@ -142,6 +148,7 @@
           class="card tier-{ev.tier}"
           class:selected={selectedId === ev.id}
           class:related={highlightIds.has(ev.id)}
+          class:dimmed={dimIds.has(ev.id) && selectedId !== ev.id}
           style:top="{card.top}px"
           style:left="{left}px"
           style:width="{cardWidth}px"
@@ -181,7 +188,7 @@
   }
   .era-label {
     position: sticky;
-    top: 0;
+    top: var(--toolbar-h, 0px);
     margin: 0;
     padding: 6px 8px 6px var(--label-pad);
     font-size: 0.75rem;
@@ -341,7 +348,7 @@
     border: 1px solid var(--line);
     border-radius: 8px;
     overflow: hidden;
-    transition: box-shadow 0.15s, border-color 0.15s;
+    transition: box-shadow 0.15s, border-color 0.15s, opacity 0.15s;
     z-index: 1;
   }
   .card.tier-1 {
@@ -404,8 +411,19 @@
     overflow: hidden;
   }
 
+  .card.dimmed,
+  .dot.dimmed,
+  .cluster.dimmed,
+  .cluster-menu button.dimmed {
+    opacity: 0.3;
+  }
+  .card.dimmed:hover,
+  .card.dimmed:focus-within {
+    opacity: 0.75;
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .card {
+    :global(:root:not([data-motion='full'])) .card {
       transition: none;
     }
   }
