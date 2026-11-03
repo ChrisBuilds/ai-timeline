@@ -4,25 +4,23 @@
   --font-display: 'Fraunces Variable', 'Iowan Old Style', Georgia, serif;
   --font-ui: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-  --bg: #f7f5f0;
-  --bg-glow-1: rgb(124 58 237 / 0.1);
-  --bg-glow-2: rgb(14 165 233 / 0.08);
-  --surface: #ffffff;
-  --surface-2: #faf9f6;
+  --bg: #f7f4ed;
+  --surface: #fffdf8;
+  --surface-2: #f1eee6;
   --band: #f1eee7;
   --text: #191917;
   --muted: #6b6a64;
   --line: #e4e0d6;
   --line-strong: #cbc6b9;
-  --accent: #4f46e5;
-  --accent-2: #0ea5e9;
+  --accent: #514c9a;
+  --accent-2: #287c76;
   --accent-soft: rgb(79 70 229 / 0.18);
   --warn: #b35c00;
   --shadow-sm: 0 1px 2px rgb(25 25 23 / 0.06);
   --shadow-md: 0 1px 2px rgb(25 25 23 / 0.05), 0 6px 16px -4px rgb(25 25 23 / 0.1);
   --shadow-lg: 0 2px 6px rgb(25 25 23 / 0.06), 0 18px 40px -8px rgb(25 25 23 / 0.18);
-  --glass: rgb(247 245 240 / 0.78);
-  --band-alpha: 0.075;
+  --glass: rgb(247 244 237 / 0.94);
+  --era-art-opacity: 0.55;
 
   /* Category colours, used for card edges, dots and chips. */
   --cat-research: #4f46e5;
@@ -47,16 +45,14 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bg: #0f0f12;
-    --bg-glow-1: rgb(139 92 246 / 0.16);
-    --bg-glow-2: rgb(14 165 233 / 0.1);
-    --surface: #18181d;
-    --surface-2: #1d1d23;
-    --band: #141418;
-    --text: #ecebf2;
-    --muted: #9d9ca8;
-    --line: #2a2a32;
-    --line-strong: #3d3d48;
+    --bg: #141a22;
+    --surface: #1c242d;
+    --surface-2: #222d37;
+    --band: #18202a;
+    --text: #eeeae2;
+    --muted: #adb5bc;
+    --line: #303d49;
+    --line-strong: #536271;
     --accent: #a5b4fc;
     --accent-2: #67e8f9;
     --accent-soft: rgb(165 180 252 / 0.22);
@@ -64,8 +60,8 @@
     --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
     --shadow-md: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 20px -6px rgb(0 0 0 / 0.55);
     --shadow-lg: 0 2px 8px rgb(0 0 0 / 0.45), 0 24px 48px -10px rgb(0 0 0 / 0.7);
-    --glass: rgb(15 15 18 / 0.72);
-    --band-alpha: 0.11;
+    --glass: rgb(20 26 34 / 0.94);
+    --era-art-opacity: 0.68;
     --cat-research: #a5b4fc;
     --cat-model-release: #c4b5fd;
     --cat-product: #5eead4;
@@ -82,16 +78,14 @@
 }
 
 :root[data-theme='dark'] {
-  --bg: #0f0f12;
-  --bg-glow-1: rgb(139 92 246 / 0.16);
-  --bg-glow-2: rgb(14 165 233 / 0.1);
-  --surface: #18181d;
-  --surface-2: #1d1d23;
-  --band: #141418;
-  --text: #ecebf2;
-  --muted: #9d9ca8;
-  --line: #2a2a32;
-  --line-strong: #3d3d48;
+  --bg: #141a22;
+  --surface: #1c242d;
+  --surface-2: #222d37;
+  --band: #18202a;
+  --text: #eeeae2;
+  --muted: #adb5bc;
+  --line: #303d49;
+  --line-strong: #536271;
   --accent: #a5b4fc;
   --accent-2: #67e8f9;
   --accent-soft: rgb(165 180 252 / 0.22);
@@ -99,8 +93,8 @@
   --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
   --shadow-md: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 20px -6px rgb(0 0 0 / 0.55);
   --shadow-lg: 0 2px 8px rgb(0 0 0 / 0.45), 0 24px 48px -10px rgb(0 0 0 / 0.7);
-  --glass: rgb(15 15 18 / 0.72);
-  --band-alpha: 0.11;
+  --glass: rgb(20 26 34 / 0.94);
+  --era-art-opacity: 0.68;
   --cat-research: #a5b4fc;
   --cat-model-release: #c4b5fd;
   --cat-product: #5eead4;
@@ -144,10 +138,6 @@ body {
   margin: 0;
   min-height: 100vh;
   background-color: var(--bg);
-  background-image:
-    radial-gradient(60rem 28rem at 12% -6rem, var(--bg-glow-1), transparent 70%),
-    radial-gradient(48rem 24rem at 88% -4rem, var(--bg-glow-2), transparent 70%);
-  background-repeat: no-repeat;
   color: var(--text);
 }
 
@@ -196,7 +186,7 @@ kbd {
 /* ---------- Header ---------- */
 
 .site-header {
-  padding: clamp(40px, 9vw, 88px) 0 20px;
+  padding: clamp(32px, 6vw, 64px) 0 24px;
   max-width: 46rem;
 }
 .eyebrow {
@@ -204,20 +194,19 @@ kbd {
   align-items: center;
   gap: 8px;
   margin: 0 0 14px;
-  padding: 4px 12px 4px 8px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--surface) 70%, transparent);
-  font-size: 0.78rem;
+  padding: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  font-size: 0.66rem;
   font-weight: 500;
   color: var(--muted);
 }
 .eyebrow .live {
   width: 8px;
   height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-soft);
+  border-radius: 1px;
+  background: var(--accent-2);
+  transform: rotate(45deg);
 }
 .site-header h1 {
   margin: 0 0 14px;
@@ -228,10 +217,7 @@ kbd {
   letter-spacing: -0.025em;
 }
 .site-header h1 .grad {
-  background: linear-gradient(100deg, var(--accent) 10%, var(--accent-2) 90%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--accent);
 }
 .help {
   margin: 20px 0 0;
@@ -294,8 +280,8 @@ kbd {
   gap: 2px;
   padding: 4px;
   border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--glass);
+  border-radius: 10px;
+  background: var(--surface);
   -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
   box-shadow: var(--shadow-md);
@@ -340,4 +326,13 @@ footer {
   border-top: 1px solid var(--line);
   font-size: 0.85rem;
   line-height: 2;
+}
+
+/* On narrow screens, a compact horizontal dock leaves more of the timeline visible. */
+@media (max-width: 600px) {
+  .zoom { flex-direction: row; gap: 4px; padding: 3px; }
+  .zoom button { width: 32px; height: 32px; border-radius: 6px; }
+  .zoom-level { min-width: 38px; text-align: center; }
+  .eyebrow { font-size: 0.6rem; letter-spacing: 0.045em; }
+  .help { font-size: 0.8rem; line-height: 1.8; margin-top: 14px; }
 }
