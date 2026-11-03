@@ -30,6 +30,12 @@
   const results = $derived(search(index, query))
   const filterCount = $derived(filters.categories.length + filters.organizations.length + filters.tags.length)
 
+  // Keep the highlighted result visible when arrow keys move past the list's edge.
+  $effect(() => {
+    if (!listOpen || !results[active]) return
+    document.getElementById(`result-${results[active].id}`)?.scrollIntoView({ block: 'nearest' })
+  })
+
   export function focusSearch() {
     input?.focus()
     input?.select()
