@@ -57,7 +57,7 @@
     const dots = [...placed.map((c) => c.y), ...clusters.map((c) => c.y)]
     const nowY = scale.y(scale.bands[0].end)
     const out: { year: number; y: number }[] = []
-    for (const t of scale.ticks(56)) {
+    for (const t of scale.ticks()) {
       if (Math.abs(t.y - nowY) < 20) continue
       if (dots.some((y) => Math.abs(t.y - y) < 18)) continue
       if (out.some((o) => Math.abs(o.y - t.y) < 24)) continue
@@ -65,6 +65,16 @@
     }
     return out
   })
+
+  // A gap's label goes beside the spine on whichever side no card covers; with
+  // both sides taken it is left out, and the dotted break still shows the gap.
+  function gapSide(gap: { top: number; height: number }): 'right' | 'left' | null {
+    const mid = gap.top + gap.height / 2
+    const free = (lane: number) => !placed.some((c) => c.lane === lane && c.top - 4 < mid + 10 && c.top + cardHeight + 4 > mid - 10)
+    if (free(0)) return 'right'
+    if (spineX >= 100 && free(1)) return 'left'
+    return null
+  }
 
   function cardLeft(lane: number): number {
     return lane === 0 ? spineX + 24 : spineX - 24 - cardWidth
@@ -93,6 +103,23 @@
   <div class="now" style:top="{scale.y(scale.bands[0].end)}px" aria-hidden="true">
     <span class="now-dot"><span class="pulse"></span></span><span class="now-label">Now</span>
   </div>
+
+  {#each scale.gaps as gap (gap.from)}
+    {@const years = Math.round(gap.from - gap.to)}
+    {@const side = gapSide(gap)}
+    <div
+      class="gap"
+      style:top="{gap.top}px"
+      style:height="{gap.height}px"
+      role="note"
+      aria-label="No events from {Math.floor(gap.to)} to {Math.floor(gap.from)}; this stretch is compressed"
+    >
+      <span class="gap-line" aria-hidden="true"></span>
+      {#if side}
+        <span class="gap-label {side}" aria-hidden="true">{years} {years === 1 ? 'year' : 'years'} with no events</span>
+      {/if}
+    </div>
+  {/each}
 
   {#each ticks as tick (tick.year)}
     <span class="tick" style:top="{tick.y}px" aria-hidden="true">{tick.year}</span>
@@ -335,6 +362,42 @@
     color: var(--muted);
     font-variant-numeric: tabular-nums;
     pointer-events: none;
+  }
+
+  /* ----- Compressed stretches ----- */
+  .gap {
+    position: absolute;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+  }
+  /* A dotted break in the spine, over a patch of background that hides the solid line. */
+  .gap-line {
+    position: absolute;
+    top: 6px;
+    bottom: 6px;
+    left: calc(var(--spine) - 3px);
+    width: 6px;
+    background:
+      radial-gradient(circle, var(--muted) 1.2px, transparent 1.6px) center top / 6px 7px repeat-y,
+      var(--bg);
+  }
+  .gap-label {
+    position: absolute;
+    top: 50%;
+    left: calc(var(--spine) + 14px);
+    transform: translateY(-50%);
+    font-size: 0.7rem;
+    font-weight: 500;
+    font-style: italic;
+    line-height: 1;
+    white-space: nowrap;
+    color: var(--muted);
+  }
+
+  .gap-label.left {
+    left: auto;
+    right: calc(100% - var(--spine) + 14px);
   }
 
   /* ----- Clusters ----- */
