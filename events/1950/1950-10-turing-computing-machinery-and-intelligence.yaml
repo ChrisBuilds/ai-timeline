@@ -13,6 +13,10 @@ category: research
 people: [Alan Turing]
 tags: [turing test, foundations, philosophy of mind]
 sources:
+  - url: https://academic.oup.com/mind/article/LIX/236/433/986238
+    title: Computing Machinery and Intelligence (Mind, vol. LIX, no. 236, pp. 433-460)
+    publisher: Oxford University Press
+    accessed: "2026-11-03"
   - url: https://en.wikipedia.org/wiki/Computing_Machinery_and_Intelligence
     title: Computing Machinery and Intelligence
     publisher: Wikipedia

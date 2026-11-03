@@ -9,6 +9,10 @@ organizations: [IBM]
 people: [Garry Kasparov]
 tags: [chess, game playing, search]
 sources:
+  - url: https://www.ibm.com/history/early-games
+    title: The games that helped AI evolve
+    publisher: IBM
+    accessed: "2026-11-03"
   - url: https://en.wikipedia.org/wiki/Deep_Blue_versus_Garry_Kasparov
     title: Deep Blue versus Garry Kasparov
     publisher: Wikipedia

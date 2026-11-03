@@ -13,6 +13,10 @@ organizations: [DeepMind]
 people: [Lee Sedol]
 tags: [go, game playing, reinforcement learning]
 sources:
+  - url: https://deepmind.google/research/alphago/
+    title: AlphaGo
+    publisher: Google DeepMind
+    accessed: "2026-11-03"
   - url: https://en.wikipedia.org/wiki/AlphaGo_versus_Lee_Sedol
     title: AlphaGo versus Lee Sedol
     publisher: Wikipedia
