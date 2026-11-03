@@ -12,8 +12,12 @@ try {
    const fail = (error) => { clearTimeout(timeout); reject(error) }
    server.once('error', fail)
    server.once('exit', code => fail(new Error(`Preview exited: ${code}`)))
+   let output = ''
    server.stdout.on('data', data => {
-     if (String(data).includes(`:${port}/`)) { clearTimeout(timeout); resolve() }
+     // Vite colors the URL in CI, and writes may split across stdout chunks.
+     output += String(data)
+     const plain = output.replace(/\u001b\[[0-9;]*m/g, '')
+     if (plain.includes(`:${port}/`)) { clearTimeout(timeout); resolve() }
    })
  })
  browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined })
