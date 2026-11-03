@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { onMount, tick } from 'svelte'
+  import { onMount, tick, untrack } from 'svelte'
   import type { EventDetails, TimelineData, TimelineEvent, RemovedEvent } from './lib/types'
   import { createDetailsLoader } from './lib/details'
   import { ERAS } from './lib/eras'
-  import { buildScale } from './lib/scale'
+  import { buildScale, DEFAULT_SCALE } from './lib/scale'
   import { layout, priorityOrder, type Cluster } from './lib/layout'
   import { nowYear, toYear } from './lib/time'
   import { MAX_ZOOM, MIN_ZOOM, clampZoom, formatHash, parseHash } from './lib/url'
@@ -13,7 +13,7 @@
   import { NO_FILTERS, isActive, matches, only, type Filters } from './lib/filters'
   import { applyPrefs, loadPrefs, prefersReducedMotion, savePrefs, type Prefs } from './lib/prefs'
 
-  const CARD_HEIGHT = 84
+  const CARD_HEIGHT = 100
   const ANCHOR_OFFSET = 18
   // Where each era's name sits in the strip at the top of its band (see DEFAULT_SCALE.headerPx).
   const LABEL_TOP = 14
@@ -26,6 +26,7 @@
   let selectedId = $state<string | null>(null)
   let missingId = $state<string | null>(null)
   let width = $state(0)
+  let viewportWidth = $state(1280)
   let timelineEl: HTMLDivElement | undefined = $state()
   let toolbar: ReturnType<typeof Toolbar> | undefined = $state()
   let toolbarHeight = $state(0)
@@ -65,8 +66,11 @@
   const years = $derived(new Map(events.map((e) => [e.id, toYear(e.date)])))
 
   const wide = $derived(width >= 720)
-  const spineX = $derived(wide ? Math.round(width / 2) : 20)
-  const cardWidth = $derived(wide ? Math.min(340, spineX - 48) : Math.max(160, width - 56))
+  const spineX = $derived(wide ? 88 : 24)
+  const cardWidth = $derived(Math.max(160, Math.min(680, width - spineX - (wide ? 56 : 40))))
+  const selectedHeight = $derived(viewportWidth < 720 ? 188 : cardWidth < 340 ? 292 : 260)
+  const eventHeight = (ev: TimelineEvent) =>
+    ev.id === selectedId ? selectedHeight : highlightIds.has(ev.id) ? CARD_HEIGHT + 28 : CARD_HEIGHT
 
   const NONE = new Set<string>()
   const filtering = $derived(isActive(filters))
@@ -84,7 +88,14 @@
   // Placement order depends on scores and date order only, so it is sorted once, not every frame.
   const priority = $derived(priorityOrder(events.map((e, i) => ({ item: e, y: -yearList[i], score: scoreList[i] }))))
 
-  const scale = $derived(buildScale(ERAS, yearList, now, zoom))
+  const scale = $derived(buildScale(ERAS, yearList, now, zoom, {
+    ...DEFAULT_SCALE,
+    headerPx: Math.max(72, LABEL_TOP + Math.max(0, ...labelHeights) + ANCHOR_OFFSET + 12),
+    footerPx: (era) => {
+      const year = selectedId ? years.get(selectedId) : undefined
+      return (year !== undefined && year >= era.start && year < (era.end ?? now + 1) ? selectedHeight : CARD_HEIGHT + 28) - ANCHOR_OFFSET + 12
+    },
+  }))
 
   // Reused across zoom frames: each frame only rewrites `y`, instead of allocating
   // an object per event.
@@ -99,16 +110,17 @@
       items,
       {
         order: priority,
-        lanes: wide ? 2 : 1,
+        lanes: 1,
         cardHeight: CARD_HEIGHT,
+        heightFor: eventHeight,
         gap: 10,
         anchorOffset: ANCHOR_OFFSET,
         clusterPx: 28,
         // The selected event always gets a card, without moving any card that is already shown.
         pin: selectedId ? byId.get(selectedId) : undefined,
-        // Keep cards off each era's name, which sits on the left of the spine on wide screens.
+        // Keep entries off the full-width era heading.
         reserved: scale.bands.map((b, i) => ({
-          lane: wide ? 1 : 0,
+          lane: 0,
           top: b.top - 2,
           bottom: b.top + LABEL_TOP + (labelHeights[i] || 36) + 4,
         })),
@@ -123,6 +135,18 @@
   const highlightIds = $derived(
     new Set<string>([...(selected?.related ?? []).map((r) => r.id), ...backlinks.map((e) => e.id)]),
   )
+
+  const relationLabels = $derived.by(() => {
+    const labels = new Map<string, string[]>()
+    const add = (id: string, label: string) => labels.set(id, [...(labels.get(id) ?? []), label])
+    for (const link of selected?.related ?? []) {
+      add(link.id, { builds_on: 'Foundation for selected event', responds_to: 'Prompted selected event', supersedes: 'Predecessor' }[link.relation])
+    }
+    for (const ev of backlinks) for (const link of ev.related ?? []) if (link.id === selectedId) {
+      add(ev.id, { builds_on: 'Builds on selected event', responds_to: 'Responds to selected event', supersedes: 'Successor' }[link.relation])
+    }
+    return labels
+  })
 
   // Descriptions, sources and artifacts are fetched when an event is opened.
   const loadDetails = createDetailsLoader(import.meta.env.BASE_URL)
@@ -232,13 +256,20 @@
     if (year === undefined) return
     // A zoom glide re-anchors the scroll every frame, which would cancel this scroll.
     stopZoomAnimation()
-    scrollTo({ top: timelineTop() + scale.y(year) - innerHeight / 3, behavior })
+    scrollTo({ top: timelineTop() + scale.y(year) - (innerWidth < 720 ? toolbarHeight + 40 : innerHeight / 3), behavior })
   }
 
   function select(id: string | null, scroll = true) {
     selectedId = id
     missingId = null
-    if (id && scroll) tick().then(() => scrollToEvent(id))
+    if (id) tick().then(() => {
+      if (scroll) scrollToEvent(id)
+      else if (innerWidth < 720) {
+        const card = document.getElementById(id)?.getBoundingClientRect()
+        const toolbarBottom = document.querySelector('.toolbar-wrap')?.getBoundingClientRect().bottom ?? 0
+        if (card) scrollBy({ top: card.top - Math.max(toolbarBottom + 16, 32), behavior: 'instant' })
+      }
+    })
   }
 
   function expand(cluster: Cluster<TimelineEvent>) {
@@ -293,6 +324,15 @@
     else return
     e.preventDefault()
   }
+
+  // A viewport change can swap the side panel for a sheet; keep the selection in view.
+  $effect(() => {
+    void viewportWidth
+    untrack(() => {
+      const id = selectedId
+      if (id) tick().then(() => scrollToEvent(id, 'instant'))
+    })
+  })
 
   // Ctrl or Cmd + wheel, which is also what trackpad pinches send.
   function onwheel(e: WheelEvent) {
@@ -364,7 +404,7 @@
   })
 </script>
 
-<svelte:window {onkeydown} />
+<svelte:window {onkeydown} bind:innerWidth={viewportWidth} />
 
 <header class="site-header">
   <p class="eyebrow"><span class="live" aria-hidden="true"></span>Open, sourced and community-reviewed</p>
@@ -373,6 +413,7 @@
     Scroll back in time. Zoom with <kbd>Ctrl</kbd> + scroll, a pinch, or <kbd>+</kbd> <kbd>−</kbd>. Press <kbd>/</kbd> to
     search. Missing something?
     <a href="https://github.com/ChrisBuilds/ai-timeline/issues/new/choose">Suggest an event</a>.
+    <span class="ribbon-help">A wider timeline means more events are hidden at this zoom.</span>
   </p>
 </header>
 
@@ -407,7 +448,7 @@
   </div>
 {/if}
 
-<main bind:clientWidth={width} style:--toolbar-h="{toolbarHeight}px">
+<main class:has-selection={selected !== null} bind:clientWidth={width} style:--toolbar-h="{toolbarHeight}px">
   {#if error}
     <p class="notice">{error}</p>
   {:else if !data}
@@ -420,13 +461,14 @@
         clusters={arranged.clusters}
         {spineX}
         {cardWidth}
-        cardHeight={CARD_HEIGHT}
-        anchorOffset={ANCHOR_OFFSET}
         {selectedId}
         {highlightIds}
+        {eventHeight}
+        {relationLabels}
+        {years}
         {dimIds}
         matchIds={filtering ? matchIds : NONE}
-        onselect={(id) => select(id === selectedId ? null : id, false)}
+        onselect={(id) => select(id, false)}
         onexpand={expand}
         onpreview={preview}
         labelTop={LABEL_TOP}
@@ -439,7 +481,7 @@
 </main>
 
 {#if data}
-  <div class="zoom" role="group" aria-label="Zoom">
+  <div class="zoom" class:has-selection={selected !== null} role="group" aria-label="Zoom">
     <button onclick={() => zoomBy(ZOOM_STEP)} disabled={zoom >= MAX_ZOOM} aria-label="Zoom in">+</button>
     <span class="zoom-level">{Math.round(zoom * 100)}%</span>
     <button onclick={() => zoomBy(1 / ZOOM_STEP)} disabled={zoom <= MIN_ZOOM} aria-label="Zoom out">−</button>

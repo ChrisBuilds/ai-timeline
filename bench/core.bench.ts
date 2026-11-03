@@ -8,10 +8,11 @@ import { layout, priorityOrder } from '../src/lib/layout'
 import { buildIndex, search } from '../src/lib/search'
 import { facets, matches, NO_FILTERS } from '../src/lib/filters'
 import { toYear } from '../src/lib/time'
+import { buildRibbon } from '../src/lib/ribbon'
 import type { TimelineEvent } from '../src/lib/types'
 
 const NOW = 2026.84
-const OPTS = { lanes: 2, cardHeight: 84, gap: 10, anchorOffset: 18, clusterPx: 28 }
+const OPTS = { lanes: 1, cardHeight: 100, gap: 10, anchorOffset: 18, clusterPx: 28 }
 // CI runs a short sample: BENCH_SIZES=5000 BENCH_TIME=100.
 const SIZES = (process.env.BENCH_SIZES ?? '1000,5000,20000').split(',').map(Number)
 const TIME = Number(process.env.BENCH_TIME ?? 500)
@@ -31,13 +32,16 @@ for (const size of SIZES) {
       bench(`layout, zoom ${zoom}`, () => {
         layout(items, OPTS)
       }, { time: TIME })
+      const hidden = layout(items, OPTS).clusters.flatMap((c) => c.items.map((item) => ({ item, year: toYear(item.date) })))
+      bench(`ribbon, zoom ${zoom}`, () => { buildRibbon(scale, hidden) }, { time: TIME })
       const order = priorityOrder(events.map((e, i) => ({ item: e, y: -years[i], score: e.score })))
       bench(`one zoom frame (scale, y(), layout with cached order), zoom ${zoom}`, () => {
         const s = buildScale(ERAS, years, NOW, zoom)
-        layout(
+        const arranged = layout(
           events.map((e, i) => ({ item: e, y: s.y(years[i]), score: e.score })),
           { ...OPTS, order },
         )
+        buildRibbon(s, arranged.clusters.flatMap((c) => c.items.map((item) => ({ item, year: toYear(item.date) }))))
       }, { time: TIME })
     }
     bench('buildIndex', () => {

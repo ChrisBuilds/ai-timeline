@@ -129,3 +129,21 @@ describe('at scale', () => {
     expect(layout(items, { ...two, order: priorityOrder(items) })).toEqual(layout(items, two))
   })
 })
+
+describe('variable event heights', () => {
+  const heightFor = (id: string) => id === 'selected' ? 240 : 80
+  const items = [
+    { item: 'above', y: 100, score: 90 },
+    { item: 'selected', y: 210, score: 10 },
+    { item: 'overlapped', y: 340, score: 80 },
+    { item: 'below', y: 600, score: 70 },
+  ]
+  it('reserves the full height of a pinned selection and keeps other entries collision-free', () => {
+    const { placed, clusters } = layout(items, { ...opts, heightFor, pin: 'selected' })
+    expect(placed.map((c) => c.item)).toEqual(['above', 'selected', 'below'])
+    expect(clusters.flatMap((c) => c.items)).toEqual(['overlapped'])
+    for (let i = 1; i < placed.length; i++) {
+      expect(placed[i].top).toBeGreaterThanOrEqual(placed[i - 1].top + heightFor(placed[i - 1].item) + opts.gap)
+    }
+  })
+})

@@ -28,6 +28,8 @@ export interface ScaleOptions {
   bottomPad: number
   /** Space at the top of each era for its name, before its time starts. Not zoomed. */
   headerPx?: number
+  /** Non-time space for entries extending past the last date in each era. */
+  footerPx?: number | ((era: Era) => number)
   /** Smallest spacing between year marks; one time unit is at least this tall. */
   unitPx?: number
   /** Height of a compressed run of empty units. Leave out to never compress. */
@@ -207,6 +209,7 @@ export function buildScale(
       }
     }
 
+    y += typeof opts.footerPx === 'function' ? opts.footerPx(era) : opts.footerPx ?? 0
     const band = { era, start, end, top, height: y - top, count: years.length, step, segments }
     top = y
     return band
@@ -218,7 +221,7 @@ export function buildScale(
 
   function y(year: number): number {
     if (year >= first.end) return first.top + header
-    if (year <= last.start) return last.top + last.height
+    if (year <= last.start) return last.segments.at(-1)!.top + last.segments.at(-1)!.height
     const band = bands.find((b) => year >= b.start && year < b.end) ?? last
     const seg = segmentForYear(band.segments, year)
     return seg.top + ((seg.from - year) / (seg.from - seg.to)) * seg.height

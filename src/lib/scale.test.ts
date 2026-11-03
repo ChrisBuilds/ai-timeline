@@ -117,3 +117,14 @@ describe('effectiveCount', () => {
     expect(effectiveCount(1200)).toBe(1200)
   })
 })
+
+describe('era footer space', () => {
+  it('protects the next heading without stretching time or changing the inverse scale', () => {
+    const a = buildScale(eras, [2020, 1950], 2026, 1, opts)
+    const b = buildScale(eras, [2020, 1950], 2026, 1, { ...opts, footerPx: (era) => era.id === 'new' ? 240 : 100 })
+    expect(b.bands[1].top - a.bands[1].top).toBe(240)
+    expect(b.y(2020) + 240).toBeLessThanOrEqual(b.bands[1].top)
+    expect(b.y(1950)).toBe(b.bands[1].top + b.bands[1].height - 100)
+    for (const year of [2025.5, 2020, 2010, 1950]) expect(b.year(b.y(year))).toBeCloseTo(year)
+  })
+})
