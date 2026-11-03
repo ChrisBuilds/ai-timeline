@@ -53,6 +53,8 @@
   // Non-matching events fade; with no filters nothing is dimmed.
   const dimIds = $derived(filtering ? new Set(events.filter((e) => !matchIds.has(e.id)).map((e) => e.id)) : new Set<string>())
 
+  const NONE = new Set<string>()
+
   const scale = $derived(buildScale(ERAS, [...years.values()], now, zoom))
 
   const arranged = $derived(
@@ -147,9 +149,11 @@
     }
   }
 
-  // Every event, newest first. Stepping can reach events hidden at this zoom,
-  // because the selected event always gets a card.
-  const ordered = $derived([...events].sort((a, b) => years.get(b.id)! - years.get(a.id)!))
+  // Every event, newest first, or only the matches while a filter is on. Stepping
+  // can reach events hidden at this zoom, because the selected event always gets a card.
+  const ordered = $derived(
+    events.filter((e) => !filtering || matchIds.has(e.id)).sort((a, b) => years.get(b.id)! - years.get(a.id)!),
+  )
 
   function step(dir: 1 | -1) {
     if (!ordered.length) return
@@ -293,6 +297,7 @@
         {selectedId}
         {highlightIds}
         {dimIds}
+        matchIds={filtering ? matchIds : NONE}
         onselect={(id) => select(id === selectedId ? null : id, false)}
         onexpand={expand}
       />
