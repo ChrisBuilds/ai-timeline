@@ -3,6 +3,7 @@
   import { formatRange } from './dates'
   import { TIER_NAMES } from './tiers'
   import { categoryColor } from './categories'
+  import type { Filters } from './filters'
 
   interface Props {
     event: TimelineEvent
@@ -11,9 +12,22 @@
     backlinks: TimelineEvent[]
     onselect: (id: string) => void
     onclose: () => void
+    filters: Filters
+    /** Shows only events that share this value, or clears that filter if it is the only one on. */
+    onfilter: (field: keyof Filters, value: string) => void
   }
 
-  let { event, byId, backlinks, onselect, onclose }: Props = $props()
+  let { event, byId, backlinks, onselect, onclose, filters, onfilter }: Props = $props()
+
+  const facts = $derived(
+    (
+      [
+        ['Organizations', 'organizations', event.organizations],
+        ['People', 'people', event.people],
+        ['Tags', 'tags', event.tags],
+      ] as const
+    ).filter(([, , values]) => values?.length),
+  )
 
   const RELATION_LABEL = {
     builds_on: 'Builds on',
@@ -75,7 +89,13 @@
   <header>
     <p class="meta">
       <time datetime={event.date}>{formatRange(event.date, event.end_date)}</time>
-      <span class="category"><span class="swatch" aria-hidden="true"></span>{event.category}</span>
+      <button
+        class="category facet-link"
+        aria-pressed={filters.categories.includes(event.category)}
+        title="Show {event.category} events"
+        onclick={() => onfilter('categories', event.category)}
+        ><span class="swatch" aria-hidden="true"></span>{event.category}</button
+      >
       <span class="tier">{TIER_NAMES[event.tier]}</span>
     </p>
     <button class="close" onclick={onclose} aria-label="Close details">×</button>
@@ -98,17 +118,23 @@
     <p>{p}</p>
   {/each}
 
-  {#if event.organizations?.length || event.people?.length}
+  {#if facts.length}
     <dl class="facts">
-      {#if event.organizations?.length}
-        <dt>Organizations</dt>
-        <dd>{event.organizations.join(', ')}</dd>
-      {/if}
-      {#if event.people?.length}
-        <dt>People</dt>
-        <dd>{event.people.join(', ')}</dd>
-      {/if}
+      {#each facts as [label, field, values] (field)}
+        <dt>{label}</dt>
+        <dd>
+          {#each values ?? [] as value (value)}
+            <button
+              class="chip"
+              aria-pressed={filters[field].includes(value)}
+              title="Show events with {value}"
+              onclick={() => onfilter(field, value)}>{value}</button
+            >
+          {/each}
+        </dd>
+      {/each}
     </dl>
+    <p class="facts-hint">Select any of these to filter the timeline.</p>
   {/if}
 
   {#if event.related?.length || backlinks.length}
@@ -361,8 +387,59 @@
   .facts dt {
     color: var(--muted);
   }
+  .facts dt {
+    padding-top: 3px;
+  }
   .facts dd {
     margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .chip {
+    font: inherit;
+    font-size: 0.82rem;
+    line-height: 1.3;
+    padding: 2px 10px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    transition:
+      border-color 0.15s,
+      background 0.15s;
+  }
+  .chip:hover,
+  .facet-link:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .chip[aria-pressed='true'],
+  .facet-link[aria-pressed='true'] {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--surface);
+  }
+  .chip:focus-visible,
+  .facet-link:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .facts-hint {
+    margin: 6px 2px 0;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .facet-link {
+    font: inherit;
+    color: inherit;
+    padding: 1px 8px;
+    margin: -1px 0;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    background: transparent;
+    cursor: pointer;
   }
 
   .links {

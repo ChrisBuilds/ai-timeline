@@ -15,7 +15,7 @@ export function clampZoom(z: number): number {
 }
 
 // Filter values are joined with "|" because organization names can contain commas.
-const FILTER_KEYS = { c: 'categories', o: 'organizations', t: 'tags' } as const
+const FILTER_KEYS = { c: 'categories', o: 'organizations', t: 'tags', p: 'people' } as const
 
 function list(params: URLSearchParams, key: string): string[] {
   const v = params.get(key)
@@ -23,7 +23,7 @@ function list(params: URLSearchParams, key: string): string[] {
 }
 
 /**
- * Reads "#e=<id>&z=<zoom>&c=<categories>&o=<orgs>&t=<tags>".
+ * Reads "#e=<id>&z=<zoom>&c=<categories>&o=<orgs>&t=<tags>&p=<people>".
  * A bare "#<id>" from older links is read as an event id.
  */
 export function parseHash(hash: string): ViewState {
@@ -39,6 +39,7 @@ export function parseHash(hash: string): ViewState {
       categories: list(params, 'c'),
       organizations: list(params, 'o'),
       tags: list(params, 't'),
+      people: list(params, 'p'),
     },
   }
 }

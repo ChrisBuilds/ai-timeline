@@ -23,7 +23,7 @@ describe('formatHash', () => {
     const state = {
       event: '2022-11-30-chatgpt-launch',
       zoom: 2.25,
-      filters: { categories: ['model release'], organizations: ['Google, Inc.', 'OpenAI'], tags: ['c++'] },
+      filters: { categories: ['model release'], organizations: ['Google, Inc.', 'OpenAI'], tags: ['c++'], people: ['Lee Sedol'] },
     }
     expect(parseHash(formatHash(state))).toEqual(state)
   })

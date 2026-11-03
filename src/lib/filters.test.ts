@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { facets, isActive, matches, toggle, NO_FILTERS } from './filters'
+import { facets, isActive, matches, only, toggle, NO_FILTERS } from './filters'
 import type { TimelineEvent } from './types'
 
 const base = {
@@ -44,5 +44,13 @@ describe('toggle', () => {
   it('adds and removes', () => {
     expect(toggle(['x'], 'y')).toEqual(['x', 'y'])
     expect(toggle(['x', 'y'], 'x')).toEqual(['y'])
+  })
+})
+
+describe('only', () => {
+  it('replaces every filter with one value, and clears it when it is already the only one', () => {
+    const f = only({ ...NO_FILTERS, categories: ['research'], tags: ['nlp'] }, 'organizations', 'OpenAI')
+    expect(f).toEqual({ ...NO_FILTERS, organizations: ['OpenAI'] })
+    expect(only(f, 'organizations', 'OpenAI')).toEqual(NO_FILTERS)
   })
 })

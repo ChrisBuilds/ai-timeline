@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { TimelineEvent } from './types'
   import { buildIndex, search } from './search'
-  import { facets, isActive, toggle, NO_FILTERS, type Filters } from './filters'
+  import { facets, filterCount as countFilters, isActive, toggle, NO_FILTERS, type Filters } from './filters'
   import type { Prefs } from './prefs'
   import { formatDate } from './dates'
 
@@ -28,7 +28,7 @@
   let root: HTMLDivElement | undefined = $state()
 
   const results = $derived(search(index, query))
-  const filterCount = $derived(filters.categories.length + filters.organizations.length + filters.tags.length)
+  const filterCount = $derived(countFilters(filters))
 
   // Keep the highlighted result visible when arrow keys move past the list's edge.
   $effect(() => {
@@ -153,7 +153,7 @@
   {#if panel === 'filters'}
     <div id="filters-panel" class="panel" role="group" aria-label="Filters">
       <p class="hint">Events that don't match fade out but stay on the timeline.</p>
-      {#each [{ field: 'categories', label: 'Category', list: options.categories }, { field: 'organizations', label: 'Organization', list: options.organizations }, { field: 'tags', label: 'Tag', list: options.tags }] as group (group.field)}
+      {#each [{ field: 'categories', label: 'Category', list: options.categories }, { field: 'organizations', label: 'Organization', list: options.organizations }, { field: 'people', label: 'Person', list: options.people }, { field: 'tags', label: 'Tag', list: options.tags }] as group (group.field)}
         {@const field = group.field as keyof Filters}
         {#if group.list.length}
           <fieldset>
