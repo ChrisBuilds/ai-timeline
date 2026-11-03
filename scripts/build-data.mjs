@@ -104,7 +104,11 @@ const removed = readYaml(join(root, 'removed.yaml')) ?? []
 if (!Array.isArray(removed)) errors.push('removed.yaml: must be a list')
 for (const r of Array.isArray(removed) ? removed : []) {
   if (!r?.id || !r?.reason) errors.push(`removed.yaml: every entry needs id and reason`)
-  else if (byId.has(r.id)) errors.push(`removed.yaml: ${r.id} is listed as removed but still exists`)
+  // A merged duplicate's id stays on as an alias of the kept event, which is expected.
+  else if (byId.get(r.id)?.id === r.id) errors.push(`removed.yaml: ${r.id} is listed as removed but still exists`)
+  else if (r.reason === 'duplicate' && byId.has(r.id) && r.duplicate_of && byId.get(r.id).id !== r.duplicate_of) {
+    errors.push(`removed.yaml: ${r.id} is an alias of ${byId.get(r.id).id}, not of duplicate_of ${r.duplicate_of}`)
+  }
   if (r?.reason === 'duplicate' && r.duplicate_of && !byId.has(r.duplicate_of)) {
     errors.push(`removed.yaml: ${r.id} duplicate_of ${r.duplicate_of} does not exist`)
   }

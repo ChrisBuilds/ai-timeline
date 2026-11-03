@@ -21,7 +21,7 @@
   // A link to a removed or merged event shows a note instead of nothing.
   const removedNote = $derived.by((): RemovedEvent | null => {
     if (!hash || !data) return null
-    if (data.events.some((e) => e.id === hash)) return null
+    if (data.events.some((e) => e.id === hash || e.aliases?.includes(hash))) return null
     return data.removed.find((r) => r.id === hash) ?? null
   })
 
