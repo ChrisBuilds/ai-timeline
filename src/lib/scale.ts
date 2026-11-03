@@ -15,9 +15,11 @@ export interface ScaleOptions {
   topPad: number
   /** Space below the last era. Not zoomed. */
   bottomPad: number
+  /** Space at the top of each era for its name, before its time starts. Not zoomed. */
+  headerPx?: number
 }
 
-export const DEFAULT_SCALE: ScaleOptions = { basePx: 140, perEventPx: 120, topPad: 72, bottomPad: 96 }
+export const DEFAULT_SCALE: ScaleOptions = { basePx: 140, perEventPx: 120, topPad: 24, bottomPad: 96, headerPx: 72 }
 
 export interface Band {
   era: Era
@@ -51,11 +53,12 @@ export function buildScale(
   opts: ScaleOptions = DEFAULT_SCALE,
 ): TimeScale {
   let top = opts.topPad
+  const header = opts.headerPx ?? 0
   const bands: Band[] = eras.map((era, i) => {
     const end = era.end ?? now
     // The newest era includes events up to and including now.
     const count = eventYears.filter((t) => t >= era.start && (i === 0 ? t <= end : t < end)).length
-    const height = (opts.basePx + opts.perEventPx * count) * zoom
+    const height = header + (opts.basePx + opts.perEventPx * count) * zoom
     const band = { era, start: era.start, end, top, height, count }
     top += height
     return band
@@ -65,16 +68,16 @@ export function buildScale(
   const last = bands[bands.length - 1]
 
   function y(year: number): number {
-    if (year >= first.end) return first.top
+    if (year >= first.end) return first.top + header
     if (year <= last.start) return last.top + last.height
     const band = bands.find((b) => year >= b.start && year < b.end) ?? last
-    return band.top + ((band.end - year) / (band.end - band.start)) * band.height
+    return band.top + header + ((band.end - year) / (band.end - band.start)) * (band.height - header)
   }
 
   function year(px: number): number {
-    if (px <= first.top) return first.end
+    if (px <= first.top + header) return first.end
     const band = bands.find((b) => px < b.top + b.height) ?? last
-    const frac = Math.min(1, (px - band.top) / band.height)
+    const frac = Math.min(1, Math.max(0, (px - band.top - header) / (band.height - header)))
     return band.end - frac * (band.end - band.start)
   }
 
@@ -83,7 +86,7 @@ export function buildScale(
     const steps = [1, 2, 5, 10, 20, 50]
     const out: Tick[] = []
     for (const b of bands) {
-      const pxPerYear = b.height / (b.end - b.start)
+      const pxPerYear = (b.height - header) / (b.end - b.start)
       const step = steps.find((s) => s * pxPerYear >= minGapPx) ?? 100
       const firstTick = Math.ceil(b.start / step) * step
       for (let t = firstTick; t < b.end; t += step) out.push({ year: t, y: y(t) })

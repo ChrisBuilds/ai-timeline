@@ -21,6 +21,10 @@
     matchIds: Set<string>
     onselect: (id: string) => void
     onexpand: (cluster: Cluster<TimelineEvent>) => void
+    /** Rendered height of each era's name, so the layout can keep cards off it. */
+    labelHeights?: number[]
+    /** Distance from the top of a band to its era name. */
+    labelTop: number
   }
 
   let {
@@ -37,6 +41,8 @@
     matchIds,
     onselect,
     onexpand,
+    labelHeights = $bindable([]),
+    labelTop,
   }: Props = $props()
 
   // Year labels sit on the spine, so skip any that would land on an event dot,
@@ -62,7 +68,7 @@
   }
 </script>
 
-<div class="timeline" style:height="{scale.height}px" style:--spine="{spineX}px" style:--label-pad="{spineX < 100 ? spineX + 16 : 8}px" style:--label-max={spineX < 100 ? '100%' : `${spineX - 24}px`}>
+<div class="timeline" style:height="{scale.height}px" style:--spine="{spineX}px" style:--label-pad="{spineX < 100 ? spineX + 16 : 8}px" style:--label-max={spineX < 100 ? '100%' : `${spineX - 24}px`} style:--label-top="{labelTop}px">
   {#each scale.bands as band, i (band.era.id)}
     <section
       class="band"
@@ -72,7 +78,7 @@
       style:--h={band.era.hue ?? 220}
       aria-label={band.era.name}
     >
-      <h2 class="era-label">
+      <h2 class="era-label" bind:clientHeight={labelHeights[i]}>
         <span class="era-name">{band.era.name}</span>
         <span class="era-years">{band.start}–{band.era.end ?? 'now'}</span>
       </h2>
@@ -205,19 +211,18 @@
   .band.alt {
     border-top-style: dashed;
   }
-  /* Era names stick under the toolbar as small frosted headers while their band scrolls. */
+  /* Era names sit in a strip at the top of their band that cards stay out of. */
   .era-label {
-    position: sticky;
-    top: calc(var(--toolbar-h, 0px) + 8px);
-    /* Below cards, so a label never hides an event. */
-    z-index: 0;
+    position: absolute;
+    top: var(--label-top);
     display: flex;
     width: fit-content;
     max-width: calc(var(--label-max, 100%) - var(--label-pad));
     flex-wrap: wrap;
     align-items: baseline;
     gap: 0 10px;
-    margin: 22px 8px 0 var(--label-pad);
+    margin: 0;
+    left: var(--label-pad);
     padding: 4px 12px 5px;
     border: 1px solid hsl(var(--h) 60% 50% / 0.22);
     border-radius: 12px;

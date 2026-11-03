@@ -56,4 +56,14 @@ describe('buildScale', () => {
     expect(old.length).toBeGreaterThan(1)
     for (let i = 1; i < old.length; i++) expect(Math.abs(old[i].y - old[i - 1].y)).toBeGreaterThanOrEqual(30 - 1e-9)
   })
+
+  it('leaves a header strip at the top of each band before its time starts', () => {
+    const s = buildScale(eras, [2021], 2026, 2, { ...opts, headerPx: 40 })
+    const [a, b] = s.bands
+    expect(a.height).toBe(40 + 150 * 2)
+    expect(s.y(2026)).toBe(a.top + 40)
+    expect(s.y(2019.999999)).toBeCloseTo(b.top + 40, 3)
+    expect(s.year(b.top + 10)).toBe(2020)
+    for (const year of [2025.3, 2020.5, 1999, 1951]) expect(s.year(s.y(year))).toBeCloseTo(year, 6)
+  })
 })

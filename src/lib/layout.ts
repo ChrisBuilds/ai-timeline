@@ -31,6 +31,8 @@ export interface LayoutOptions<T = unknown> {
    * the cards it overlaps in one lane are hidden to make room.
    */
   pin?: T
+  /** Spans no card may overlap, such as an era's name, by lane. */
+  reserved?: { lane: number; top: number; bottom: number }[]
 }
 
 /**
@@ -43,6 +45,7 @@ export function layout<T>(items: Positioned<T>[], opts: LayoutOptions<T>) {
   const order = [...items].sort((a, b) => b.score - a.score || a.y - b.y)
   const scores = new Map(items.map((it) => [it.item, it.score]))
   const lanes: [number, number][][] = Array.from({ length: opts.lanes }, () => [])
+  for (const r of opts.reserved ?? []) lanes[r.lane]?.push([r.top, r.bottom])
   const placed: PlacedCard<T>[] = []
   const hidden: Positioned<T>[] = []
 
@@ -70,7 +73,9 @@ export function layout<T>(items: Positioned<T>[], opts: LayoutOptions<T>) {
     let bestCost = Infinity
     for (let lane = 0; lane < opts.lanes; lane++) {
       const blocking = placed.filter((c) => c.lane === lane && overlaps(c))
-      const cost = blocking.length * 1e6 + blocking.reduce((n, c) => n + (scores.get(c.item) ?? 0), 0)
+      // Covering an era's name is the last resort.
+      const covers = (opts.reserved ?? []).some((r) => r.lane === lane && !(bottom <= r.top || top >= r.bottom))
+      const cost = (covers ? 1e12 : 0) + blocking.length * 1e6 + blocking.reduce((n, c) => n + (scores.get(c.item) ?? 0), 0)
       if (cost < bestCost) {
         best = lane
         bestCost = cost
