@@ -145,7 +145,7 @@
 
   {#if isActive(filters)}
     <p class="status" aria-live="polite">
-      {matching} of {events.length} events match.
+      {matching} of {events.length} events match{#if matching}, <kbd>j</kbd>/<kbd>k</kbd> steps through them{/if}.
       <button class="linkish" onclick={() => onfilters({ ...NO_FILTERS })}>Clear</button>
     </p>
   {/if}

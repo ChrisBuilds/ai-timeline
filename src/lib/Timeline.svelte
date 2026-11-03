@@ -16,6 +16,8 @@
     highlightIds: Set<string>
     /** Events that don't match the active filters. */
     dimIds: Set<string>
+    /** Events that match the active filters; empty when no filter is on. */
+    matchIds: Set<string>
     onselect: (id: string) => void
     onexpand: (cluster: Cluster<TimelineEvent>) => void
   }
@@ -31,6 +33,7 @@
     selectedId,
     highlightIds,
     dimIds,
+    matchIds,
     onselect,
     onexpand,
   }: Props = $props()
@@ -90,6 +93,7 @@
       <button
         class="cluster"
         class:dimmed={cluster.items.every((e) => dimIds.has(e.id))}
+        class:match={cluster.items.some((e) => matchIds.has(e.id))}
         onclick={() => (openCluster = openCluster === key ? null : key)}
         aria-expanded={openCluster === key}
         aria-label="{cluster.items.length} more event{cluster.items.length === 1 ? '' : 's'} here"
@@ -102,6 +106,7 @@
             <button
               role="menuitem"
               class:dimmed={dimIds.has(ev.id)}
+              class:match={matchIds.has(ev.id)}
               onclick={() => {
                 openCluster = null
                 onselect(ev.id)
@@ -133,6 +138,7 @@
           class="dot tier-{ev.tier}"
           class:selected={selectedId === ev.id}
           class:dimmed={dimIds.has(ev.id) && selectedId !== ev.id}
+          class:match={matchIds.has(ev.id)}
           style:top="{card.y}px"
           aria-hidden="true"
         ></span>
@@ -149,6 +155,7 @@
           class:selected={selectedId === ev.id}
           class:related={highlightIds.has(ev.id)}
           class:dimmed={dimIds.has(ev.id) && selectedId !== ev.id}
+          class:match={matchIds.has(ev.id)}
           style:top="{card.top}px"
           style:left="{left}px"
           style:width="{cardWidth}px"
@@ -411,15 +418,46 @@
     overflow: hidden;
   }
 
+  /* Filters: matches get the accent, everything else fades to grey. */
   .card.dimmed,
   .dot.dimmed,
   .cluster.dimmed,
   .cluster-menu button.dimmed {
-    opacity: 0.3;
+    opacity: 0.25;
+    filter: grayscale(1);
+  }
+  .card.match {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
+    background: color-mix(in srgb, var(--accent) 9%, var(--surface));
+  }
+  .dot.match {
+    width: 14px;
+    height: 14px;
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .cluster.match {
+    border-style: solid;
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .cluster-menu button.match {
+    font-weight: 600;
+  }
+  /* The open event must still stand out among highlighted matches. */
+  .card.match.selected {
+    box-shadow:
+      0 0 0 3px var(--accent),
+      0 6px 18px rgb(0 0 0 / 0.14);
+  }
+  .dot.match.selected {
+    box-shadow: 0 0 0 5px var(--accent-soft);
   }
   .card.dimmed:hover,
   .card.dimmed:focus-within {
     opacity: 0.75;
+    filter: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
