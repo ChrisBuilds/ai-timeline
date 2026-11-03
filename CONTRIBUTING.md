@@ -16,7 +16,15 @@ Every event is researched against its sources and reviewed by a maintainer befor
 
 ## Unverified details
 
-If you are unsure of a detail in an event, drop it. If it is still worth keeping, mark it in the description as low confidence with "additional citation needed", and say so in the pull request, so a reviewer can find a source. If the exact day is unconfirmed, use the month.
+If you are unsure of a detail in an event, drop it. If it is still worth keeping, put `{citation needed}` straight after it in the description, and say so in the pull request, so a reviewer can find a source. If the exact day is unconfirmed, use the month.
+
+Other remarks about the text, such as how a source was read, go in a note rather than in parentheses: `{note: The date is from the publisher's page.}`. The site shows `{citation needed}` as a superscript badge and each note as a numbered footnote under the description. Both work only in `description`.
+
+```yaml
+description: |
+  The paper appeared on 9 October 1986.{note: The date is from the Nature page.}
+  It is the standard way networks are trained today.{citation needed}
+```
 
 ## Work on the site
 

@@ -4,6 +4,7 @@
   import { TIER_NAMES } from './tiers'
   import { categoryColor } from './categories'
   import type { Filters } from './filters'
+  import { parseDescription } from '../../scripts/notes.mjs'
 
   interface Props {
     event: TimelineEvent
@@ -41,7 +42,15 @@
   } as const
 
   // Descriptions are markdown; render them as plain paragraphs for now so no HTML is injected.
-  const paragraphs = $derived((details?.description ?? '').split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean))
+  // {citation needed} and {note: …} markers become superscripts (see scripts/notes.mjs).
+  const description = $derived(parseDescription(details?.description ?? ''))
+
+  let notesList: HTMLOListElement | undefined = $state()
+  function showNote(n: number) {
+    const item = notesList?.children[n - 1] as HTMLElement | undefined
+    item?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+    item?.focus({ preventScroll: true })
+  }
 
   // Each contribution opens the update form with this event filled in. GitHub only
   // prefills text fields, so the kind of change goes in the title and a starter
@@ -119,9 +128,27 @@
   {/if}
 
   <p class="summary">{event.summary}</p>
-  {#each paragraphs as p, i (i)}
-    <p>{p}</p>
+  {#each description.paragraphs as parts, i (i)}
+    <p>
+      {#each parts as part, j (j)}{#if part.kind === 'text'}{part.text}{:else if part.kind === 'cn'}<sup class="cn"
+            ><a
+              href={updateUrl({ kind: 'add source', prompt: 'Source for a detail marked "citation needed", and what it confirms:\n' })}
+              rel="noopener noreferrer"
+              target="_blank"
+              title="This detail has low confidence and needs another source. Select to suggest one.">citation needed</a
+            ></sup
+          >{:else}<sup class="note-ref"
+            ><button title={part.text} aria-label="Note {part.n}: {part.text}" onclick={() => showNote(part.n)}>{part.n}</button></sup
+          >{/if}{/each}
+    </p>
   {/each}
+  {#if description.notes.length}
+    <ol class="notes" aria-label="Notes" bind:this={notesList}>
+      {#each description.notes as note, i (i)}
+        <li tabindex="-1">{note}</li>
+      {/each}
+    </ol>
+  {/if}
 
   {#if facts.length}
     <dl class="facts">
@@ -377,6 +404,66 @@
     font-size: 1.05rem;
     font-weight: 500;
     line-height: 1.55;
+  }
+
+  sup {
+    line-height: 0;
+    margin-left: 2px;
+  }
+  .cn a {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--warn);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .cn a::before {
+    content: '[';
+  }
+  .cn a::after {
+    content: ']';
+  }
+  .cn a:hover,
+  .cn a:focus-visible {
+    text-decoration: underline;
+  }
+  .note-ref button {
+    all: unset;
+    font-size: 0.68rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--accent);
+    cursor: pointer;
+  }
+  .note-ref button::before {
+    content: '[';
+  }
+  .note-ref button::after {
+    content: ']';
+  }
+  .note-ref button:hover,
+  .note-ref button:focus-visible {
+    text-decoration: underline;
+  }
+  .note-ref button:focus-visible {
+    outline: 2px solid var(--accent-soft);
+    border-radius: 3px;
+  }
+  .notes {
+    margin: 4px 0 0;
+    padding: 8px 12px 8px 30px;
+    border-top: 1px solid var(--line);
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .notes li {
+    border-radius: 4px;
+  }
+  .notes li:focus {
+    outline: 2px solid var(--accent-soft);
+    color: var(--text);
   }
 
   .notice {

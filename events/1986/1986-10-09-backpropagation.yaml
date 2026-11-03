@@ -7,16 +7,16 @@ summary: >-
   training multi-layer neural networks by backpropagation.
 description: |
   The paper appeared in *Nature* vol. 323, issue 6088, pp. 533-536, in October
-  1986; the Nature article page gives the publication date as 9 October 1986
-  (read by the maintainer; not opened in the research session). Its title names
+  1986; the Nature article page gives the publication date as 9 October 1986.{note:
+  The Nature page was read by the maintainer, not opened in the research session.}
+  Its title names
   the idea that networks with hidden layers can learn internal representations by
   propagating errors backwards and adjusting their weights.
 
   The method is usually described as popularised rather than invented by this
-  paper, because related ideas appeared earlier (low confidence; additional
-  citation needed). Backpropagation, applied to much larger networks, is the
-  standard way deep learning models are trained today (low confidence; additional
-  citation needed).
+  paper, because related ideas appeared earlier.{citation needed} Backpropagation,
+  applied to much larger networks, is the standard way deep learning models are
+  trained today.{citation needed}
 category: research
 organizations: []
 people: [David Rumelhart, Geoffrey Hinton, Ronald Williams]

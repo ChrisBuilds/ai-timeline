@@ -19,6 +19,7 @@ import addFormats from 'ajv-formats'
 import YAML from 'yaml'
 import { computeScore, tierOf } from './importance.mjs'
 import { splitEvent } from './split-event.mjs'
+import { checkNotes } from './notes.mjs'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const checkOnly = process.argv.includes('--check')
@@ -94,6 +95,7 @@ for (const file of files) {
   if (data.end_date && data.end_date < data.date) {
     errors.push(`${rel}: end_date is before date`)
   }
+  for (const e of checkNotes(data)) errors.push(`${rel}: ${e}`)
   events.push({ ...data, _file: rel })
 }
 
