@@ -47,9 +47,5 @@ artifacts:
     title: Hochreiter and Schmidhuber, Long Short-Term Memory (1997)
 importance:
   rubric: {capability: 4, adoption: 3, impact: 4, culture: 1}
-related:
-  - id: 2017-06-12-attention-is-all-you-need
-    relation: responds_to
-    source: https://proceedings.neurips.cc/paper_files/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf
 issue: 36
 submitted_by: ChrisBuilds
