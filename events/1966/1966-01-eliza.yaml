@@ -1,0 +1,49 @@
+id: 1966-01-eliza
+title: Weizenbaum publishes ELIZA, the first chatbot
+date: "1966-01"
+summary: >-
+  Joseph Weizenbaum of MIT describes ELIZA, a program that converses in text by
+  matching keywords and rephrasing the user's words, most famously as a Rogerian
+  psychotherapist.
+description: |
+  Weizenbaum's paper appeared in *Communications of the ACM* (vol. 9, no. 1,
+  pp. 36-45). ELIZA ran on MIT's MAC time-sharing system and was written in
+  Weizenbaum's SLIP list-processing language. It analysed each input sentence with
+  keyword-triggered decomposition rules and built a reply with reassembly rules,
+  with the behaviour set by a script; the best-known script imitated a Rogerian
+  psychotherapist, which let the program say little about the world.
+
+  Weizenbaum wrote that some subjects were very hard to convince that ELIZA was not
+  human, and argued that users sustain the impression of being understood by
+  generously assuming a conversational partner has background knowledge. The
+  tendency to read understanding into such programs was later named the "ELIZA
+  effect". In 2025 researchers reported finding a printout of an early version of
+  the code in Weizenbaum's MIT archives and running it on a restored CTSS.
+category: research
+organizations: [MIT]
+people: [Joseph Weizenbaum]
+tags: [chatbot, natural language, ELIZA effect, symbolic AI]
+sources:
+  - url: http://web.stanford.edu/class/linguist238/p36-weizenabaum.pdf
+    title: "ELIZA: A Computer Program for the Study of Natural Language Communication Between Man and Machine (Communications of the ACM 9(1), January 1966)"
+    publisher: Association for Computing Machinery (copy hosted by Stanford)
+    accessed: "2026-11-03"
+  - url: https://api.crossref.org/works/10.1145/365153.365168
+    title: Crossref record for DOI 10.1145/365153.365168
+    publisher: Crossref
+    accessed: "2026-11-03"
+  - url: https://arxiv.org/abs/2501.06707
+    title: "ELIZA Reanimated: The world's first chatbot restored on the world's first time sharing system"
+    publisher: arXiv
+    accessed: "2026-11-03"
+artifacts:
+  - type: paper
+    url: https://courses.cs.umbc.edu/331/papers/eliza.html
+    title: Weizenbaum, ELIZA (1966), HTML copy
+  - type: paper
+    url: https://arxiv.org/abs/2501.06707
+    title: ELIZA Reanimated (arXiv, 2025)
+importance:
+  rubric: {capability: 3, adoption: 2, impact: 3, culture: 4}
+issue: 32
+submitted_by: ChrisBuilds
