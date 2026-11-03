@@ -1,0 +1,56 @@
+id: 1989-12-01-lecun-zip-code-recognition
+title: LeCun and colleagues train a network to recognize ZIP-code digits
+date: "1989-12-01"
+summary: >-
+  Yann LeCun and six Bell Labs colleagues apply backpropagation through a
+  constrained network to classify normalized images of handwritten U.S. ZIP-code digits.
+description: |
+  LeCun and six colleagues at AT&T Bell Laboratories published the paper in
+  *Neural Computation* 1(4), pp. 541–551. They applied backpropagation to a
+  network whose architecture encoded task-specific constraints, classifying
+  normalized images of handwritten U.S. Postal Service ZIP-code digits. The
+  network learned the mapping from each normalized character image to a digit
+  class; it did not process an entire envelope or ZIP code end to end.
+
+  Later work extended convolutional character recognition to complete document
+  systems. In 1997, Bottou, Bengio and LeCun reported that their globally trained
+  check-reading system was commercially deployed, and that it had been fielded
+  in a bank in June 1996. Their 1998 review also describes the system and its
+  commercial use. These are reports by the system's developers; the papers give
+  conflicting check-volume figures, so none is included here.
+category: research
+organizations: [AT&T Bell Laboratories, U.S. Postal Service]
+people:
+  - Yann LeCun
+  - Bernhard E. Boser
+  - John S. Denker
+  - Donnie Henderson
+  - Richard E. Howard
+  - Wayne E. Hubbard
+  - Lawrence D. Jackel
+tags: [convolutional neural networks, backpropagation, handwritten digit recognition, optical character recognition]
+sources:
+  - url: https://doi.org/10.1162/neco.1989.1.4.541
+    title: Backpropagation Applied to Handwritten Zip Code Recognition
+    publisher: MIT Press
+    accessed: "2026-11-03"
+  - url: https://yann.lecun.org/exdb/publis/pdf/bottou-lecun-bengio-97.pdf
+    title: Global Training of Document Processing Systems Using Graph Transformer Networks
+    publisher: IEEE Computer Society
+    accessed: "2026-11-03"
+  - url: https://proceedingsoftheieee.ieee.org/gradient-based-learning-applied-to-document-recognition/
+    title: Gradient-Based Learning Applied to Document Recognition
+    publisher: Proceedings of the IEEE
+    accessed: "2026-11-03"
+artifacts:
+  - type: paper
+    url: https://doi.org/10.1162/neco.1989.1.4.541
+    title: LeCun et al., Backpropagation Applied to Handwritten Zip Code Recognition (1989)
+importance:
+  rubric: {capability: 3, adoption: 2, impact: 3, culture: 1}
+related:
+  - id: 1986-10-09-backpropagation
+    relation: builds_on
+    source: https://doi.org/10.1162/neco.1989.1.4.541
+issue: 35
+submitted_by: ChrisBuilds
