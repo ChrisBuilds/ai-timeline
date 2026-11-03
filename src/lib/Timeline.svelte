@@ -173,6 +173,7 @@
   {#each scale.bands as band, i (band.era.id)}
     <section
       class="band"
+      data-motion-key="era-{band.era.id}"
       style:top="{band.top}px"
       style:height="{band.height}px"
       aria-label={band.era.name}
@@ -186,7 +187,7 @@
 
   <Ribbon spans={ribbon} {spineX} viewTop={Math.max(0, winTop)} viewBottom={Math.min(scale.height, winBottom)} onactivate={activate} activeTop={activeBin?.top ?? null} />
 
-  <div class="now" style:top="{scale.y(scale.bands[0].end)}px" aria-hidden="true">
+  <div data-motion-key="now" class="now" style:top="{scale.y(scale.bands[0].end)}px" aria-hidden="true">
     <span class="now-dot"></span><span class="now-label">Now</span>
   </div>
 
@@ -195,6 +196,7 @@
     {@const side = gapSide(gap)}
     <div
       class="gap"
+      data-motion-key="gap-{gap.from}"
       style:top="{gap.top}px"
       style:height="{gap.height}px"
       role="note"
@@ -208,7 +210,7 @@
   {/each}
 
   {#each ticks as tick (tick.year)}
-    <span class="tick" style:top="{tick.y}px" aria-hidden="true">{tick.year}</span>
+    <span data-motion-key="tick-{tick.year}" class="tick" style:top="{tick.y}px" aria-hidden="true">{tick.year}</span>
   {/each}
 
   {#if activeBin}
@@ -232,6 +234,7 @@
         <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
         <span
           onclick={() => onselect(ev.id)}
+          data-motion-key="dot-{ev.id}"
           class="dot tier-{ev.tier}"
           class:selected={selectedId === ev.id}
           class:related={highlightIds.has(ev.id)}
@@ -244,6 +247,7 @@
         <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
         <span
           onclick={() => onselect(ev.id)}
+          data-motion-key="connector-{ev.id}"
           class="connector"
           class:dimmed={dimIds.has(ev.id) && selectedId !== ev.id}
           style:--c={categoryColor(ev.category)}
@@ -254,6 +258,7 @@
         ></span>
         <article
           id={ev.id}
+          data-motion-key="card-{ev.id}"
           class="card tier-{ev.tier}"
           class:selected={selectedId === ev.id}
           class:related={highlightIds.has(ev.id)}
