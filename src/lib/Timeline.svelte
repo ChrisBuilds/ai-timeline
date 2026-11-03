@@ -21,6 +21,8 @@
     matchIds: Set<string>
     onselect: (id: string) => void
     onexpand: (cluster: Cluster<TimelineEvent>) => void
+    /** A card was hovered or focused, so it may be opened next. */
+    onpreview?: (id: string) => void
     /** Rendered height of each era's name, so the layout can keep cards off it. */
     labelHeights?: number[]
     /** Distance from the top of a band to its era name. */
@@ -44,6 +46,7 @@
     matchIds,
     onselect,
     onexpand,
+    onpreview,
     labelHeights = $bindable([]),
     labelTop,
     viewTop = 0,
@@ -82,6 +85,15 @@
 
   // Year labels sit on the spine, so skip any that would land on an event dot,
   // the Now marker, or another label just across an era boundary.
+  let lastPreview = ''
+  function previewFrom(e: Event) {
+    const id = (e.target as Element).closest?.('article.card')?.id
+    if (id && id !== lastPreview) {
+      lastPreview = id
+      onpreview?.(id)
+    }
+  }
+
   // Which "+N" marker has its list of hidden events open.
   let openCluster = $state<string | null>(null)
 
@@ -131,7 +143,13 @@
   }
 </script>
 
-<div class="timeline" style:height="{scale.height}px" style:--spine="{spineX}px" style:--label-pad="{spineX < 100 ? spineX + 16 : 8}px" style:--label-max={spineX < 100 ? '100%' : `${spineX - 24}px`} style:--label-top="{labelTop}px">
+<!-- Hovering or focusing a card starts loading its details, so opening it is instant. -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div
+  class="timeline"
+  onpointerover={previewFrom}
+  onfocusin={previewFrom}
+  style:height="{scale.height}px" style:--spine="{spineX}px" style:--label-pad="{spineX < 100 ? spineX + 16 : 8}px" style:--label-max={spineX < 100 ? '100%' : `${spineX - 24}px`} style:--label-top="{labelTop}px">
   {#each scale.bands as band, i (band.era.id)}
     <section
       class="band"

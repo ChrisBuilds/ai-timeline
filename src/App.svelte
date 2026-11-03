@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte'
-  import type { TimelineData, TimelineEvent, RemovedEvent } from './lib/types'
+  import type { EventDetails, TimelineData, TimelineEvent, RemovedEvent } from './lib/types'
+  import { createDetailsLoader } from './lib/details'
   import { ERAS } from './lib/eras'
   import { buildScale } from './lib/scale'
   import { layout, priorityOrder, type Cluster } from './lib/layout'
@@ -53,7 +54,7 @@
   }
 
   // Newest first by exact time, so events are in timeline order (top to bottom).
-  // events.json is sorted by date string, which puts "2024" after "2024-03-01".
+  // index.json is sorted by date string, which puts "2024" after "2024-03-01".
   const events = $derived.by(() => {
     if (!data) return []
     const year = new Map(data.events.map((e) => [e, toYear(e.date)]))
@@ -122,6 +123,30 @@
   const highlightIds = $derived(
     new Set<string>([...(selected?.related ?? []).map((r) => r.id), ...backlinks.map((e) => e.id)]),
   )
+
+  // Descriptions, sources and artifacts are fetched when an event is opened.
+  const loadDetails = createDetailsLoader(import.meta.env.BASE_URL)
+  let details = $state.raw<{ id: string; value?: EventDetails; error?: string } | null>(null)
+  let detailsAttempt = $state(0)
+  $effect(() => {
+    const id = selected?.id
+    void detailsAttempt
+    if (!id) {
+      details = null
+      return
+    }
+    let current = true
+    details = { id }
+    loadDetails(id).then(
+      (value) => current && (details = { id, value }),
+      (e: Error) => current && (details = { id, error: e.message }),
+    )
+    return () => (current = false)
+  })
+  /** Starts loading an event's details before it is opened, on hover or focus. */
+  function preview(id: string) {
+    loadDetails(id).catch(() => {})
+  }
 
   const removedNote = $derived.by((): RemovedEvent | null => {
     if (!missingId || !data) return null
@@ -301,7 +326,7 @@
 
   onMount(() => {
     const initialHash = location.hash
-    fetch(`${import.meta.env.BASE_URL}data/events.json`)
+    fetch(`${import.meta.env.BASE_URL}data/index.json`)
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then(async (d: TimelineData) => {
         data = d
@@ -403,6 +428,7 @@
         matchIds={filtering ? matchIds : NONE}
         onselect={(id) => select(id === selectedId ? null : id, false)}
         onexpand={expand}
+        onpreview={preview}
         labelTop={LABEL_TOP}
         {viewTop}
         {viewHeight}
@@ -429,6 +455,9 @@
     {byId}
     {backlinks}
     {filters}
+    details={details?.id === selected.id ? (details.value ?? null) : null}
+    detailsError={details?.id === selected.id ? (details.error ?? null) : null}
+    onretry={() => detailsAttempt++}
     onselect={(id) => select(id)}
     onclose={() => select(null, false)}
     onfilter={(field, value) => (filters = only(filters, field, value))}
