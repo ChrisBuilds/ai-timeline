@@ -1,0 +1,7 @@
+# Labels pull requests by the paths they touch (actions/labeler v5 format).
+content:
+  - changed-files:
+      - any-glob-to-any-file: ['events/**', 'removed.yaml']
+site:
+  - changed-files:
+      - any-glob-to-any-file: ['src/**', 'public/**', 'index.html', 'scripts/**', 'schema/**', '.github/**', 'package.json', 'package-lock.json', '*.config.*', 'tsconfig*.json', 'vite.config.ts', 'CLAUDE.md', 'CONTRIBUTING.md', 'README.md']

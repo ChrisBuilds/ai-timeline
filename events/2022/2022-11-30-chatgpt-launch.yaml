@@ -1,0 +1,16 @@
+id: 2022-11-30-chatgpt-launch
+title: OpenAI launches ChatGPT
+date: "2022-11-30"
+summary: >-
+  OpenAI releases ChatGPT as a free research preview, bringing conversational AI to
+  the general public and setting off the generative AI boom.
+category: product
+organizations: [OpenAI]
+tags: [chatbot, large language model, consumer]
+sources:
+  - url: https://openai.com/index/chatgpt/
+    title: Introducing ChatGPT
+    publisher: OpenAI
+    accessed: "2026-11-03"
+importance:
+  rubric: {capability: 3, adoption: 5, impact: 5, culture: 5}

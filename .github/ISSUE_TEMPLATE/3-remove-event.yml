@@ -1,0 +1,38 @@
+name: Remove an event
+description: Report a duplicate, a hoax, an unverifiable claim, or an event that doesn't belong.
+title: "Remove: "
+labels: [content, "type:removal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Events are removed when they are false, duplicated or out of scope, never because they are unflattering. Please include evidence.
+  - type: input
+    id: event
+    attributes:
+      label: Event link or id
+    validations:
+      required: true
+  - type: dropdown
+    id: reason
+    attributes:
+      label: Reason
+      options:
+        - Duplicate of another event
+        - Hoax or fabricated
+        - Cannot be verified
+        - Out of scope or not notable
+    validations:
+      required: true
+  - type: input
+    id: duplicate_of
+    attributes:
+      label: Duplicate of (if a duplicate)
+      description: Link or id of the event to keep.
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Links and an explanation.
+    validations:
+      required: true

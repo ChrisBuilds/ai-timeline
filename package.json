@@ -1,0 +1,25 @@
+{
+  "name": "ai-timeline",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "npm run data && vite",
+    "data": "node scripts/build-data.mjs",
+    "validate": "node scripts/build-data.mjs --check",
+    "build": "npm run data && vite build",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^5.0.3",
+    "@tsconfig/svelte": "^5.0.4",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "svelte": "^5.28.1",
+    "svelte-check": "^4.1.6",
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5",
+    "yaml": "^2.8.0"
+  }
+}

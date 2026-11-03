@@ -1,0 +1,25 @@
+id: 1956-06-dartmouth-workshop
+title: The Dartmouth workshop names the field of artificial intelligence
+date: "1956-06"
+end_date: "1956-08"
+summary: >-
+  A summer research project at Dartmouth College, proposed by McCarthy, Minsky,
+  Rochester and Shannon, gives the field its name and is usually treated as its founding.
+description: |
+  The proposal, dated 1955, introduced the term "artificial intelligence" and
+  conjectured that every aspect of learning or intelligence could in principle be
+  described precisely enough for a machine to simulate it. The workshop ran for
+  roughly six to eight weeks from about June 18 to August 17, 1956.
+category: research
+organizations: [Dartmouth College]
+people: [John McCarthy, Marvin Minsky, Nathaniel Rochester, Claude Shannon]
+tags: [founding, symbolic AI]
+sources:
+  - url: https://en.wikipedia.org/wiki/Dartmouth_workshop
+    title: Dartmouth workshop
+    publisher: Wikipedia
+    accessed: "2026-11-03"
+importance:
+  rubric: {capability: 2, adoption: 2, impact: 5, culture: 4}
+  override: 100
+  override_reason: Origin event of the timeline; always visible at every zoom level.

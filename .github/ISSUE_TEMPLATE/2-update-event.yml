@@ -1,0 +1,37 @@
+name: Update an event
+description: Fix a source, add an artifact, correct a fact, or argue for a different importance.
+title: "Update: "
+labels: [content, "type:update"]
+body:
+  - type: input
+    id: event
+    attributes:
+      label: Event link or id
+      placeholder: https://chrisbuilds.github.io/ai-timeline/#2024-09-12-openai-o1
+    validations:
+      required: true
+  - type: dropdown
+    id: change
+    attributes:
+      label: What needs changing?
+      multiple: true
+      options:
+        - Fix or replace a source
+        - Add a supporting artifact (paper, repo, model card, video, dataset)
+        - Correct a fact (date, title, organization, summary)
+        - Change importance
+        - Link a directly related event
+    validations:
+      required: true
+  - type: textarea
+    id: proposed
+    attributes:
+      label: The proposed change
+      description: For importance changes, explain why the event matters more or less than its current placement.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Links that support the change, one per line. Required for sources, artifacts and facts.

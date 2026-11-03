@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chrisbuilds.github.io/ai-timeline/schema/event.schema.json",
+  "title": "AI Timeline event",
+  "description": "One event on the AI Timeline. Each event lives in events/<year>/<id>.yaml.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "title", "date", "summary", "category", "sources", "importance"],
+  "$defs": {
+    "date": {
+      "description": "YYYY, YYYY-MM or YYYY-MM-DD. The format sets the precision.",
+      "type": "string",
+      "pattern": "^\\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\\d|3[01]))?)?$"
+    },
+    "eventId": {
+      "type": "string",
+      "pattern": "^\\d{4}(-\\d{2}){0,2}-[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "rating": { "type": "integer", "minimum": 1, "maximum": 5 }
+  },
+  "properties": {
+    "id": {
+      "$ref": "#/$defs/eventId",
+      "description": "Date plus a short slug, matching the file name, e.g. 2024-09-12-openai-o1."
+    },
+    "title": { "type": "string", "minLength": 3, "maxLength": 80 },
+    "date": { "$ref": "#/$defs/date" },
+    "end_date": {
+      "$ref": "#/$defs/date",
+      "description": "For events that span time, such as an AI winter."
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 280,
+      "description": "One sentence shown on the card."
+    },
+    "description": {
+      "type": "string",
+      "description": "Markdown shown in the detail panel."
+    },
+    "category": {
+      "enum": [
+        "research",
+        "model release",
+        "product",
+        "company and funding",
+        "policy and regulation",
+        "safety and security incident",
+        "hardware and compute",
+        "benchmark milestone",
+        "open source",
+        "culture and society",
+        "misinformation"
+      ]
+    },
+    "tags": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "organizations": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "people": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "sources": {
+      "description": "Proof the event happened. Primary source first.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["url", "title", "publisher", "accessed"],
+        "properties": {
+          "url": { "type": "string", "format": "uri" },
+          "title": { "type": "string" },
+          "publisher": { "type": "string" },
+          "accessed": { "type": "string", "format": "date" },
+          "archived_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Wayback Machine snapshot, used if the original disappears."
+          }
+        }
+      }
+    },
+    "artifacts": {
+      "description": "Things the event produced: the paper, repo, model card, demo.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "url", "title"],
+        "properties": {
+          "type": { "enum": ["paper", "repo", "model card", "video", "dataset", "post", "image"] },
+          "url": { "type": "string", "format": "uri" },
+          "title": { "type": "string" }
+        }
+      }
+    },
+    "related": {
+      "description": "At most 3 direct, source-stated links. See CLAUDE.md.",
+      "type": "array",
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "relation"],
+        "properties": {
+          "id": { "$ref": "#/$defs/eventId" },
+          "relation": { "enum": ["builds_on", "responds_to", "supersedes"] },
+          "source": { "type": "string", "format": "uri", "description": "Where the link is stated." }
+        }
+      }
+    },
+    "importance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rubric"],
+      "properties": {
+        "rubric": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["capability", "adoption", "impact", "culture"],
+          "properties": {
+            "capability": { "$ref": "#/$defs/rating" },
+            "adoption": { "$ref": "#/$defs/rating" },
+            "impact": { "$ref": "#/$defs/rating" },
+            "culture": { "$ref": "#/$defs/rating" }
+          }
+        },
+        "override": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "override_reason": { "type": "string", "minLength": 10 }
+      },
+      "dependentRequired": { "override": ["override_reason"] }
+    },
+    "aliases": {
+      "description": "Ids of duplicate events merged into this one.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/eventId" }
+    },
+    "disputed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issue", "reason"],
+      "properties": {
+        "issue": { "type": "integer", "minimum": 1 },
+        "reason": { "type": "string" }
+      }
+    },
+    "developing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["since", "recheck"],
+      "properties": {
+        "since": { "type": "string", "format": "date" },
+        "recheck": { "type": "string", "format": "date" },
+        "issue": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "submitted_by": { "type": "string", "description": "GitHub handle of the submitter." },
+    "issue": { "type": "integer", "minimum": 1, "description": "Canonical issue for this event." }
+  }
+}
