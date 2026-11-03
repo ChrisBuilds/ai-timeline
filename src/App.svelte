@@ -8,6 +8,9 @@
   import { MAX_ZOOM, MIN_ZOOM, clampZoom, formatHash, parseHash } from './lib/url'
   import Timeline from './lib/Timeline.svelte'
   import DetailPanel from './lib/DetailPanel.svelte'
+  import Toolbar from './lib/Toolbar.svelte'
+  import { NO_FILTERS, isActive, matches, type Filters } from './lib/filters'
+  import { applyPrefs, loadPrefs, prefersReducedMotion, savePrefs, type Prefs } from './lib/prefs'
 
   const CARD_HEIGHT = 72
   const ANCHOR_OFFSET = 18
@@ -20,12 +23,21 @@
   let missingId = $state<string | null>(null)
   let width = $state(0)
   let timelineEl: HTMLDivElement | undefined = $state()
+  let toolbar: ReturnType<typeof Toolbar> | undefined = $state()
+  let toolbarHeight = $state(0)
+  let filters = $state<Filters>({ ...NO_FILTERS })
+  let prefs = $state<Prefs>(loadPrefs())
   // The URL is only written once the link we were opened with has been applied.
   let ready = $state(false)
 
   const now = nowYear()
-  const reducedMotion =
-    typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
+  const reducedMotion = $derived(prefersReducedMotion(prefs))
+
+  function setPrefs(p: Prefs) {
+    prefs = p
+    applyPrefs(p)
+    savePrefs(p)
+  }
 
   const events = $derived(data?.events ?? [])
   const byId = $derived(new Map(events.map((e) => [e.id, e])))
@@ -36,6 +48,11 @@
   const spineX = $derived(wide ? Math.round(width / 2) : 20)
   const cardWidth = $derived(wide ? Math.min(340, spineX - 48) : Math.max(160, width - 56))
 
+  const filtering = $derived(isActive(filters))
+  const matchIds = $derived(new Set(events.filter((e) => matches(e, filters)).map((e) => e.id)))
+  // Non-matching events fade; with no filters nothing is dimmed.
+  const dimIds = $derived(filtering ? new Set(events.filter((e) => !matchIds.has(e.id)).map((e) => e.id)) : new Set<string>())
+
   const scale = $derived(buildScale(ERAS, [...years.values()], now, zoom))
 
   const arranged = $derived(
@@ -43,8 +60,8 @@
       events.map((e) => ({
         item: e,
         y: scale.y(years.get(e.id)!),
-        // The selected event always gets a card.
-        score: e.id === selectedId ? Infinity : e.score,
+        // The selected event always gets a card, and matching events win cards over faded ones.
+        score: e.id === selectedId ? Infinity : e.score + (filtering && matchIds.has(e.id) ? 1000 : 0),
       })),
       {
         lanes: wide ? 2 : 1,
@@ -73,7 +90,7 @@
   $effect(() => {
     if (!ready) return
     // Keep an unknown or removed id in the URL so a refresh or a shared link still explains it.
-    const hash = formatHash({ event: selectedId ?? missingId, zoom })
+    const hash = formatHash({ event: selectedId ?? missingId, zoom, filters })
     if (location.hash !== hash) history.replaceState(null, '', hash || location.pathname + location.search)
   })
 
@@ -92,7 +109,8 @@
     scrollTo({ top: scale.y(year) + top - anchorClientY, behavior: 'instant' })
   }
 
-  function scrollToEvent(id: string, behavior: ScrollBehavior = reducedMotion ? 'instant' : 'smooth') {
+  function scrollToEvent(id: string, behavior?: ScrollBehavior) {
+    behavior ??= reducedMotion ? 'instant' : 'smooth'
     const year = years.get(id)
     if (year === undefined) return
     scrollTo({ top: timelineTop() + scale.y(year) - innerHeight / 3, behavior })
@@ -113,6 +131,7 @@
   function applyHash(hash = location.hash) {
     const state = parseHash(hash)
     zoom = state.zoom
+    filters = state.filters
     if (!state.event) {
       selectedId = null
       missingId = null
@@ -148,6 +167,7 @@
     else if (e.key === 'j') step(1)
     else if (e.key === 'k') step(-1)
     else if (e.key === 'Escape') select(null)
+    else if (e.key === '/') toolbar?.focusSearch()
     else return
     e.preventDefault()
   }
@@ -219,7 +239,7 @@
   <p class="lede">Artificial intelligence from the 1956 Dartmouth workshop to now. Every event is sourced and reviewed.</p>
   <p class="help">
     Scroll back in time. Zoom with <kbd>Ctrl</kbd> + scroll, a pinch, or <kbd>+</kbd> and <kbd>−</kbd> to reveal
-    more events. Missing something?
+    more events. Press <kbd>/</kbd> to search. Missing something?
     <a href="https://github.com/ChrisBuilds/ai-timeline/issues/new/choose">Suggest an event</a>.
   </p>
 </header>
@@ -240,7 +260,22 @@
   </aside>
 {/if}
 
-<main bind:clientWidth={width}>
+{#if data}
+  <div class="toolbar-wrap" bind:clientHeight={toolbarHeight}>
+    <Toolbar
+      bind:this={toolbar}
+      {events}
+      {filters}
+      matching={matchIds.size}
+      {prefs}
+      onpick={(id) => select(id)}
+      onfilters={(f) => (filters = f)}
+      onprefs={setPrefs}
+    />
+  </div>
+{/if}
+
+<main bind:clientWidth={width} style:--toolbar-h="{toolbarHeight}px">
   {#if error}
     <p class="notice">{error}</p>
   {:else if !data}
@@ -257,6 +292,7 @@
         anchorOffset={ANCHOR_OFFSET}
         {selectedId}
         {highlightIds}
+        {dimIds}
         onselect={(id) => select(id === selectedId ? null : id, false)}
         onexpand={expand}
       />
@@ -283,5 +319,5 @@
   Data and code on <a href="https://github.com/ChrisBuilds/ai-timeline">GitHub</a>.
   {#if data}{data.events.length} events, updated {data.generated.slice(0, 10)}.{/if}
   Keys: <kbd>j</kbd>/<kbd>k</kbd> next and previous, <kbd>+</kbd>/<kbd>−</kbd> zoom, <kbd>0</kbd> reset,
-  <kbd>Esc</kbd> close.
+  <kbd>/</kbd> search, <kbd>Esc</kbd> close.
 </footer>

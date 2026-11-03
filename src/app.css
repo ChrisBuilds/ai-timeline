@@ -15,7 +15,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --bg: #161615;
     --surface: #201f1d;
     --band: #1b1b19;
@@ -26,7 +26,35 @@
     --accent: #8ea4ff;
     --accent-soft: rgb(142 164 255 / 0.3);
     --warn: #f0a656;
+    color-scheme: dark;
   }
+}
+
+:root[data-theme='dark'] {
+  --bg: #161615;
+  --surface: #201f1d;
+  --band: #1b1b19;
+  --text: #ecebe6;
+  --muted: #a3a29c;
+  --line: #34332f;
+  --line-strong: #4a4943;
+  --accent: #8ea4ff;
+  --accent-soft: rgb(142 164 255 / 0.3);
+  --warn: #f0a656;
+  color-scheme: dark;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+/* The reduced-motion setting, when chosen on the page rather than by the system. */
+:root[data-motion='reduce'] *,
+:root[data-motion='reduce'] *::before,
+:root[data-motion='reduce'] *::after {
+  transition: none !important;
+  animation: none !important;
+  scroll-behavior: auto !important;
 }
 
 * {
@@ -47,6 +75,14 @@ body {
 
 a {
   color: var(--accent);
+}
+
+.toolbar-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 15;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
 }
 
 .site-header {

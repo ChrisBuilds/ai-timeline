@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="A crowdsourced, sourced timeline of artificial intelligence, from the 1956 Dartmouth workshop to now." />
     <title>AI Timeline</title>
+    <script>
+      // Apply saved display settings before first paint. Mirrors src/lib/prefs.ts.
+      try {
+        var p = JSON.parse(localStorage.getItem('ai-timeline:prefs') || '{}')
+        if (p.theme === 'light' || p.theme === 'dark') document.documentElement.dataset.theme = p.theme
+        if (p.motion === 'reduce' || p.motion === 'full') document.documentElement.dataset.motion = p.motion
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="app"></div>
