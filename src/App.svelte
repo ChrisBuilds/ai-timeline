@@ -72,7 +72,8 @@
   // Keep the URL in step with the view, without adding history entries.
   $effect(() => {
     if (!ready) return
-    const hash = formatHash({ event: selectedId, zoom })
+    // Keep an unknown or removed id in the URL so a refresh or a shared link still explains it.
+    const hash = formatHash({ event: selectedId ?? missingId, zoom })
     if (location.hash !== hash) history.replaceState(null, '', hash || location.pathname + location.search)
   })
 
@@ -126,12 +127,15 @@
     }
   }
 
+  // Every event, newest first. Stepping can reach events hidden at this zoom,
+  // because the selected event always gets a card.
+  const ordered = $derived([...events].sort((a, b) => years.get(b.id)! - years.get(a.id)!))
+
   function step(dir: 1 | -1) {
-    const cards = arranged.placed
-    if (!cards.length) return
-    const i = cards.findIndex((c) => c.item.id === selectedId)
-    const next = i === -1 ? (dir === 1 ? 0 : cards.length - 1) : Math.min(cards.length - 1, Math.max(0, i + dir))
-    select(cards[next].item.id)
+    if (!ordered.length) return
+    const i = ordered.findIndex((e) => e.id === selectedId)
+    const next = i === -1 ? (dir === 1 ? 0 : ordered.length - 1) : Math.min(ordered.length - 1, Math.max(0, i + dir))
+    select(ordered[next].id)
   }
 
   function onkeydown(e: KeyboardEvent) {
@@ -226,9 +230,13 @@
       It was merged into <a href={`#e=${removedNote.duplicate_of}`}>another event</a>.
     {/if}
     {#if removedNote.note}{removedNote.note}{/if}
+    <button class="dismiss" onclick={() => (missingId = null)}>Dismiss</button>
   </aside>
 {:else if missingId && data}
-  <aside class="notice" role="status">There's no event called “{missingId}” on the timeline.</aside>
+  <aside class="notice" role="status">
+    There's no event called “{missingId}” on the timeline.
+    <button class="dismiss" onclick={() => (missingId = null)}>Dismiss</button>
+  </aside>
 {/if}
 
 <main bind:clientWidth={width}>

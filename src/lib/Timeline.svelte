@@ -34,6 +34,9 @@
 
   // Year labels sit on the spine, so skip any that would land on an event dot,
   // the Now marker, or another label just across an era boundary.
+  // Which "+N" marker has its list of hidden events open.
+  let openCluster = $state<string | null>(null)
+
   const ticks = $derived.by(() => {
     const dots = [...placed.map((c) => c.y), ...clusters.map((c) => c.y)]
     const nowY = scale.y(scale.bands[0].end)
@@ -79,15 +82,41 @@
   {/each}
 
   {#each clusters as cluster (cluster.items.map((e) => e.id).join('|'))}
-    <button
-      class="cluster"
-      style:top="{cluster.y}px"
-      onclick={() => onexpand(cluster)}
-      title={cluster.items.map((e) => e.title).join('\n')}
-      aria-label="{cluster.items.length} more event{cluster.items.length === 1 ? '' : 's'} here. Zoom in to show."
-    >
-      +{cluster.items.length}
-    </button>
+    {@const key = cluster.items.map((e) => e.id).join('|')}
+    <div class="cluster-wrap" style:top="{cluster.y}px">
+      <button
+        class="cluster"
+        onclick={() => (openCluster = openCluster === key ? null : key)}
+        aria-expanded={openCluster === key}
+        aria-label="{cluster.items.length} more event{cluster.items.length === 1 ? '' : 's'} here"
+      >
+        +{cluster.items.length}
+      </button>
+      {#if openCluster === key}
+        <div class="cluster-menu" role="menu">
+          {#each cluster.items as ev (ev.id)}
+            <button
+              role="menuitem"
+              onclick={() => {
+                openCluster = null
+                onselect(ev.id)
+              }}
+            >
+              <span class="menu-date">{formatRange(ev.date, ev.end_date)}</span>
+              {ev.title}
+            </button>
+          {/each}
+          <button
+            role="menuitem"
+            class="menu-zoom"
+            onclick={() => {
+              openCluster = null
+              onexpand(cluster)
+            }}>Zoom in here</button
+          >
+        </div>
+      {/if}
+    </div>
   {/each}
 
   <ol class="cards" aria-label="Events">
@@ -207,9 +236,15 @@
     pointer-events: none;
   }
 
-  .cluster {
+  .cluster-wrap {
     position: absolute;
     left: var(--spine);
+    z-index: 3;
+  }
+  .cluster {
+    position: absolute;
+    left: 0;
+    top: 0;
     transform: translate(-50%, -50%);
     font: inherit;
     font-size: 0.7rem;
@@ -220,13 +255,48 @@
     border: 1px dashed var(--muted);
     background: var(--bg);
     color: var(--text);
-    cursor: zoom-in;
-    z-index: 2;
+    cursor: pointer;
   }
   .cluster:hover,
-  .cluster:focus-visible {
+  .cluster:focus-visible,
+  .cluster[aria-expanded='true'] {
     border-style: solid;
     border-color: var(--accent);
+  }
+  .cluster-menu {
+    position: absolute;
+    top: 14px;
+    left: -12px;
+    width: min(300px, calc(100vw - var(--spine) - 8px));
+    display: grid;
+    padding: 4px;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+  }
+  .cluster-menu button {
+    all: unset;
+    display: block;
+    padding: 6px 8px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    line-height: 1.3;
+    cursor: pointer;
+  }
+  .cluster-menu button:hover,
+  .cluster-menu button:focus-visible {
+    background: var(--band);
+  }
+  .menu-date {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+  .cluster-menu .menu-zoom {
+    color: var(--accent);
+    border-top: 1px solid var(--line);
+    border-radius: 0 0 6px 6px;
   }
 
   .cards {
