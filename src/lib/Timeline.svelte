@@ -4,6 +4,7 @@
   import type { Cluster, PlacedCard } from './layout'
   import { formatRange } from './dates'
   import { categoryColor } from './categories'
+  import { fade } from 'svelte/transition'
 
   interface Props {
     scale: TimeScale
@@ -25,6 +26,7 @@
     labelHeights?: number[]
     /** Distance from the top of a band to its era name. */
     labelTop: number
+    reducedMotion?: boolean
   }
 
   let {
@@ -43,6 +45,7 @@
     onexpand,
     labelHeights = $bindable([]),
     labelTop,
+    reducedMotion = false,
   }: Props = $props()
 
   // Year labels sit on the spine, so skip any that would land on an event dot,
@@ -97,7 +100,7 @@
 
   {#each clusters as cluster (cluster.items.map((e) => e.id).join('|'))}
     {@const key = cluster.items.map((e) => e.id).join('|')}
-    <div class="cluster-wrap" style:top="{cluster.y}px">
+    <div class="cluster-wrap" style:top="{cluster.y}px" transition:fade={{ duration: reducedMotion ? 0 : 160 }}>
       <button
         class="cluster"
         class:dimmed={cluster.items.every((e) => dimIds.has(e.id))}
@@ -141,7 +144,7 @@
     {#each placed as card (card.item.id)}
       {@const ev = card.item}
       {@const left = cardLeft(card.lane)}
-      <li>
+      <li transition:fade={{ duration: reducedMotion ? 0 : 180 }}>
         <span
           class="dot tier-{ev.tier}"
           class:selected={selectedId === ev.id}
@@ -464,7 +467,8 @@
       box-shadow 0.18s,
       border-color 0.18s,
       transform 0.18s,
-      opacity 0.18s;
+      opacity 0.18s,
+      left 0.25s ease;
     z-index: 1;
   }
   .card::before {

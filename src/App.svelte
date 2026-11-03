@@ -104,16 +104,19 @@
     if (!ready) return
     // Keep an unknown or removed id in the URL so a refresh or a shared link still explains it.
     const hash = formatHash({ event: selectedId ?? missingId, zoom, filters })
-    if (location.hash !== hash) history.replaceState(null, '', hash || location.pathname + location.search)
+    // Wait for zooming to settle: browsers limit how often the URL can change.
+    const t = setTimeout(() => {
+      if (location.hash !== hash) history.replaceState(null, '', hash || location.pathname + location.search)
+    }, 200)
+    return () => clearTimeout(t)
   })
 
   function timelineTop(): number {
     return (timelineEl?.getBoundingClientRect().top ?? 0) + scrollY
   }
 
-  /** Changes zoom while keeping the moment under `anchorClientY` in place on screen. */
-  async function setZoom(next: number, anchorClientY = innerHeight / 2) {
-    next = clampZoom(next)
+  /** Sets zoom at once, keeping the moment under `anchorClientY` in place on screen. */
+  async function applyZoom(next: number, anchorClientY: number) {
     if (next === zoom) return
     const top = timelineTop()
     const year = scale.year(scrollY + anchorClientY - top)
@@ -122,10 +125,57 @@
     scrollTo({ top: scale.y(year) + top - anchorClientY, behavior: 'instant' })
   }
 
+  // Zoom glides toward its target a little each frame, so events slide into
+  // place instead of jumping. New input moves the target, so quick wheel
+  // clicks or key presses blend into one smooth zoom.
+  let zoomTarget = 1
+  let zoomAnchor = 0
+  let zoomFrame: number | null = null
+  let lastFrame = 0
+
+  /** Changes zoom while keeping the moment under `anchorClientY` in place on screen. */
+  function setZoom(next: number, anchorClientY = innerHeight / 2, smooth = !reducedMotion) {
+    zoomTarget = clampZoom(next)
+    zoomAnchor = anchorClientY
+    if (!smooth) {
+      stopZoomAnimation()
+      applyZoom(zoomTarget, anchorClientY)
+      return
+    }
+    if (zoomFrame === null) {
+      lastFrame = performance.now()
+      zoomFrame = requestAnimationFrame(zoomStep)
+    }
+  }
+
+  /** Multiplies the zoom being headed for, not the one on screen mid-glide. */
+  function zoomBy(factor: number, anchorClientY?: number, smooth?: boolean) {
+    setZoom((zoomFrame === null ? zoom : zoomTarget) * factor, anchorClientY, smooth)
+  }
+
+  function stopZoomAnimation() {
+    if (zoomFrame !== null) cancelAnimationFrame(zoomFrame)
+    zoomFrame = null
+  }
+
+  async function zoomStep(now: number) {
+    const dt = Math.min(64, now - lastFrame)
+    lastFrame = now
+    // Ease out in log space, so zooming in and out feel the same.
+    const from = Math.log(zoom)
+    const to = Math.log(zoomTarget)
+    const close = Math.abs(to - from) < 0.003
+    const next = close ? zoomTarget : Math.exp(from + (to - from) * (1 - Math.exp(-dt / 90)))
+    await applyZoom(next, zoomAnchor)
+    zoomFrame = close ? null : requestAnimationFrame(zoomStep)
+  }
+
   function scrollToEvent(id: string, behavior?: ScrollBehavior) {
     behavior ??= reducedMotion ? 'instant' : 'smooth'
     const year = years.get(id)
     if (year === undefined) return
+    // A zoom glide re-anchors the scroll every frame, which would cancel this scroll.
+    stopZoomAnimation()
     scrollTo({ top: timelineTop() + scale.y(year) - innerHeight / 3, behavior })
   }
 
@@ -138,12 +188,13 @@
   function expand(cluster: Cluster<TimelineEvent>) {
     const top = timelineTop()
     const anchor = Math.min(Math.max(top + cluster.y - scrollY, 80), innerHeight - 80)
-    setZoom(zoom * (cluster.items.length > 3 ? ZOOM_STEP * ZOOM_STEP : ZOOM_STEP * 1.4), anchor)
+    zoomBy(cluster.items.length > 3 ? ZOOM_STEP * ZOOM_STEP : ZOOM_STEP * 1.4, anchor)
   }
 
   function applyHash(hash = location.hash) {
     const state = parseHash(hash)
-    zoom = state.zoom
+    stopZoomAnimation()
+    zoom = zoomTarget = state.zoom
     filters = state.filters
     if (!state.event) {
       selectedId = null
@@ -176,8 +227,8 @@
   function onkeydown(e: KeyboardEvent) {
     const target = e.target as HTMLElement
     if (e.metaKey || e.ctrlKey || e.altKey || target.closest('input, textarea, select')) return
-    if (e.key === '+' || e.key === '=') setZoom(zoom * ZOOM_STEP)
-    else if (e.key === '-' || e.key === '_') setZoom(zoom / ZOOM_STEP)
+    if (e.key === '+' || e.key === '=') zoomBy(ZOOM_STEP)
+    else if (e.key === '-' || e.key === '_') zoomBy(1 / ZOOM_STEP)
     else if (e.key === '0') setZoom(1)
     else if (e.key === 'j') step(1)
     else if (e.key === 'k') step(-1)
@@ -191,7 +242,11 @@
   function onwheel(e: WheelEvent) {
     if (!(e.ctrlKey || e.metaKey)) return
     e.preventDefault()
-    setZoom(zoom * Math.exp(-e.deltaY * 0.01), e.clientY)
+    // A mouse wheel click is a large delta and a trackpad pinch many small ones;
+    // capping each step keeps a wheel click from leaping.
+    const lines = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerHeight : 1
+    const delta = Math.max(-60, Math.min(60, e.deltaY * lines))
+    zoomBy(Math.exp(-delta * 0.006), e.clientY)
   }
 
   // Two-finger pinch on touch screens.
@@ -206,7 +261,8 @@
     if (!pinch || e.touches.length !== 2) return
     e.preventDefault()
     const mid = (e.touches[0].clientY + e.touches[1].clientY) / 2
-    setZoom(pinch.zoom * (touchDist(e.touches) / pinch.dist), mid)
+    // Fingers are followed directly; easing here would lag behind them.
+    setZoom(pinch.zoom * (touchDist(e.touches) / pinch.dist), mid, false)
   }
   function ontouchend(e: TouchEvent) {
     if (e.touches.length < 2) pinch = null
@@ -312,6 +368,7 @@
         onselect={(id) => select(id === selectedId ? null : id, false)}
         onexpand={expand}
         labelTop={LABEL_TOP}
+        {reducedMotion}
         bind:labelHeights
       />
     </div>
@@ -320,9 +377,9 @@
 
 {#if data}
   <div class="zoom" role="group" aria-label="Zoom">
-    <button onclick={() => setZoom(zoom * ZOOM_STEP)} disabled={zoom >= MAX_ZOOM} aria-label="Zoom in">+</button>
-    <span class="zoom-level" aria-live="polite">{Math.round(zoom * 100)}%</span>
-    <button onclick={() => setZoom(zoom / ZOOM_STEP)} disabled={zoom <= MIN_ZOOM} aria-label="Zoom out">−</button>
+    <button onclick={() => zoomBy(ZOOM_STEP)} disabled={zoom >= MAX_ZOOM} aria-label="Zoom in">+</button>
+    <span class="zoom-level">{Math.round(zoom * 100)}%</span>
+    <button onclick={() => zoomBy(1 / ZOOM_STEP)} disabled={zoom <= MIN_ZOOM} aria-label="Zoom out">−</button>
     {#if Math.abs(zoom - 1) > 0.01}
       <button class="reset" onclick={() => setZoom(1)} aria-label="Reset zoom">1×</button>
     {/if}
