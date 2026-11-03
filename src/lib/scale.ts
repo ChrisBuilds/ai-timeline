@@ -15,6 +15,13 @@ export interface ScaleOptions {
   basePx: number
   /** Extra pixels per event in the era, at zoom 1. */
   perEventPx: number
+  /**
+   * Past this many events, an era grows more slowly: by its event count raised
+   * to `densityExponent`. This keeps a timeline of thousands of events a few
+   * dozen screens tall at zoom 1, with zoom revealing the rest.
+   */
+  linearUpTo?: number
+  densityExponent?: number
   /** Space above the first era, for the "Now" marker. Not zoomed. */
   topPad: number
   /** Space below the last era. Not zoomed. */
@@ -32,6 +39,8 @@ export interface ScaleOptions {
 export const DEFAULT_SCALE: ScaleOptions = {
   basePx: 140,
   perEventPx: 120,
+  linearUpTo: 12,
+  densityExponent: 0.4,
   topPad: 24,
   bottomPad: 96,
   headerPx: 72,
@@ -81,6 +90,65 @@ export interface TimeScale {
 
 const STEPS = [1, 2, 5, 10, 20, 50]
 
+// Splitting years into eras doesn't depend on zoom, so it is done once per list
+// of years and reused for every zoom frame.
+const yearsCache = new WeakMap<number[], { eras: Era[]; now: number; perBand: Float64Array[] }>()
+
+/** Each era's event years, ascending, so a time unit is checked with a binary search. */
+function bandYears(eventYears: number[], eras: Era[], now: number): Float64Array[] {
+  const hit = yearsCache.get(eventYears)
+  if (hit && hit.eras === eras && hit.now === now) return hit.perBand
+  const perBand = eras.map((era, i) => {
+    const end = era.end ?? now
+    // The newest era includes events up to and including now.
+    return Float64Array.from(eventYears.filter((t) => t >= era.start && (i === 0 ? t <= end : t < end))).sort()
+  })
+  yearsCache.set(eventYears, { eras, now, perBand })
+  return perBand
+}
+
+/** Index of the first value at or above `x` in an ascending array. */
+function lowerBound(sorted: Float64Array, x: number): number {
+  let lo = 0
+  let hi = sorted.length
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1
+    if (sorted[mid] < x) lo = mid + 1
+    else hi = mid
+  }
+  return lo
+}
+
+/** The segment holding `year`; segments run newest first. */
+function segmentForYear(segments: Segment[], year: number): Segment {
+  let lo = 0
+  let hi = segments.length - 1
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1
+    if (year > segments[mid].to) hi = mid
+    else lo = mid + 1
+  }
+  return segments[lo]
+}
+
+/** The segment holding pixel offset `px`; the last one if `px` is past the end. */
+function segmentForPx(segments: Segment[], px: number): Segment {
+  let lo = 0
+  let hi = segments.length - 1
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1
+    if (px < segments[mid].top + segments[mid].height) hi = mid
+    else lo = mid + 1
+  }
+  return segments[lo]
+}
+
+/** How many events' worth of height an era with `count` events gets. */
+export function effectiveCount(count: number, linearUpTo = Infinity, exponent = 1): number {
+  if (count <= linearUpTo) return count
+  return linearUpTo * Math.pow(count / linearUpTo, exponent)
+}
+
 export function buildScale(
   eras: Era[],
   eventYears: number[],
@@ -97,9 +165,9 @@ export function buildScale(
     const end = era.end ?? now
     const start = era.start
     // The newest era includes events up to and including now.
-    const inBand = (t: number) => t >= start && (i === 0 ? t <= end : t < end)
-    const years = eventYears.filter(inBand)
-    const timePx = (opts.basePx + opts.perEventPx * years.length) * zoom
+    const years = bandYears(eventYears, eras, now)[i]
+    const weight = effectiveCount(years.length, opts.linearUpTo, opts.densityExponent)
+    const timePx = (opts.basePx + opts.perEventPx * weight) * zoom
     const pxPerYear = timePx / (end - start)
     const step = STEPS.find((s) => s * pxPerYear >= unitPx) ?? 100
 
@@ -109,7 +177,8 @@ export function buildScale(
       const to = Math.max(start, k * step)
       const from = Math.min(end, (k + 1) * step)
       if (from <= to) continue
-      const empty = !years.some((t) => t >= to && (t < from || (t === from && from === end && i === 0)))
+      const first = lowerBound(years, to)
+      const empty = !(first < years.length && (years[first] < from || (years[first] === from && from === end && i === 0)))
       units.push({ from, to, empty })
     }
 
@@ -151,7 +220,7 @@ export function buildScale(
     if (year >= first.end) return first.top + header
     if (year <= last.start) return last.top + last.height
     const band = bands.find((b) => year >= b.start && year < b.end) ?? last
-    const seg = band.segments.find((s) => year > s.to || s === band.segments.at(-1))!
+    const seg = segmentForYear(band.segments, year)
     return seg.top + ((seg.from - year) / (seg.from - seg.to)) * seg.height
   }
 
@@ -159,7 +228,7 @@ export function buildScale(
     if (px <= first.top + header) return first.end
     const band = bands.find((b) => px < b.top + b.height) ?? last
     if (px <= band.top + header) return band.end
-    const seg = band.segments.find((s) => px < s.top + s.height) ?? band.segments.at(-1)!
+    const seg = segmentForPx(band.segments, px)
     const frac = Math.min(1, Math.max(0, (px - seg.top) / seg.height))
     return seg.from - frac * (seg.from - seg.to)
   }

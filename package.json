@@ -10,7 +10,10 @@
     "build": "npm run data && vite build",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
-    "test": "vitest run"
+    "test": "vitest run",
+    "bench": "vitest bench --run",
+    "bench:browser": "node bench/browser.mjs",
+    "bench:profile": "node bench/profile.mjs"
   },
   "devDependencies": {
     "@fontsource-variable/fraunces": "^5.3.0",
@@ -19,6 +22,7 @@
     "@tsconfig/svelte": "^5.0.4",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
+    "playwright": "^1.63.0",
     "svelte": "^5.28.1",
     "svelte-check": "^4.1.6",
     "typescript": "~5.8.3",

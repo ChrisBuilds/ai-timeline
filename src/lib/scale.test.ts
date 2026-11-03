@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Era } from './eras'
-import { buildScale, type ScaleOptions } from './scale'
+import { buildScale, effectiveCount, type ScaleOptions } from './scale'
 
 const eras: Era[] = [
   { id: 'new', name: 'New', start: 2020 },
@@ -105,5 +105,15 @@ describe('buildScale', () => {
       const s = buildScale(eras, [2021, 1990], 2026, 1, { ...gapOpts, gapPx: undefined })
       expect(s.gaps).toEqual([])
     })
+  })
+})
+
+describe('effectiveCount', () => {
+  it('is linear up to the threshold, then grows more slowly', () => {
+    expect(effectiveCount(5, 12, 0.4)).toBe(5)
+    expect(effectiveCount(12, 12, 0.4)).toBe(12)
+    expect(effectiveCount(1200, 12, 0.4)).toBeCloseTo(12 * Math.pow(100, 0.4))
+    expect(effectiveCount(1200, 12, 0.4)).toBeLessThan(80)
+    expect(effectiveCount(1200)).toBe(1200)
   })
 })

@@ -4,7 +4,6 @@
   import type { Cluster, PlacedCard } from './layout'
   import { formatRange } from './dates'
   import { categoryColor } from './categories'
-  import { fade } from 'svelte/transition'
 
   interface Props {
     scale: TimeScale
@@ -17,7 +16,7 @@
     selectedId: string | null
     highlightIds: Set<string>
     /** Events that don't match the active filters. */
-    dimIds: Set<string>
+    dimIds: { has(id: string): boolean }
     /** Events that match the active filters; empty when no filter is on. */
     matchIds: Set<string>
     onselect: (id: string) => void
@@ -26,7 +25,9 @@
     labelHeights?: number[]
     /** Distance from the top of a band to its era name. */
     labelTop: number
-    reducedMotion?: boolean
+    /** The on-screen part of the timeline, in timeline pixels. */
+    viewTop?: number
+    viewHeight?: number
   }
 
   let {
@@ -45,8 +46,39 @@
     onexpand,
     labelHeights = $bindable([]),
     labelTop,
-    reducedMotion = false,
+    viewTop = 0,
+    viewHeight = 100_000,
   }: Props = $props()
+
+  // Only what is within half a screen of the view is rendered, so the page stays
+  // light with thousands of events. The window snaps to whole chunks, so it
+  // only changes every few hundred pixels of scrolling.
+  const CHUNK = 256
+  const winTop = $derived(Math.floor((viewTop - viewHeight / 2) / CHUNK) * CHUNK)
+  const winBottom = $derived(Math.ceil((viewTop + 1.5 * viewHeight) / CHUNK) * CHUNK)
+
+  /** Items whose `y` lies in [from, to); `list` is sorted by y. */
+  function within<T extends { y: number }>(list: T[], from: number, to: number): T[] {
+    const start = lowerBound(list, from)
+    let end = start
+    while (end < list.length && list[end].y < to) end++
+    return list.slice(start, end)
+  }
+  function lowerBound(list: { y: number }[], y: number): number {
+    let lo = 0
+    let hi = list.length
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1
+      if (list[mid].y < y) lo = mid + 1
+      else hi = mid
+    }
+    return lo
+  }
+
+  // Cards reach up `anchorOffset` and down the rest of their height from their date.
+  const shownCards = $derived(within(placed, winTop - cardHeight, winBottom + cardHeight))
+  const shownClusters = $derived(within(clusters, winTop, winBottom))
+  const shownGaps = $derived(scale.gaps.filter((g) => g.top + g.height > winTop && g.top < winBottom))
 
   // Year labels sit on the spine, so skip any that would land on an event dot,
   // the Now marker, or another label just across an era boundary.
@@ -54,13 +86,21 @@
   let openCluster = $state<string | null>(null)
 
   const ticks = $derived.by(() => {
-    const dots = [...placed.map((c) => c.y), ...clusters.map((c) => c.y)]
+    // Dots near the window, sorted by y, so each tick checks its neighbours with a binary search.
+    const dots = [...shownCards, ...shownClusters].map((c) => ({ y: c.y })).sort((a, b) => a.y - b.y)
+    const nearDot = (y: number) => {
+      const i = lowerBound(dots, y - 18)
+      return i < dots.length && dots[i].y < y + 18
+    }
     const nowY = scale.y(scale.bands[0].end)
     const out: { year: number; y: number }[] = []
-    for (const t of scale.ticks()) {
+    // Within an era, ticks come oldest year first, so sort by position to check spacing.
+    const near = scale.ticks().filter((t) => t.y >= winTop && t.y < winBottom)
+    near.sort((a, b) => a.y - b.y)
+    for (const t of near) {
       if (Math.abs(t.y - nowY) < 20) continue
-      if (dots.some((y) => Math.abs(t.y - y) < 18)) continue
-      if (out.some((o) => Math.abs(o.y - t.y) < 24)) continue
+      if (nearDot(t.y)) continue
+      if (out.length && t.y - out[out.length - 1].y < 24) continue
       out.push(t)
     }
     return out
@@ -70,10 +110,20 @@
   // both sides taken it is left out, and the dotted break still shows the gap.
   function gapSide(gap: { top: number; height: number }): 'right' | 'left' | null {
     const mid = gap.top + gap.height / 2
-    const free = (lane: number) => !placed.some((c) => c.lane === lane && c.top - 4 < mid + 10 && c.top + cardHeight + 4 > mid - 10)
+    const free = (lane: number) => !shownCards.some((c) => c.lane === lane && c.top - 4 < mid + 10 && c.top + cardHeight + 4 > mid - 10)
     if (free(0)) return 'right'
     if (spineX >= 100 && free(1)) return 'left'
     return null
+  }
+
+  // A cluster can hold thousands of events when zoomed out; its key and menu stay small.
+  const MENU_MAX = 12
+  function clusterKey(c: Cluster<TimelineEvent>): string {
+    return `${c.items[0].id}|${c.items.length}`
+  }
+  function menuItems(c: Cluster<TimelineEvent>): TimelineEvent[] {
+    if (c.items.length <= MENU_MAX) return c.items
+    return [...c.items].sort((a, b) => b.score - a.score).slice(0, MENU_MAX)
   }
 
   function cardLeft(lane: number): number {
@@ -104,7 +154,7 @@
     <span class="now-dot"><span class="pulse"></span></span><span class="now-label">Now</span>
   </div>
 
-  {#each scale.gaps as gap (gap.from)}
+  {#each shownGaps as gap (gap.from)}
     {@const years = Math.round(gap.from - gap.to)}
     {@const side = gapSide(gap)}
     <div
@@ -125,9 +175,9 @@
     <span class="tick" style:top="{tick.y}px" aria-hidden="true">{tick.year}</span>
   {/each}
 
-  {#each clusters as cluster (cluster.items.map((e) => e.id).join('|'))}
-    {@const key = cluster.items.map((e) => e.id).join('|')}
-    <div class="cluster-wrap" style:top="{cluster.y}px" transition:fade={{ duration: reducedMotion ? 0 : 160 }}>
+  {#each shownClusters as cluster (clusterKey(cluster))}
+    {@const key = clusterKey(cluster)}
+    <div class="cluster-wrap appear" style:top="{cluster.y}px">
       <button
         class="cluster"
         class:dimmed={cluster.items.every((e) => dimIds.has(e.id))}
@@ -140,7 +190,7 @@
       </button>
       {#if openCluster === key}
         <div class="cluster-menu" role="menu">
-          {#each cluster.items as ev (ev.id)}
+          {#each menuItems(cluster) as ev (ev.id)}
             <button
               role="menuitem"
               class:dimmed={dimIds.has(ev.id)}
@@ -160,7 +210,8 @@
             onclick={() => {
               openCluster = null
               onexpand(cluster)
-            }}>Zoom in here</button
+            }}
+            >{cluster.items.length > MENU_MAX ? `Zoom in to see all ${cluster.items.length}` : 'Zoom in here'}</button
           >
         </div>
       {/if}
@@ -168,10 +219,10 @@
   {/each}
 
   <ol class="cards" aria-label="Events">
-    {#each placed as card (card.item.id)}
+    {#each shownCards as card (card.item.id)}
       {@const ev = card.item}
       {@const left = cardLeft(card.lane)}
-      <li transition:fade={{ duration: reducedMotion ? 0 : 180 }}>
+      <li class="appear">
         <!-- The dot and connector are extra click targets for the card; its button is the keyboard route. -->
         <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
         <span
@@ -369,9 +420,26 @@
     pointer-events: none;
   }
 
+  /* Cards and markers fade in as they appear. A CSS animation costs no script
+     time, unlike a JS transition, which matters when many appear in one zoom frame. */
+  .appear {
+    animation: appear 0.18s ease-out;
+  }
+  @keyframes appear {
+    from {
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(:root:not([data-motion='full'])) .appear {
+      animation: none;
+    }
+  }
+
   /* ----- Compressed stretches ----- */
   .gap {
     position: absolute;
+    contain: layout style;
     left: 0;
     right: 0;
     pointer-events: none;
@@ -546,6 +614,9 @@
 
   .card {
     position: absolute;
+    /* Its size is set inline, so the browser can lay it out and paint it on its own
+       when it moves during a zoom. */
+    contain: strict;
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: 12px;

@@ -1,0 +1,72 @@
+name: Performance
+
+# Benchmarks the timeline with 5,000 synthetic events on a CPU slowed 4x, and
+# fails when a metric goes over its budget in bench/budgets.json. This is a short
+# sample to keep PRs quick; run `npm run bench` and `npm run bench:browser`
+# locally for the full 1,000 to 20,000 event sweep.
+# Results are in the run summary and in the bench-results artifact.
+on:
+  pull_request:
+    paths: ['src/**', 'bench/**', 'index.html', 'vite.config.ts', 'package.json', 'package-lock.json', '.github/workflows/performance.yml']
+  push:
+    branches: [main]
+    paths: ['src/**', 'bench/**', 'index.html', 'vite.config.ts', 'package.json', 'package-lock.json']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: performance-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Cache Playwright browsers
+        id: pw-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+      - if: steps.pw-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+      - run: npm run build
+      - name: Micro-benchmarks
+        env:
+          BENCH_SIZES: '5000'
+          BENCH_TIME: '100'
+        run: |
+          npx vitest bench --run --outputJson bench-core.json | tee bench-core.txt
+      - name: Browser benchmark
+        run: |
+          set -o pipefail
+          node bench/browser.mjs --sizes 5000 --budgets --json bench-browser.json | tee bench-browser.md
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo '## Browser benchmark'
+            cat bench-browser.md 2>/dev/null || echo 'No results.'
+            echo
+            echo '## Micro-benchmarks (mean ms per run)'
+            node bench/summarize-core.mjs bench-core.json 2>/dev/null || echo 'No results.'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bench-results
+          path: |
+            bench-core.json
+            bench-browser.json
+            bench-browser.md

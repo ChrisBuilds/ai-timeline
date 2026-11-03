@@ -3,7 +3,7 @@
   import type { TimelineData, TimelineEvent, RemovedEvent } from './lib/types'
   import { ERAS } from './lib/eras'
   import { buildScale } from './lib/scale'
-  import { layout, type Cluster } from './lib/layout'
+  import { layout, priorityOrder, type Cluster } from './lib/layout'
   import { nowYear, toYear } from './lib/time'
   import { MAX_ZOOM, MIN_ZOOM, clampZoom, formatHash, parseHash } from './lib/url'
   import Timeline from './lib/Timeline.svelte'
@@ -18,7 +18,8 @@
   const LABEL_TOP = 14
   const ZOOM_STEP = 1.5
 
-  let data = $state<TimelineData | null>(null)
+  // Raw: the data is never mutated, and a deep reactive proxy would tax every read of thousands of events.
+  let data = $state.raw<TimelineData | null>(null)
   let error = $state<string | null>(null)
   let zoom = $state(1)
   let selectedId = $state<string | null>(null)
@@ -28,6 +29,15 @@
   let toolbar: ReturnType<typeof Toolbar> | undefined = $state()
   let toolbarHeight = $state(0)
   let labelHeights = $state<number[]>([])
+  // The part of the timeline on screen, in timeline pixels; the timeline only
+  // renders what is near it.
+  let viewTop = $state(0)
+  let viewHeight = $state(800)
+
+  function syncView() {
+    viewTop = scrollY - timelineTop()
+    viewHeight = innerHeight
+  }
   let filters = $state<Filters>({ ...NO_FILTERS })
   let prefs = $state<Prefs>(loadPrefs())
   // The URL is only written once the link we were opened with has been applied.
@@ -42,7 +52,13 @@
     savePrefs(p)
   }
 
-  const events = $derived(data?.events ?? [])
+  // Newest first by exact time, so events are in timeline order (top to bottom).
+  // events.json is sorted by date string, which puts "2024" after "2024-03-01".
+  const events = $derived.by(() => {
+    if (!data) return []
+    const year = new Map(data.events.map((e) => [e, toYear(e.date)]))
+    return [...data.events].sort((a, b) => year.get(b)! - year.get(a)!)
+  })
   const byId = $derived(new Map(events.map((e) => [e.id, e])))
   const aliasTo = $derived(new Map(events.flatMap((e) => (e.aliases ?? []).map((a) => [a, e.id] as const))))
   const years = $derived(new Map(events.map((e) => [e.id, toYear(e.date)])))
@@ -51,24 +67,37 @@
   const spineX = $derived(wide ? Math.round(width / 2) : 20)
   const cardWidth = $derived(wide ? Math.min(340, spineX - 48) : Math.max(160, width - 56))
 
+  const NONE = new Set<string>()
   const filtering = $derived(isActive(filters))
   const matchIds = $derived(new Set(events.filter((e) => matches(e, filters)).map((e) => e.id)))
   // Non-matching events fade; with no filters nothing is dimmed.
-  const dimIds = $derived(filtering ? new Set(events.filter((e) => !matchIds.has(e.id)).map((e) => e.id)) : new Set<string>())
+  // A lookup rather than a second set of thousands of ids.
+  const dimIds = $derived(filtering ? { has: (id: string) => !matchIds.has(id) } : NONE)
 
-  const NONE = new Set<string>()
 
-  const scale = $derived(buildScale(ERAS, [...years.values()], now, zoom))
+  // Per-event arrays in the same order as `events`, so a zoom frame only does
+  // array lookups. Everything here changes with the data or filters, not zoom.
+  const yearList = $derived(events.map((e) => years.get(e.id)!))
+  // Matching events win cards over faded ones.
+  const scoreList = $derived(events.map((e) => e.score + (filtering && matchIds.has(e.id) ? 1000 : 0)))
+  // Placement order depends on scores and date order only, so it is sorted once, not every frame.
+  const priority = $derived(priorityOrder(events.map((e, i) => ({ item: e, y: -yearList[i], score: scoreList[i] }))))
 
-  const arranged = $derived(
-    layout(
-      events.map((e) => ({
-        item: e,
-        y: scale.y(years.get(e.id)!),
-        // Matching events win cards over faded ones.
-        score: e.score + (filtering && matchIds.has(e.id) ? 1000 : 0),
-      })),
+  const scale = $derived(buildScale(ERAS, yearList, now, zoom))
+
+  // Reused across zoom frames: each frame only rewrites `y`, instead of allocating
+  // an object per event.
+  const layoutItems = $derived(events.map((e, i) => ({ item: e, y: 0, score: scoreList[i] })))
+
+  const arranged = $derived.by(() => {
+    const s = scale
+    const items = layoutItems
+    const ys = yearList
+    for (let i = 0; i < items.length; i++) items[i].y = s.y(ys[i])
+    return layout(
+      items,
       {
+        order: priority,
         lanes: wide ? 2 : 1,
         cardHeight: CARD_HEIGHT,
         gap: 10,
@@ -83,8 +112,8 @@
           bottom: b.top + LABEL_TOP + (labelHeights[i] || 36) + 4,
         })),
       },
-    ),
-  )
+    )
+  })
 
   const selected = $derived(selectedId ? byId.get(selectedId) ?? null : null)
   const backlinks = $derived(
@@ -123,6 +152,8 @@
     zoom = next
     await tick()
     scrollTo({ top: scale.y(year) + top - anchorClientY, behavior: 'instant' })
+    // Update the rendered window now rather than on the scroll event, so the new view never paints empty.
+    syncView()
   }
 
   // Zoom glides toward its target a little each frame, so events slide into
@@ -276,6 +307,7 @@
         data = d
         await tick()
         applyHash(initialHash)
+        syncView()
         ready = true
       })
       .catch((e) => (error = `Could not load events: ${e.message}`))
@@ -283,9 +315,13 @@
     const onhashchange = () => applyHash()
     addEventListener('hashchange', onhashchange)
     addEventListener('wheel', onwheel, { passive: false })
+    addEventListener('scroll', syncView, { passive: true })
+    addEventListener('resize', syncView, { passive: true })
     return () => {
       removeEventListener('hashchange', onhashchange)
       removeEventListener('wheel', onwheel)
+      removeEventListener('scroll', syncView)
+      removeEventListener('resize', syncView)
     }
   })
 
@@ -368,7 +404,8 @@
         onselect={(id) => select(id === selectedId ? null : id, false)}
         onexpand={expand}
         labelTop={LABEL_TOP}
-        {reducedMotion}
+        {viewTop}
+        {viewHeight}
         bind:labelHeights
       />
     </div>

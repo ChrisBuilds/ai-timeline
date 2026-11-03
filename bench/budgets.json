@@ -1,0 +1,10 @@
+{
+  "browser": {
+    "1000/desktop": { "firstCard": 1500, "domNodes": 600, "zoomP95": 150, "scrollP95": 75, "filterMs": 250, "selectMs": 200 },
+    "1000/phone": { "firstCard": 1500, "domNodes": 500, "zoomP95": 120, "scrollP95": 60, "filterMs": 250, "selectMs": 200 },
+    "5000/desktop": { "firstCard": 2500, "domNodes": 600, "zoomP95": 200, "scrollP95": 120, "filterMs": 350, "selectMs": 250 },
+    "5000/phone": { "firstCard": 2000, "domNodes": 500, "zoomP95": 150, "scrollP95": 75, "filterMs": 350, "selectMs": 250 },
+    "20000/desktop": { "firstCard": 4500, "domNodes": 700, "zoomP95": 300, "scrollP95": 200, "filterMs": 1000, "selectMs": 350 },
+    "20000/phone": { "firstCard": 4000, "domNodes": 500, "zoomP95": 200, "scrollP95": 120, "filterMs": 800, "selectMs": 350 }
+  }
+}
