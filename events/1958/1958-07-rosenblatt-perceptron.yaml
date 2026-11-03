@@ -15,8 +15,7 @@ description: |
   Rosenblatt described the model in "The Perceptron: A Probabilistic Model for
   Information Storage and Organization in the Brain", received by *Psychological
   Review* on April 23, 1958 and published in volume 65, issue 6 of that year. It
-  reports experiments simulating the perceptron on the IBM 704. A hardware version,
-  the Mark I Perceptron, was built later, in 1959.
+  reports experiments simulating the perceptron on the IBM 704.
 category: research
 organizations: [Office of Naval Research, Cornell Aeronautical Laboratory]
 people: [Frank Rosenblatt]
