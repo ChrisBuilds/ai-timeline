@@ -1,7 +1,9 @@
 name: Performance
 
-# Benchmarks the timeline with synthetic data (1,000 to 20,000 events) on a CPU
-# slowed 4x, and fails when a metric goes over its budget in bench/budgets.json.
+# Benchmarks the timeline with 5,000 synthetic events on a CPU slowed 4x, and
+# fails when a metric goes over its budget in bench/budgets.json. This is a short
+# sample to keep PRs quick; run `npm run bench` and `npm run bench:browser`
+# locally for the full 1,000 to 20,000 event sweep.
 # Results are in the run summary and in the bench-results artifact.
 on:
   pull_request:
@@ -21,7 +23,7 @@ concurrency:
 jobs:
   bench:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -29,15 +31,27 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      - name: Cache Playwright browsers
+        id: pw-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+      - if: steps.pw-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
       - run: npm run build
       - name: Micro-benchmarks
+        env:
+          BENCH_SIZES: '5000'
+          BENCH_TIME: '100'
         run: |
           npx vitest bench --run --outputJson bench-core.json | tee bench-core.txt
       - name: Browser benchmark
         run: |
           set -o pipefail
-          node bench/browser.mjs --budgets --json bench-browser.json | tee bench-browser.md
+          node bench/browser.mjs --sizes 5000 --budgets --json bench-browser.json | tee bench-browser.md
       - name: Summary
         if: always()
         run: |

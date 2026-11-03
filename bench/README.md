@@ -18,8 +18,11 @@ organizations, people and tags repeat with a long tail, like the real data.
 
 ## CI
 
-The `Performance` workflow runs both benchmarks on pull requests that touch the
-site and on pushes to `main`. Results go in the run summary and the
+The `Performance` workflow runs a short sample of both benchmarks on pull
+requests that touch the site and on pushes to `main`: 5,000 events only, with
+micro-benchmarks sampled for 100ms each (`BENCH_SIZES=5000 BENCH_TIME=100`).
+The benchmarks themselves take under 20 seconds. Run the full sweep locally
+before changing anything performance-sensitive. Results go in the run summary and the
 `bench-results` artifact. The browser benchmark fails the run when a metric is
 over its budget in `bench/budgets.json`.
 

@@ -12,8 +12,11 @@ import type { TimelineEvent } from '../src/lib/types'
 
 const NOW = 2026.84
 const OPTS = { lanes: 2, cardHeight: 84, gap: 10, anchorOffset: 18, clusterPx: 28 }
+// CI runs a short sample: BENCH_SIZES=5000 BENCH_TIME=100.
+const SIZES = (process.env.BENCH_SIZES ?? '1000,5000,20000').split(',').map(Number)
+const TIME = Number(process.env.BENCH_TIME ?? 500)
 
-for (const size of [1000, 5000, 20000]) {
+for (const size of SIZES) {
   const events = generate(size, 7).events as TimelineEvent[]
   const years = events.map((e) => toYear(e.date))
   const index = buildIndex(events)
@@ -22,12 +25,12 @@ for (const size of [1000, 5000, 20000]) {
     for (const zoom of [1, 10]) {
       bench(`buildScale, zoom ${zoom}`, () => {
         buildScale(ERAS, years, NOW, zoom)
-      })
+      }, { time: TIME })
       const scale = buildScale(ERAS, years, NOW, zoom)
       const items = events.map((e, i) => ({ item: e, y: scale.y(years[i]), score: e.score }))
       bench(`layout, zoom ${zoom}`, () => {
         layout(items, OPTS)
-      })
+      }, { time: TIME })
       const order = priorityOrder(events.map((e, i) => ({ item: e, y: -years[i], score: e.score })))
       bench(`one zoom frame (scale, y(), layout with cached order), zoom ${zoom}`, () => {
         const s = buildScale(ERAS, years, NOW, zoom)
@@ -35,20 +38,20 @@ for (const size of [1000, 5000, 20000]) {
           events.map((e, i) => ({ item: e, y: s.y(years[i]), score: e.score })),
           { ...OPTS, order },
         )
-      })
+      }, { time: TIME })
     }
     bench('buildIndex', () => {
       buildIndex(events)
-    })
+    }, { time: TIME })
     bench('search "model reasoning"', () => {
       search(index, 'model reasoning')
-    })
+    }, { time: TIME })
     bench('facets', () => {
       facets(events)
-    })
+    }, { time: TIME })
     bench('matches (one organization)', () => {
       const f = { ...NO_FILTERS, organizations: ['Org 3'] }
       events.filter((e) => matches(e, f))
-    })
+    }, { time: TIME })
   })
 }

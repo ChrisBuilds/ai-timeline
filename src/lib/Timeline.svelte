@@ -94,8 +94,10 @@
     }
     const nowY = scale.y(scale.bands[0].end)
     const out: { year: number; y: number }[] = []
-    for (const t of scale.ticks()) {
-      if (t.y < winTop || t.y >= winBottom) continue
+    // Within an era, ticks come oldest year first, so sort by position to check spacing.
+    const near = scale.ticks().filter((t) => t.y >= winTop && t.y < winBottom)
+    near.sort((a, b) => a.y - b.y)
+    for (const t of near) {
       if (Math.abs(t.y - nowY) < 20) continue
       if (nearDot(t.y)) continue
       if (out.length && t.y - out[out.length - 1].y < 24) continue
