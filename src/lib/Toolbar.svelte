@@ -224,11 +224,21 @@
     width: 100%;
     font: inherit;
     font-size: 0.95rem;
-    padding: 7px 12px;
+    padding: 8px 12px 8px 36px;
     border: 1px solid var(--line-strong);
-    border-radius: 8px;
-    background: var(--surface);
+    border-radius: 10px;
+    background: var(--surface)
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3Cpath d='m11 11 3.5 3.5'/%3E%3C/svg%3E")
+      12px 50% no-repeat;
     color: var(--text);
+    box-shadow: var(--shadow-sm);
+    transition:
+      border-color 0.15s,
+      box-shadow 0.15s;
+  }
+  input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft);
   }
   input:focus-visible {
     outline: 2px solid var(--accent);
@@ -276,9 +286,11 @@
   .tool {
     font: inherit;
     font-size: 0.9rem;
-    padding: 7px 12px;
+    font-weight: 500;
+    padding: 8px 14px;
     border: 1px solid var(--line-strong);
-    border-radius: 8px;
+    border-radius: 10px;
+    box-shadow: var(--shadow-sm);
     background: var(--surface);
     color: var(--text);
     cursor: pointer;
@@ -320,8 +332,8 @@
     padding: 12px 14px;
     background: var(--surface);
     border: 1px solid var(--line-strong);
-    border-radius: 10px;
-    box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+    border-radius: 14px;
+    box-shadow: var(--shadow-lg);
   }
   .panel.narrow {
     width: min(320px, 100%);

@@ -2,6 +2,7 @@
   import type { TimelineEvent } from './types'
   import { formatRange } from './dates'
   import { TIER_NAMES } from './tiers'
+  import { categoryColor } from './categories'
 
   interface Props {
     event: TimelineEvent
@@ -37,11 +38,12 @@
   })
 </script>
 
-<aside class="panel" aria-labelledby="panel-title">
+<aside class="panel" aria-labelledby="panel-title" style:--c={categoryColor(event.category)}>
+  <span class="grabber" aria-hidden="true"></span>
   <header>
     <p class="meta">
       <time datetime={event.date}>{formatRange(event.date, event.end_date)}</time>
-      <span class="category">{event.category}</span>
+      <span class="category"><span class="swatch" aria-hidden="true"></span>{event.category}</span>
       <span class="tier">{TIER_NAMES[event.tier]}</span>
     </p>
     <button class="close" onclick={onclose} aria-label="Close details">×</button>
@@ -99,11 +101,11 @@
   {/if}
 
   <h3>Sources</h3>
-  <ul class="links">
+  <ul class="links sources">
     {#each event.sources as s (s.url)}
-      <li>
+      <li class="source">
         <a href={s.url} rel="noopener noreferrer" target="_blank">{s.title}</a>
-        <span class="muted">· {s.publisher}</span>
+        <span class="muted">{s.publisher}</span>
         {#if s.archived_url}<a class="muted" href={s.archived_url} rel="noopener noreferrer" target="_blank">(archived)</a>{/if}
       </li>
     {/each}
@@ -122,9 +124,9 @@
   {/if}
 
   <p class="footer">
-    <a href={editUrl} target="_blank" rel="noopener noreferrer">Suggest a correction</a>
+    <a class="pill" href={editUrl} target="_blank" rel="noopener noreferrer">Suggest a correction</a>
     {#if event.issue}
-      · <a href="https://github.com/ChrisBuilds/ai-timeline/issues/{event.issue}" target="_blank" rel="noopener noreferrer">Discussion</a>
+      <a class="pill" href="https://github.com/ChrisBuilds/ai-timeline/issues/{event.issue}" target="_blank" rel="noopener noreferrer">Discussion</a>
     {/if}
   </p>
 </aside>
@@ -136,12 +138,35 @@
     top: 0;
     right: 0;
     bottom: 0;
-    width: min(400px, 100vw);
+    width: min(420px, 100vw);
     overflow-y: auto;
-    padding: 16px 20px 32px;
+    padding: 22px 24px 40px;
     background: var(--surface);
     border-left: 1px solid var(--line);
-    box-shadow: -8px 0 24px rgb(0 0 0 / 0.08);
+    box-shadow: var(--shadow-lg);
+    animation: slide-in 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--c) 16%, transparent), transparent);
+    pointer-events: none;
+  }
+  .panel > :global(*) {
+    position: relative;
+  }
+  .grabber {
+    display: none;
+  }
+  @keyframes slide-in {
+    from {
+      transform: translateX(24px);
+      opacity: 0;
+    }
   }
 
   @media (max-width: 719px) {
@@ -149,11 +174,31 @@
       top: auto;
       left: 0;
       width: 100%;
-      max-height: 70vh;
+      max-height: 72vh;
+      padding: 10px 20px calc(32px + env(safe-area-inset-bottom));
       border-left: none;
       border-top: 1px solid var(--line);
-      border-radius: 12px 12px 0 0;
-      box-shadow: 0 -8px 24px rgb(0 0 0 / 0.12);
+      border-radius: 20px 20px 0 0;
+      animation-name: slide-up;
+    }
+    .grabber {
+      display: block;
+      width: 40px;
+      height: 4px;
+      margin: 0 auto 12px;
+      border-radius: 999px;
+      background: var(--line-strong);
+    }
+    @keyframes slide-up {
+      from {
+        transform: translateY(32px);
+        opacity: 0;
+      }
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(:root:not([data-motion='full'])) .panel {
+      animation: none;
     }
   }
 
@@ -167,29 +212,46 @@
   .meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    align-items: center;
+    gap: 6px 12px;
     margin: 6px 0 0;
     font-size: 0.8rem;
     color: var(--muted);
   }
+  .meta time {
+    font-weight: 600;
+    color: var(--text);
+  }
   .category {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     text-transform: capitalize;
   }
+  .swatch {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    background: var(--c);
+  }
   .tier {
-    border: 1px solid currentColor;
+    border: 1px solid color-mix(in srgb, var(--c) 50%, var(--line));
+    color: var(--text);
     border-radius: 999px;
-    padding: 0 6px;
+    padding: 0 8px;
+    font-size: 0.72rem;
+    font-weight: 600;
   }
 
   .close {
     font: inherit;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     line-height: 1;
     width: 36px;
     height: 36px;
-    border: none;
-    border-radius: 8px;
-    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: var(--surface);
     color: var(--muted);
     cursor: pointer;
     flex: none;
@@ -201,27 +263,37 @@
   }
 
   h2 {
-    font-size: 1.25rem;
-    margin: 8px 0 12px;
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    margin: 14px 0 14px;
     outline: none;
   }
   h3 {
-    font-size: 0.8rem;
+    font-size: 0.72rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.08em;
     color: var(--muted);
-    margin: 20px 0 6px;
+    margin: 26px 0 8px;
   }
 
+  p {
+    line-height: 1.65;
+  }
   .summary {
+    font-size: 1.05rem;
     font-weight: 500;
+    line-height: 1.55;
   }
 
   .notice {
     font-size: 0.85rem;
     border: 1px solid var(--line-strong);
-    border-radius: 8px;
-    padding: 6px 10px;
+    border-radius: 10px;
+    padding: 8px 12px;
   }
   .notice.warn {
     border-color: var(--warn);
@@ -230,9 +302,13 @@
   .facts {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: 2px 12px;
-    font-size: 0.85rem;
-    margin: 12px 0 0;
+    gap: 6px 16px;
+    font-size: 0.88rem;
+    margin: 18px 0 0;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
   }
   .facts dt {
     color: var(--muted);
@@ -246,8 +322,23 @@
     padding: 0;
     margin: 0;
     display: grid;
-    gap: 6px;
+    gap: 8px;
     font-size: 0.9rem;
+  }
+  .sources .source {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    padding: 9px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface-2);
+  }
+  .sources .source a {
+    font-weight: 500;
+  }
+  .sources .muted {
+    font-size: 0.78rem;
   }
   .relation {
     display: inline-block;
@@ -260,6 +351,7 @@
     all: unset;
     color: var(--accent);
     text-decoration: underline;
+    text-underline-offset: 0.18em;
     cursor: pointer;
   }
   .link:focus-visible {
@@ -269,7 +361,21 @@
     color: var(--muted);
   }
   .footer {
-    margin-top: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 28px;
     font-size: 0.85rem;
+  }
+  .pill {
+    padding: 6px 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .pill:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
   }
 </style>
