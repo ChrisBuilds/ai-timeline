@@ -12,6 +12,7 @@ import { fileURLToPath } from 'node:url'
 import Ajv2020 from 'ajv/dist/2020.js'
 import addFormats from 'ajv-formats'
 import YAML from 'yaml'
+import { computeScore, tierOf } from './importance.mjs'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const checkOnly = process.argv.includes('--check')
@@ -154,7 +155,10 @@ if (!checkOnly) {
   const out = {
     generated: new Date().toISOString(),
     events: events
-      .map(({ _file, ...ev }) => ev)
+      .map(({ _file, ...ev }) => {
+        const score = computeScore(ev.importance)
+        return { ...ev, score, tier: tierOf(score) }
+      })
       .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0)),
     removed: Array.isArray(removed) ? removed : [],
   }

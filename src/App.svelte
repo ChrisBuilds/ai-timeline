@@ -1,107 +1,278 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
+  import { onMount, tick } from 'svelte'
   import type { TimelineData, TimelineEvent, RemovedEvent } from './lib/types'
-  import { formatRange } from './lib/dates'
+  import { ERAS } from './lib/eras'
+  import { buildScale } from './lib/scale'
+  import { layout, type Cluster } from './lib/layout'
+  import { nowYear, toYear } from './lib/time'
+  import { MAX_ZOOM, MIN_ZOOM, clampZoom, formatHash, parseHash } from './lib/url'
+  import Timeline from './lib/Timeline.svelte'
+  import DetailPanel from './lib/DetailPanel.svelte'
+
+  const CARD_HEIGHT = 72
+  const ANCHOR_OFFSET = 18
+  const ZOOM_STEP = 1.5
 
   let data = $state<TimelineData | null>(null)
   let error = $state<string | null>(null)
-  let hash = $state('')
+  let zoom = $state(1)
+  let selectedId = $state<string | null>(null)
+  let missingId = $state<string | null>(null)
+  let width = $state(0)
+  let timelineEl: HTMLDivElement | undefined = $state()
+  // The URL is only written once the link we were opened with has been applied.
+  let ready = $state(false)
 
-  const years = $derived.by(() => {
-    const groups: { year: string; events: TimelineEvent[] }[] = []
-    for (const ev of data?.events ?? []) {
-      const year = ev.date.slice(0, 4)
-      const last = groups.at(-1)
-      if (last?.year === year) last.events.push(ev)
-      else groups.push({ year, events: [ev] })
-    }
-    return groups
-  })
+  const now = nowYear()
+  const reducedMotion =
+    typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
 
-  // A link to a removed or merged event shows a note instead of nothing.
+  const events = $derived(data?.events ?? [])
+  const byId = $derived(new Map(events.map((e) => [e.id, e])))
+  const aliasTo = $derived(new Map(events.flatMap((e) => (e.aliases ?? []).map((a) => [a, e.id] as const))))
+  const years = $derived(new Map(events.map((e) => [e.id, toYear(e.date)])))
+
+  const wide = $derived(width >= 720)
+  const spineX = $derived(wide ? Math.round(width / 2) : 20)
+  const cardWidth = $derived(wide ? Math.min(340, spineX - 48) : Math.max(160, width - 56))
+
+  const scale = $derived(buildScale(ERAS, [...years.values()], now, zoom))
+
+  const arranged = $derived(
+    layout(
+      events.map((e) => ({
+        item: e,
+        y: scale.y(years.get(e.id)!),
+        // The selected event always gets a card.
+        score: e.id === selectedId ? Infinity : e.score,
+      })),
+      {
+        lanes: wide ? 2 : 1,
+        cardHeight: CARD_HEIGHT,
+        gap: 10,
+        anchorOffset: ANCHOR_OFFSET,
+        clusterPx: 28,
+      },
+    ),
+  )
+
+  const selected = $derived(selectedId ? byId.get(selectedId) ?? null : null)
+  const backlinks = $derived(
+    selectedId ? events.filter((e) => e.related?.some((r) => r.id === selectedId)) : [],
+  )
+  const highlightIds = $derived(
+    new Set<string>([...(selected?.related ?? []).map((r) => r.id), ...backlinks.map((e) => e.id)]),
+  )
+
   const removedNote = $derived.by((): RemovedEvent | null => {
-    if (!hash || !data) return null
-    if (data.events.some((e) => e.id === hash || e.aliases?.includes(hash))) return null
-    return data.removed.find((r) => r.id === hash) ?? null
+    if (!missingId || !data) return null
+    return data.removed.find((r) => r.id === missingId) ?? null
   })
 
-  function syncHash() {
-    hash = decodeURIComponent(location.hash.slice(1))
-    if (!data || !hash) return
-    const target = data.events.find((e) => e.id === hash || e.aliases?.includes(hash))
-    if (target) requestAnimationFrame(() => document.getElementById(target.id)?.scrollIntoView({ block: 'center' }))
+  // Keep the URL in step with the view, without adding history entries.
+  $effect(() => {
+    if (!ready) return
+    const hash = formatHash({ event: selectedId, zoom })
+    if (location.hash !== hash) history.replaceState(null, '', hash || location.pathname + location.search)
+  })
+
+  function timelineTop(): number {
+    return (timelineEl?.getBoundingClientRect().top ?? 0) + scrollY
+  }
+
+  /** Changes zoom while keeping the moment under `anchorClientY` in place on screen. */
+  async function setZoom(next: number, anchorClientY = innerHeight / 2) {
+    next = clampZoom(next)
+    if (next === zoom) return
+    const top = timelineTop()
+    const year = scale.year(scrollY + anchorClientY - top)
+    zoom = next
+    await tick()
+    scrollTo({ top: scale.y(year) + top - anchorClientY, behavior: 'instant' })
+  }
+
+  function scrollToEvent(id: string, behavior: ScrollBehavior = reducedMotion ? 'instant' : 'smooth') {
+    const year = years.get(id)
+    if (year === undefined) return
+    scrollTo({ top: timelineTop() + scale.y(year) - innerHeight / 3, behavior })
+  }
+
+  function select(id: string | null, scroll = true) {
+    selectedId = id
+    missingId = null
+    if (id && scroll) tick().then(() => scrollToEvent(id))
+  }
+
+  function expand(cluster: Cluster<TimelineEvent>) {
+    const top = timelineTop()
+    const anchor = Math.min(Math.max(top + cluster.y - scrollY, 80), innerHeight - 80)
+    setZoom(zoom * (cluster.items.length > 3 ? ZOOM_STEP * ZOOM_STEP : ZOOM_STEP * 1.4), anchor)
+  }
+
+  function applyHash(hash = location.hash) {
+    const state = parseHash(hash)
+    zoom = state.zoom
+    if (!state.event) {
+      selectedId = null
+      return
+    }
+    const id = aliasTo.get(state.event) ?? state.event
+    if (byId.has(id)) {
+      select(id, false)
+      tick().then(() => scrollToEvent(id, 'instant'))
+    } else {
+      selectedId = null
+      missingId = state.event
+    }
+  }
+
+  function step(dir: 1 | -1) {
+    const cards = arranged.placed
+    if (!cards.length) return
+    const i = cards.findIndex((c) => c.item.id === selectedId)
+    const next = i === -1 ? (dir === 1 ? 0 : cards.length - 1) : Math.min(cards.length - 1, Math.max(0, i + dir))
+    select(cards[next].item.id)
+  }
+
+  function onkeydown(e: KeyboardEvent) {
+    const target = e.target as HTMLElement
+    if (e.metaKey || e.ctrlKey || e.altKey || target.closest('input, textarea, select')) return
+    if (e.key === '+' || e.key === '=') setZoom(zoom * ZOOM_STEP)
+    else if (e.key === '-' || e.key === '_') setZoom(zoom / ZOOM_STEP)
+    else if (e.key === '0') setZoom(1)
+    else if (e.key === 'j') step(1)
+    else if (e.key === 'k') step(-1)
+    else if (e.key === 'Escape') select(null)
+    else return
+    e.preventDefault()
+  }
+
+  // Ctrl or Cmd + wheel, which is also what trackpad pinches send.
+  function onwheel(e: WheelEvent) {
+    if (!(e.ctrlKey || e.metaKey)) return
+    e.preventDefault()
+    setZoom(zoom * Math.exp(-e.deltaY * 0.01), e.clientY)
+  }
+
+  // Two-finger pinch on touch screens.
+  let pinch: { dist: number; zoom: number } | null = null
+  function touchDist(t: TouchList) {
+    return Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY)
+  }
+  function ontouchstart(e: TouchEvent) {
+    if (e.touches.length === 2) pinch = { dist: touchDist(e.touches), zoom }
+  }
+  function ontouchmove(e: TouchEvent) {
+    if (!pinch || e.touches.length !== 2) return
+    e.preventDefault()
+    const mid = (e.touches[0].clientY + e.touches[1].clientY) / 2
+    setZoom(pinch.zoom * (touchDist(e.touches) / pinch.dist), mid)
+  }
+  function ontouchend(e: TouchEvent) {
+    if (e.touches.length < 2) pinch = null
   }
 
   onMount(() => {
+    const initialHash = location.hash
     fetch(`${import.meta.env.BASE_URL}data/events.json`)
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
-      .then((d: TimelineData) => {
+      .then(async (d: TimelineData) => {
         data = d
-        syncHash()
+        await tick()
+        applyHash(initialHash)
+        ready = true
       })
       .catch((e) => (error = `Could not load events: ${e.message}`))
-    addEventListener('hashchange', syncHash)
-    return () => removeEventListener('hashchange', syncHash)
+
+    const onhashchange = () => applyHash()
+    addEventListener('hashchange', onhashchange)
+    addEventListener('wheel', onwheel, { passive: false })
+    return () => {
+      removeEventListener('hashchange', onhashchange)
+      removeEventListener('wheel', onwheel)
+    }
+  })
+
+  $effect(() => {
+    const el = timelineEl
+    if (!el) return
+    el.addEventListener('touchstart', ontouchstart, { passive: true })
+    el.addEventListener('touchmove', ontouchmove, { passive: false })
+    el.addEventListener('touchend', ontouchend)
+    return () => {
+      el.removeEventListener('touchstart', ontouchstart)
+      el.removeEventListener('touchmove', ontouchmove)
+      el.removeEventListener('touchend', ontouchend)
+    }
   })
 </script>
 
-<header>
+<svelte:window {onkeydown} />
+
+<header class="site-header">
   <h1>AI Timeline</h1>
   <p class="lede">Artificial intelligence from the 1956 Dartmouth workshop to now. Every event is sourced and reviewed.</p>
-  <p class="contribute">
-    Missing something? <a href="https://github.com/ChrisBuilds/ai-timeline/issues/new/choose">Suggest an event</a>.
+  <p class="help">
+    Scroll back in time. Zoom with <kbd>Ctrl</kbd> + scroll, a pinch, or <kbd>+</kbd> and <kbd>−</kbd> to reveal
+    more events. Missing something?
+    <a href="https://github.com/ChrisBuilds/ai-timeline/issues/new/choose">Suggest an event</a>.
   </p>
 </header>
 
-<main>
-  {#if removedNote}
-    <aside class="notice" role="status">
-      This event was removed ({removedNote.reason}).
-      {#if removedNote.duplicate_of}
-        It was merged into <a href={`#${removedNote.duplicate_of}`}>another event</a>.
-      {/if}
-      {#if removedNote.note}{removedNote.note}{/if}
-    </aside>
-  {/if}
+{#if removedNote}
+  <aside class="notice" role="status">
+    This event was removed ({removedNote.reason}).
+    {#if removedNote.duplicate_of}
+      It was merged into <a href={`#e=${removedNote.duplicate_of}`}>another event</a>.
+    {/if}
+    {#if removedNote.note}{removedNote.note}{/if}
+  </aside>
+{:else if missingId && data}
+  <aside class="notice" role="status">There's no event called “{missingId}” on the timeline.</aside>
+{/if}
 
+<main bind:clientWidth={width}>
   {#if error}
     <p class="notice">{error}</p>
   {:else if !data}
     <p class="muted">Loading…</p>
   {:else}
-    <div class="now" aria-hidden="true">Now</div>
-    <ol class="timeline">
-      {#each years as group (group.year)}
-        <li class="year">
-          <h2>{group.year}</h2>
-          <ol>
-            {#each group.events as ev (ev.id)}
-              <li>
-                <article id={ev.id} class:selected={hash === ev.id || ev.aliases?.includes(hash)}>
-                  <p class="meta">
-                    <time datetime={ev.date}>{formatRange(ev.date, ev.end_date)}</time>
-                    <span class="category">{ev.category}</span>
-                    {#if ev.developing}<span class="badge">developing</span>{/if}
-                    {#if ev.disputed}<span class="badge warn">disputed</span>{/if}
-                  </p>
-                  <h3><a href={`#${ev.id}`}>{ev.title}</a></h3>
-                  <p>{ev.summary}</p>
-                  <p class="sources">
-                    {#each ev.sources as s, i}
-                      {#if i > 0} · {/if}<a href={s.url} rel="noopener">{s.publisher}</a>
-                    {/each}
-                  </p>
-                </article>
-              </li>
-            {/each}
-          </ol>
-        </li>
-      {/each}
-    </ol>
+    <div bind:this={timelineEl}>
+      <Timeline
+        {scale}
+        placed={arranged.placed}
+        clusters={arranged.clusters}
+        {spineX}
+        {cardWidth}
+        cardHeight={CARD_HEIGHT}
+        anchorOffset={ANCHOR_OFFSET}
+        {selectedId}
+        {highlightIds}
+        onselect={(id) => select(id === selectedId ? null : id, false)}
+        onexpand={expand}
+      />
+    </div>
   {/if}
 </main>
 
+{#if data}
+  <div class="zoom" role="group" aria-label="Zoom">
+    <button onclick={() => setZoom(zoom * ZOOM_STEP)} disabled={zoom >= MAX_ZOOM} aria-label="Zoom in">+</button>
+    <span class="zoom-level" aria-live="polite">{Math.round(zoom * 100)}%</span>
+    <button onclick={() => setZoom(zoom / ZOOM_STEP)} disabled={zoom <= MIN_ZOOM} aria-label="Zoom out">−</button>
+    {#if Math.abs(zoom - 1) > 0.01}
+      <button class="reset" onclick={() => setZoom(1)} aria-label="Reset zoom">1×</button>
+    {/if}
+  </div>
+{/if}
+
+{#if selected}
+  <DetailPanel event={selected} {byId} {backlinks} onselect={(id) => select(id)} onclose={() => select(null, false)} />
+{/if}
+
 <footer class="muted">
   Data and code on <a href="https://github.com/ChrisBuilds/ai-timeline">GitHub</a>.
-  {#if data}Updated {data.generated.slice(0, 10)}.{/if}
+  {#if data}{data.events.length} events, updated {data.generated.slice(0, 10)}.{/if}
+  Keys: <kbd>j</kbd>/<kbd>k</kbd> next and previous, <kbd>+</kbd>/<kbd>−</kbd> zoom, <kbd>0</kbd> reset,
+  <kbd>Esc</kbd> close.
 </footer>
