@@ -1,0 +1,16 @@
+id: 2023-03-14-openai-gpt-4
+title: OpenAI releases GPT-4
+date: "2023-03-14"
+summary: >-
+  OpenAI's GPT-4 accepts images and text and performs at a human level on many
+  professional and academic exams, setting the bar for frontier models.
+category: model release
+organizations: [OpenAI]
+tags: [large language model, multimodal, frontier model]
+sources:
+  - url: https://openai.com/index/gpt-4-research/
+    title: GPT-4
+    publisher: OpenAI
+    accessed: "2026-11-03"
+importance:
+  rubric: {capability: 5, adoption: 5, impact: 5, culture: 4}

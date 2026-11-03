@@ -1,0 +1,25 @@
+id: 2016-03-12-alphago-defeats-lee-sedol
+title: DeepMind's AlphaGo defeats Go champion Lee Sedol
+date: "2016-03-12"
+summary: >-
+  AlphaGo wins the third game in Seoul to clinch the match against one of the world's
+  best Go players, a feat long thought to be a decade away, and goes on to win 4–1.
+description: |
+  The five-game match ran from March 9 to 15, 2016, at the Four Seasons Hotel in
+  Seoul. AlphaGo combined deep neural networks with tree search and reinforcement
+  learning.
+category: benchmark milestone
+organizations: [DeepMind]
+people: [Lee Sedol]
+tags: [go, game playing, reinforcement learning]
+sources:
+  - url: https://deepmind.google/research/alphago/
+    title: AlphaGo
+    publisher: Google DeepMind
+    accessed: "2026-11-03"
+  - url: https://en.wikipedia.org/wiki/AlphaGo_versus_Lee_Sedol
+    title: AlphaGo versus Lee Sedol
+    publisher: Wikipedia
+    accessed: "2026-11-03"
+importance:
+  rubric: {capability: 5, adoption: 2, impact: 4, culture: 5}
