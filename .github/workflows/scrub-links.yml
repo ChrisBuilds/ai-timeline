@@ -39,38 +39,33 @@ jobs:
             const { hasPrivateLink, scrub } = await import(`${process.env.GITHUB_WORKSPACE}/scripts/scrub-links.mjs`)
             const { owner, repo } = context.repo
             const p = context.payload
-            let target, body, update
-            switch (context.eventName) {
-              case 'issues':
-                target = `issue #${p.issue.number}`
-                body = p.issue.body
-                update = (b) => github.rest.issues.update({ owner, repo, issue_number: p.issue.number, body: b })
-                break
-              case 'pull_request_target':
-                target = `PR #${p.pull_request.number}`
-                body = p.pull_request.body
-                update = (b) => github.rest.pulls.update({ owner, repo, pull_number: p.pull_request.number, body: b })
-                break
-              case 'issue_comment':
-                target = `comment ${p.comment.id}`
-                body = p.comment.body
-                update = (b) => github.rest.issues.updateComment({ owner, repo, comment_id: p.comment.id, body: b })
-                break
-              case 'pull_request_review':
-                target = `review ${p.review.id}`
-                body = p.review.body
-                update = (b) =>
-                  github.rest.pulls.updateReview({ owner, repo, pull_number: p.pull_request.number, review_id: p.review.id, body: b })
-                break
-              case 'pull_request_review_comment':
-                target = `review comment ${p.comment.id}`
-                body = p.comment.body
-                update = (b) => github.rest.pulls.updateReviewComment({ owner, repo, comment_id: p.comment.id, body: b })
-                break
+            // Each case reads the current text rather than the event's copy, so an edit
+            // made while this run was queued is never overwritten with older text.
+            const pr = p.pull_request?.number
+            const cases = {
+              issues: [`issue #${p.issue?.number}`,
+                async () => (await github.rest.issues.get({ owner, repo, issue_number: p.issue.number })).data.body,
+                (body) => github.rest.issues.update({ owner, repo, issue_number: p.issue.number, body })],
+              pull_request_target: [`PR #${pr}`,
+                async () => (await github.rest.pulls.get({ owner, repo, pull_number: pr })).data.body,
+                (body) => github.rest.pulls.update({ owner, repo, pull_number: pr, body })],
+              issue_comment: [`comment ${p.comment?.id}`,
+                async () => (await github.rest.issues.getComment({ owner, repo, comment_id: p.comment.id })).data.body,
+                (body) => github.rest.issues.updateComment({ owner, repo, comment_id: p.comment.id, body })],
+              pull_request_review: [`review ${p.review?.id}`,
+                async () => (await github.rest.pulls.getReview({ owner, repo, pull_number: pr, review_id: p.review.id })).data.body,
+                (body) => github.rest.pulls.updateReview({ owner, repo, pull_number: pr, review_id: p.review.id, body })],
+              pull_request_review_comment: [`review comment ${p.comment?.id}`,
+                async () => (await github.rest.pulls.getReviewComment({ owner, repo, comment_id: p.comment.id })).data.body,
+                (body) => github.rest.pulls.updateReviewComment({ owner, repo, comment_id: p.comment.id, body })],
             }
+            const [target, get, update] = cases[context.eventName]
+            const body = await get()
             if (!hasPrivateLink(body)) {
               core.info(`No private links in ${target}.`)
               return
             }
-            await update(scrub(body))
+            // GitHub rejects an empty comment, so a comment that was only a link gets a note instead.
+            const clean = scrub(body).trim() ? scrub(body) : '_A private Claude link was removed._'
+            await update(clean)
             core.notice(`Removed private Claude links from ${target}.`)
