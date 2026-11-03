@@ -174,6 +174,8 @@
     behavior ??= reducedMotion ? 'instant' : 'smooth'
     const year = years.get(id)
     if (year === undefined) return
+    // A zoom glide re-anchors the scroll every frame, which would cancel this scroll.
+    stopZoomAnimation()
     scrollTo({ top: timelineTop() + scale.y(year) - innerHeight / 3, behavior })
   }
 
