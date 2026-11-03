@@ -51,8 +51,8 @@ describe('buildScale', () => {
   })
 
   it('spaces ticks at least the minimum gap apart within a band', () => {
-    const s = buildScale(eras, [], 2026, 1, opts)
-    const old = s.ticks(30).filter((t) => t.year < 2020)
+    const s = buildScale(eras, [], 2026, 1, { ...opts, unitPx: 30 })
+    const old = s.ticks().filter((t) => t.year < 2020)
     expect(old.length).toBeGreaterThan(1)
     for (let i = 1; i < old.length; i++) expect(Math.abs(old[i].y - old[i - 1].y)).toBeGreaterThanOrEqual(30 - 1e-9)
   })
@@ -65,5 +65,45 @@ describe('buildScale', () => {
     expect(s.y(2019.999999)).toBeCloseTo(b.top + 40, 3)
     expect(s.year(b.top + 10)).toBe(2020)
     for (const year of [2025.3, 2020.5, 1999, 1951]) expect(s.year(s.y(year))).toBeCloseTo(year, 6)
+  })
+
+  describe('compressing empty stretches', () => {
+    // Old era: 70 years, 1 event in 1990, so 150px and ~2.1px a year: 20-year units.
+    const gapOpts = { ...opts, unitPx: 40, gapPx: 30, minGapUnits: 2 }
+
+    it('squeezes runs of empty units into a gap', () => {
+      const s = buildScale(eras, [2021, 1990], 2026, 1, gapOpts)
+      const old = s.bands[1]
+      expect(old.step).toBe(20)
+      const gaps = old.segments.filter((g) => g.gap)
+      // 1950 to 1980 is empty: units 1960-1980 and 1950-1960.
+      expect(gaps).toEqual([expect.objectContaining({ from: 1980, to: 1950, height: 30 })])
+      expect(old.height).toBeLessThan(150)
+      expect(s.gaps).toContainEqual(gaps[0])
+    })
+
+    it('leaves a single empty unit alone', () => {
+      const s = buildScale(eras, [2021, 1990, 1965], 2026, 1, gapOpts)
+      expect(s.bands[1].segments.some((g) => g.gap)).toBe(false)
+    })
+
+    it('keeps y and year consistent across gaps', () => {
+      const s = buildScale(eras, [2021, 1990], 2026, 1, gapOpts)
+      for (const year of [2025, 2019, 1990, 1981, 1970, 1955, 1951]) expect(s.year(s.y(year))).toBeCloseTo(year, 6)
+      expect(s.y(1980)).toBeLessThan(s.y(1970))
+      expect(s.y(1950) - s.y(1980)).toBeCloseTo(30)
+    })
+
+    it('drops year marks inside a gap but keeps its edges', () => {
+      const s = buildScale(eras, [2021, 1990], 2026, 1, gapOpts)
+      const years = s.ticks().map((t) => t.year)
+      expect(years).toContain(1980)
+      expect(years).not.toContain(1960)
+    })
+
+    it('never compresses without gapPx', () => {
+      const s = buildScale(eras, [2021, 1990], 2026, 1, { ...gapOpts, gapPx: undefined })
+      expect(s.gaps).toEqual([])
+    })
   })
 })
