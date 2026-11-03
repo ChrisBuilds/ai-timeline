@@ -18,6 +18,7 @@ npm install
 npm run dev        # build data and start the dev server
 npm run validate   # check every event
 npm run check      # type check
+npm test           # unit tests
 npm run build      # production build into dist/
 ```
 

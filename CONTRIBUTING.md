@@ -18,7 +18,7 @@ Every event is researched against its sources and reviewed by a maintainer befor
 
 1. Open or pick an issue labelled `site`.
 2. Branch from `main` as `dev/<issue-number>-<short-name>`.
-3. Run `npm install`, then `npm run dev`. Before opening a PR, run `npm run check` and `npm run build`.
+3. Run `npm install`, then `npm run dev`. Before opening a PR, run `npm run check`, `npm test` and `npm run build`.
 4. Open a pull request titled `Site: …` with `Closes #<issue>` in the body.
 
 ## Add events by hand
