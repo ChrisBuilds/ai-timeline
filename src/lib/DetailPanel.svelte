@@ -6,9 +6,12 @@
   import type { Filters } from './filters'
   import { parseDescription } from './markdown'
   import Inline from './Inline.svelte'
+  import { cubicOut } from 'svelte/easing'
+  import { SELECTION_DURATION } from './selection-motion'
 
   interface Props {
     event: TimelineEvent
+    reducedMotion: boolean
     byId: Map<string, TimelineEvent>
     /** Events that link to this one. */
     backlinks: TimelineEvent[]
@@ -24,7 +27,17 @@
     onretry: () => void
   }
 
-  let { event, byId, backlinks, onselect, onclose, filters, onfilter, details, detailsError, onretry }: Props = $props()
+  let { event, reducedMotion, byId, backlinks, onselect, onclose, filters, onfilter, details, detailsError, onretry }: Props = $props()
+
+  function panelTransition(_node: HTMLElement, options: { reduced: boolean }) {
+    const axis = innerWidth < 720 ? 'Y' : 'X'
+    return {
+      duration: options.reduced ? 0 : SELECTION_DURATION,
+      delay: options.reduced ? 0 : 40,
+      easing: cubicOut,
+      css: (t: number) => `transform: translate${axis}(${(1 - t) * 100}%);`,
+    }
+  }
 
   const facts = $derived(
     (
@@ -163,7 +176,7 @@
   })
 </script>
 
-<aside class="panel" bind:this={panel} aria-labelledby="panel-title" style:--c={categoryColor(event.category)}>
+<aside transition:panelTransition={{ reduced: reducedMotion }} class="panel" bind:this={panel} aria-labelledby="panel-title" style:--c={categoryColor(event.category)}>
   <span class="grabber" aria-hidden="true"></span>
   <header>
     <p class="meta">
@@ -363,7 +376,6 @@
     background: var(--surface);
     border-left: 1px solid var(--line);
     box-shadow: var(--shadow-lg);
-    animation: slide-in 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
   @media (min-width: 720px) and (max-width: 1099px) { .panel { width: 340px; } }
   .panel > :global(*) {
@@ -372,13 +384,6 @@
   .grabber {
     display: none;
   }
-  @keyframes slide-in {
-    from {
-      transform: translateX(24px);
-      opacity: 0;
-    }
-  }
-
   @media (max-width: 719px) {
     .panel {
       top: auto;
@@ -389,7 +394,6 @@
       border-left: none;
       border-top: 1px solid var(--line);
       border-radius: 20px 20px 0 0;
-      animation-name: slide-up;
     }
     .grabber {
       display: block;
@@ -398,17 +402,6 @@
       margin: 0 auto 12px;
       border-radius: 999px;
       background: var(--line-strong);
-    }
-    @keyframes slide-up {
-      from {
-        transform: translateY(32px);
-        opacity: 0;
-      }
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    :global(:root:not([data-motion='full'])) .panel {
-      animation: none;
     }
   }
 

@@ -7,10 +7,10 @@ name: Performance
 # Results are in the run summary and in the bench-results artifact.
 on:
   pull_request:
-    paths: ['src/**', 'bench/**', 'index.html', 'vite.config.ts', 'package.json', 'package-lock.json', '.github/workflows/performance.yml']
+    paths: ['src/**', 'bench/**', 'scripts/selection-motion.browser.mjs', 'index.html', 'vite.config.ts', 'package.json', 'package-lock.json', '.github/workflows/performance.yml']
   push:
     branches: [main]
-    paths: ['src/**', 'bench/**', 'index.html', 'vite.config.ts', 'package.json', 'package-lock.json']
+    paths: ['src/**', 'bench/**', 'scripts/selection-motion.browser.mjs', 'index.html', 'vite.config.ts', 'package.json', 'package-lock.json']
   workflow_dispatch:
 
 permissions:
@@ -52,6 +52,8 @@ jobs:
         run: |
           set -o pipefail
           node bench/browser.mjs --sizes 5000 --budgets --json bench-browser.json | tee bench-browser.md
+      - name: Selection motion browser checks
+        run: node scripts/selection-motion.browser.mjs
       - name: Summary
         if: always()
         run: |

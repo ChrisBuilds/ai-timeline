@@ -3,6 +3,7 @@
   import type { EventDetails, TimelineData, TimelineEvent, RemovedEvent } from './lib/types'
   import { createDetailsLoader } from './lib/details'
   import { ERAS } from './lib/eras'
+  import { animateSelection, captureSelection, selectionScroll } from './lib/selection-motion'
   import { buildScale, DEFAULT_SCALE } from './lib/scale'
   import { layout, priorityOrder, type Cluster } from './lib/layout'
   import { nowYear, toYear } from './lib/time'
@@ -24,6 +25,9 @@
   let error = $state<string | null>(null)
   let zoom = $state(1)
   let selectedId = $state<string | null>(null)
+  let animatePanel = $state(false)
+  let selectionRun = 0
+  let cancelSelectionMotion = () => {}
   let missingId = $state<string | null>(null)
   let width = $state(0)
   let viewportWidth = $state(1280)
@@ -215,6 +219,7 @@
 
   /** Changes zoom while keeping the moment under `anchorClientY` in place on screen. */
   function setZoom(next: number, anchorClientY = innerHeight / 2, smooth = !reducedMotion) {
+    cancelSelectionMotion()
     zoomTarget = clampZoom(next)
     zoomAnchor = anchorClientY
     if (!smooth) {
@@ -259,17 +264,49 @@
     scrollTo({ top: timelineTop() + scale.y(year) - (innerWidth < 720 ? toolbarHeight + 40 : innerHeight / 3), behavior })
   }
 
-  function select(id: string | null, scroll = true) {
+  async function select(id: string | null, scroll = true, animate = ready && !reducedMotion) {
+    if (id === selectedId) {
+      missingId = null
+      return
+    }
+    const run = ++selectionRun
+    const root = timelineEl?.querySelector<HTMLElement>('.timeline')
+    // Capture before cancelling: an interrupted transition starts where it is on screen.
+    const before = animate && root ? captureSelection(root) : null
+    cancelSelectionMotion()
+    stopZoomAnimation()
+    animatePanel = animate
     selectedId = id
     missingId = null
-    if (id) tick().then(() => {
-      if (scroll) scrollToEvent(id)
-      else if (innerWidth < 720) {
-        const card = document.getElementById(id)?.getBoundingClientRect()
-        const toolbarBottom = document.querySelector('.toolbar-wrap')?.getBoundingClientRect().bottom ?? 0
-        if (card) scrollBy({ top: card.top - Math.max(toolbarBottom + 16, 32), behavior: 'instant' })
-      }
-    })
+    await tick()
+    if (run !== selectionRun) return
+    // ResizeObserver bindings arrive on the next frame. Flush panel-induced
+    // width and heading changes now so FLIP measures the final layout before paint.
+    if (timelineEl && timelineEl.clientWidth !== width) {
+      width = timelineEl.clientWidth
+      await tick()
+    }
+    const headings = [...(timelineEl?.querySelectorAll<HTMLElement>('.era-label') ?? [])].map((el) => el.clientHeight)
+    if (headings.length !== labelHeights.length || headings.some((height, i) => height !== labelHeights[i])) {
+      labelHeights = headings
+      await tick()
+    }
+    if (run !== selectionRun) return
+    if (id && scroll) scrollToEvent(id, 'instant')
+    else if (id && innerWidth < 720) {
+      const card = document.getElementById(id)?.getBoundingClientRect()
+      const toolbarBottom = document.querySelector('.toolbar-wrap')?.getBoundingClientRect().bottom ?? 0
+      // offsetHeight ignores the sheet's entrance transform: fit the final resting position.
+      const sheetHeight = document.querySelector<HTMLElement>('.panel')?.offsetHeight ?? innerHeight * 0.55
+      if (card) scrollBy({
+        top: selectionScroll(card.top, card.height, Math.max(toolbarBottom + 16, 32), innerHeight - sheetHeight - 16),
+        behavior: 'instant',
+      })
+    }
+    syncView()
+    await tick()
+    if (run !== selectionRun) return
+    if (before && root?.isConnected) cancelSelectionMotion = animateSelection(root, before)
   }
 
   function expand(cluster: Cluster<TimelineEvent>) {
@@ -279,6 +316,8 @@
   }
 
   function applyHash(hash = location.hash) {
+    cancelSelectionMotion()
+    ++selectionRun
     const state = parseHash(hash)
     stopZoomAnimation()
     zoom = zoomTarget = state.zoom
@@ -290,8 +329,7 @@
     }
     const id = aliasTo.get(state.event) ?? state.event
     if (byId.has(id)) {
-      select(id, false)
-      tick().then(() => scrollToEvent(id, 'instant'))
+      select(id, true, false)
     } else {
       selectedId = null
       missingId = state.event
@@ -328,6 +366,8 @@
   // A viewport change can swap the side panel for a sheet; keep the selection in view.
   $effect(() => {
     void viewportWidth
+    ++selectionRun
+    cancelSelectionMotion()
     untrack(() => {
       const id = selectedId
       if (id) tick().then(() => scrollToEvent(id, 'instant'))
@@ -383,6 +423,7 @@
     addEventListener('scroll', syncView, { passive: true })
     addEventListener('resize', syncView, { passive: true })
     return () => {
+      cancelSelectionMotion()
       removeEventListener('hashchange', onhashchange)
       removeEventListener('wheel', onwheel)
       removeEventListener('scroll', syncView)
@@ -494,6 +535,7 @@
 {#if selected}
   <DetailPanel
     event={selected}
+    reducedMotion={reducedMotion || !animatePanel}
     {byId}
     {backlinks}
     {filters}

@@ -21,6 +21,16 @@ The ribbon is neutral in both themes. Category, selection and filter colors do n
 
 Zoom generally narrows the ribbon as hidden events become visible. Collision thresholds, bin changes and expanded selections can change hidden counts locally; width is not a claim about historical importance or absolute activity. Compressed empty spans are labeled “no recorded events.”
 
+## Selection motion
+
+Interactive selection animates over 360ms from the card's current painted position and dimensions. Layout and any necessary scroll settle before the first paint; an inverse transform preserves the original view and eases into the destination. Card dimensions animate directly so text is not stretched. The mobile sheet and desktop panel slide fully into view with a 40ms lead for the card expansion; closing reverses the transition.
+
+Mobile selections move only as far as needed to fit between the sticky toolbar and the resting sheet. Cards that already fit expand in place. Desktop panel width changes are measured before animation rather than waiting for ResizeObserver, avoiding a one-frame horizontal jump. Rapid selections capture the in-flight position and cancel obsolete work. Zoom and viewport changes cancel selection motion. Reduced motion applies immediately, and initial/deep-link navigation does not animate.
+
+Run `npm run test:motion` for the selection browser regression checks; install Playwright Chromium first or set `CHROMIUM_PATH` to an installed executable. The checks sample initial/intermediate/final geometry, rapid reselection, reversing an opening/closing sheet, reduced-motion overrides and deep-link navigation.
+
+These animations run only during selection. Normal scroll and zoom never trigger per-event motion measurements. `selection-motion.ts` owns the geometry capture, layout animation and minimal scroll calculation.
+
 ## Responsive behavior and performance
 
 Desktop selection reserves room for the detail panel. At tablet widths the panel is narrower. Phone details use a bottom sheet capped at 55vh; the selected entry is anchored above it and zoom controls stay in the timeline gutter. Theme and motion preferences, URL state, lazy-loaded details, filtering and date-anchored zoom are retained.
