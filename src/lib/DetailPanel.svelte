@@ -24,35 +24,40 @@
   // Descriptions are markdown; render them as plain paragraphs for now so no HTML is injected.
   const paragraphs = $derived((event.description ?? '').split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean))
 
-  // Each contribution opens the update form with this event and the kind of change filled in.
-  function updateUrl(change: string): string {
+  // Each contribution opens the update form with this event filled in. GitHub only
+  // prefills text fields, so the kind of change goes in the title and a starter
+  // line in "The proposed change"; the dropdown is left for the person to tick.
+  function updateUrl(c: { kind: string; prompt: string }): string {
     const params = new URLSearchParams({
       template: '2-update-event.yml',
-      title: `Update: ${event.title}`,
+      title: `Update: ${event.title} (${c.kind})`,
       event: event.id,
-      change,
+      proposed: c.prompt,
     })
     return `https://github.com/ChrisBuilds/ai-timeline/issues/new?${params}`
   }
 
   const contributions = [
-    { label: 'Add a source', hint: 'A report, filing or announcement', change: 'Add a source', icon: 'M9 12h6M10 7H8a5 5 0 0 0 0 10h2m4-10h2a5 5 0 0 1 0 10h-2' },
+    { label: 'Add a source', hint: 'A report, filing or announcement', kind: 'add source', prompt: 'Source to add, and what it confirms:\n', icon: 'M9 12h6M10 7H8a5 5 0 0 0 0 10h2m4-10h2a5 5 0 0 1 0 10h-2' },
     {
       label: 'Add an artifact',
       hint: 'Paper, repo, model card, video',
-      change: 'Add a supporting artifact (paper, repo, model card, video, dataset)',
+      kind: 'add artifact',
+      prompt: 'Artifact to add (paper, repo, model card, video or dataset):\n',
       icon: 'M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Zm0 0v5h5M9 13h6M9 17h4',
     },
     {
       label: 'Add details',
       hint: 'Context, people, what followed',
-      change: 'Add details or context (what happened, who was involved, what followed)',
+      kind: 'add details',
+      prompt: 'Details to add:\n',
       icon: 'M12 5v14M5 12h14',
     },
     {
       label: 'Suggest a correction',
       hint: 'A wrong date, name or fact',
-      change: 'Correct a fact (date, title, organization, summary)',
+      kind: 'correction',
+      prompt: 'What is wrong, and what it should say:\n',
       icon: 'M4 20h4L19 9l-4-4L4 16v4Zm9-13 4 4',
     },
   ]
@@ -156,7 +161,7 @@
     <ul class="actions">
       {#each contributions as c (c.label)}
         <li>
-          <a class="action" href={updateUrl(c.change)} target="_blank" rel="noopener noreferrer">
+          <a class="action" href={updateUrl(c)} target="_blank" rel="noopener noreferrer">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d={c.icon} /></svg>
             <span class="action-text">
               <span class="action-label">{c.label}</span>
