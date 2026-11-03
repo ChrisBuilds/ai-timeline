@@ -1,0 +1,41 @@
+id: 2009-06-imagenet-cvpr
+title: Deng and colleagues introduce the ImageNet database
+date: "2009-06"
+summary: >-
+  Jia Deng and colleagues introduce ImageNet, a WordNet-organized image database
+  that contained 3.2 million images across 5,247 synsets in their CVPR 2009 paper.
+description: |
+  The paper presents ImageNet as a large-scale resource for visual recognition,
+  organized using WordNet's hierarchy. It describes 3.2 million images across
+  5,247 synsets and proposes the database as training and benchmarking material.
+  The paper appeared in the CVPR 2009 proceedings; the conference ran June 20–25,
+  but the exact day of this presentation is not confirmed.
+category: research
+organizations: [Princeton University]
+people: [Jia Deng, Wei Dong, Richard Socher, Li-Jia Li, Kai Li, Li Fei-Fei]
+tags: [ImageNet, computer vision, image datasets, visual recognition, benchmark]
+sources:
+  - url: https://www.image-net.org/static_files/papers/imagenet_cvpr09.pdf
+    title: "ImageNet: A Large-Scale Hierarchical Image Database"
+    publisher: CVPR
+    accessed: "2026-11-03"
+  - url: https://collaborate.princeton.edu/en/publications/imagenet-a-large-scale-hierarchical-image-database/
+    title: "ImageNet: A Large-Scale Hierarchical Image Database"
+    publisher: Princeton University
+    accessed: "2026-11-03"
+  - url: https://proceedings.neurips.cc/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf
+    title: "ImageNet Classification with Deep Convolutional Neural Networks"
+    publisher: NeurIPS
+    accessed: "2026-11-03"
+artifacts:
+  - type: paper
+    url: https://doi.org/10.1109/CVPR.2009.5206848
+    title: "ImageNet: A Large-Scale Hierarchical Image Database"
+related:
+  - id: 2012-09-30-alexnet-imagenet
+    relation: builds_on
+    source: https://proceedings.neurips.cc/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf
+importance:
+  rubric: {capability: 3, adoption: 4, impact: 4, culture: 2}
+issue: 38
+submitted_by: ChrisBuilds
