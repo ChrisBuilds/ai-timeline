@@ -1,0 +1,55 @@
+id: 1973-lighthill-report
+title: The Lighthill report criticises AI research in Britain
+date: "1973"
+summary: >-
+  Sir James Lighthill's survey for the UK Science Research Council, "Artificial
+  Intelligence: A General Survey", concluded that AI had failed to meet its promises
+  outside narrow domains, and it is often credited with cutting UK funding.
+description: |
+  The Science Research Council asked Lighthill, a Cambridge applied mathematician from
+  outside the field, to appraise AI research. The SRC chair wrote to him in September
+  1971, and he submitted the report in March 1972. The Council published it in 1973 in
+  *Artificial Intelligence: a Paper Symposium*, alongside replies from Stuart Sutherland,
+  Roger Needham, Christopher Longuet-Higgins and Donald Michie.
+
+  Lighthill divided the work into advanced automation (A), computer-based study of the
+  central nervous system (C), and a "bridge" category of building robots (B). He judged
+  B the most disappointing, doubted that AI was a coherent field, and blamed much of the
+  disappointment on "failure to recognise the implications of the combinatorial explosion".
+  A BBC debate on the report followed in June 1973.
+
+  Historians and the Chilton Computing archive describe a loss of confidence in AI among
+  UK funders that lasted almost a decade, until a 1982 review led to the Alvey programme.
+  Jon Agar writes that the SRC funded categories A and C separately and left B without
+  support. The report is often named as a cause of the first "AI winter", but Agar finds no
+  figures for the cuts and notes that the criticisms resonated beyond the UK. The month of
+  publication is not confirmed.
+category: policy and regulation
+organizations: [Science Research Council]
+people: [James Lighthill]
+tags: [AI winter, funding, United Kingdom]
+sources:
+  - url: https://www.chilton-computing.org.uk/inf/literature/reports/lighthill_report/p001.htm
+    title: "Artificial Intelligence: A General Survey (Part I of the Lighthill Report)"
+    publisher: Chilton Computing, UKRI Science and Technology Facilities Council
+    accessed: "2026-11-03"
+  - url: https://www.chilton-computing.org.uk/inf/literature/reports/lighthill_report/overview.htm
+    title: Lighthill Report, overview
+    publisher: Chilton Computing, UKRI Science and Technology Facilities Council
+    accessed: "2026-11-03"
+  - url: https://www.cambridge.org/core/journals/british-journal-for-the-history-of-science/article/abs/what-is-science-for-the-lighthill-report-on-artificial-intelligence-reinterpreted/61B13B32988D6A8C58CF8AADD4777789
+    title: What is science for? The Lighthill report on artificial intelligence reinterpreted
+    publisher: The British Journal for the History of Science (Jon Agar)
+    accessed: "2026-11-03"
+  - url: https://discovery-pp.ucl.ac.uk/id/eprint/10105726
+    title: What is science for? The Lighthill report on artificial intelligence reinterpreted (accepted manuscript)
+    publisher: UCL Discovery (Jon Agar)
+    accessed: "2026-11-03"
+artifacts:
+  - type: paper
+    url: http://www.chilton-computing.org.uk/inf/literature/reports/lighthill_report/contents.htm
+    title: "Artificial Intelligence: a paper symposium, full text (Chilton Computing)"
+importance:
+  rubric: {capability: 1, adoption: 2, impact: 4, culture: 3}
+issue: 33
+submitted_by: ChrisBuilds
