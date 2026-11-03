@@ -9,7 +9,7 @@
   import Timeline from './lib/Timeline.svelte'
   import DetailPanel from './lib/DetailPanel.svelte'
   import Toolbar from './lib/Toolbar.svelte'
-  import { NO_FILTERS, isActive, matches, type Filters } from './lib/filters'
+  import { NO_FILTERS, isActive, matches, only, type Filters } from './lib/filters'
   import { applyPrefs, loadPrefs, prefersReducedMotion, savePrefs, type Prefs } from './lib/prefs'
 
   const CARD_HEIGHT = 84
@@ -387,7 +387,15 @@
 {/if}
 
 {#if selected}
-  <DetailPanel event={selected} {byId} {backlinks} onselect={(id) => select(id)} onclose={() => select(null, false)} />
+  <DetailPanel
+    event={selected}
+    {byId}
+    {backlinks}
+    {filters}
+    onselect={(id) => select(id)}
+    onclose={() => select(null, false)}
+    onfilter={(field, value) => (filters = only(filters, field, value))}
+  />
 {/if}
 
 <footer class="muted">

@@ -172,7 +172,10 @@
       {@const ev = card.item}
       {@const left = cardLeft(card.lane)}
       <li transition:fade={{ duration: reducedMotion ? 0 : 180 }}>
+        <!-- The dot and connector are extra click targets for the card; its button is the keyboard route. -->
+        <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
         <span
+          onclick={() => onselect(ev.id)}
           class="dot tier-{ev.tier}"
           class:selected={selectedId === ev.id}
           class:dimmed={dimIds.has(ev.id) && selectedId !== ev.id}
@@ -181,7 +184,9 @@
           style:--c={categoryColor(ev.category)}
           aria-hidden="true"
         ></span>
+        <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
         <span
+          onclick={() => onselect(ev.id)}
           class="connector"
           class:dimmed={dimIds.has(ev.id) && selectedId !== ev.id}
           style:--c={categoryColor(ev.category)}
@@ -513,10 +518,30 @@
       0 0 0 6px var(--accent-soft);
   }
 
+  /* A tall, invisible hit area around a 1px line, so the connector is easy to click. */
   .connector {
     position: absolute;
+    height: 15px;
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
+  .connector::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 7px;
     height: 1px;
     background: linear-gradient(90deg, color-mix(in srgb, var(--c) 55%, transparent), var(--line-strong));
+    transition: height 0.15s, top 0.15s;
+  }
+  .connector:hover::before {
+    top: 6.5px;
+    height: 2px;
+    background: color-mix(in srgb, var(--c) 70%, transparent);
+  }
+  .dot {
+    cursor: pointer;
   }
 
   .card {
@@ -551,7 +576,8 @@
   .card.tier-1 {
     background: linear-gradient(100deg, color-mix(in srgb, var(--c) 9%, var(--surface)) 0, var(--surface) 55%);
   }
-  .card:hover {
+  .card:hover,
+  li:has(.connector:hover, .dot:hover) .card {
     transform: translateY(-1px);
     box-shadow: var(--shadow-md);
     border-color: color-mix(in srgb, var(--c) 45%, var(--line));
