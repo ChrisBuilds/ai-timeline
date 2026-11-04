@@ -15,7 +15,10 @@
     "test:motion": "npm run build && node scripts/selection-motion.browser.mjs",
     "bench": "vitest bench --run",
     "bench:browser": "node bench/browser.mjs",
-    "bench:profile": "node bench/profile.mjs"
+    "bench:profile": "node bench/profile.mjs",
+    "importance:report": "node scripts/importance-report.mjs",
+    "importance:review": "node scripts/importance-report.mjs --review",
+    "test:importance:browser": "node scripts/importance.browser.mjs"
   },
   "devDependencies": {
     "@fontsource-variable/fraunces": "^5.3.0",
