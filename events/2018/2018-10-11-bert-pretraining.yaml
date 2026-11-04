@@ -1,0 +1,33 @@
+id: 2018-10-11-bert-pretraining
+title: Google researchers introduce BERT
+date: "2018-10-11"
+summary: >-
+  Google researchers present BERT, a Transformer encoder pretrained with masked
+  language modeling to learn bidirectional text representations, then fine-tuned
+  for downstream tasks; the paper reports new results on eleven NLP benchmarks.
+description: |
+  BERT (Bidirectional Encoder Representations from Transformers) uses masked
+  language modeling and a next sentence prediction task during pretraining. The
+  authors fine-tuned the pretrained model for several language understanding
+  tasks, reporting state-of-the-art results on eleven benchmarks, including GLUE,
+  SQuAD and MultiNLI. The paper identifies its architecture as a multi-layer
+  bidirectional Transformer encoder.
+category: research
+organizations: [Google AI Language]
+people: [Jacob Devlin, Ming-Wei Chang, Kenton Lee, Kristina Toutanova]
+tags: [language models, NLP, pretraining, transformer]
+sources:
+  - url: https://arxiv.org/abs/1810.04805
+    title: "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding"
+    publisher: arXiv
+    accessed: "2026-11-04"
+artifacts:
+  - type: paper
+    url: https://arxiv.org/abs/1810.04805
+    title: BERT (arXiv)
+related:
+  - id: 2017-06-12-attention-is-all-you-need
+    relation: builds_on
+    source: https://arxiv.org/abs/1810.04805
+importance:
+  rubric: {capability: 4, adoption: 5, impact: 5, culture: 2}
