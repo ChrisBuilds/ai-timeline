@@ -34,8 +34,8 @@ sources:
     publisher: Hugging Face
     accessed: "2026-11-04"
 artifacts:
-  - type: model
-    url: https://huggingface.co/CompVis/stable-diffusion-v1-4
-    title: Stable Diffusion v1-4
+  - type: post
+    url: https://stability.ai/news/stable-diffusion-public-release
+    title: Stable Diffusion Public Release
 importance:
   rubric: {capability: 4, adoption: 4, impact: 4, culture: 4}
