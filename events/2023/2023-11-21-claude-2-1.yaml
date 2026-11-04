@@ -1,0 +1,22 @@
+id: 2023-11-21-claude-2-1
+title: Anthropic releases Claude 2.1
+date: "2023-11-21"
+summary: >-
+  Anthropic released Claude 2.1 with a 200,000-token context window and beta
+  tool use for orchestrating developer-defined functions and APIs.
+description: >-
+  Claude 2.1 became available through Anthropic's API and powered Claude's chat
+  experience. The 200,000-token context window was available to Claude Pro users;
+  API tool use launched in beta.
+category: model release
+organizations: [Anthropic]
+tags: [large language model, long context, tool use]
+sources:
+  - url: https://www.anthropic.com/news/claude-2-1
+    title: Introducing Claude 2.1
+    publisher: Anthropic
+    accessed: "2026-11-04"
+importance:
+  rubric: {capability: 4, adoption: 3, impact: 3, culture: 2}
+issue: 88
+submitted_by: ChrisBuilds
