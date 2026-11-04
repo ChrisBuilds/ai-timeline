@@ -27,8 +27,9 @@ const STEPS = [1 / 12, 1 / 4, 1 / 2, 1, 2, 5, 10, 20, 50, 100]
  * Every bin in a band has the same calendar duration (end bins are clipped).
  * Headers and compressed gaps separate paths, so smoothing cannot bridge them.
  */
-export function buildRibbon<T>(scale: TimeScale, hidden: { year: number; item: T }[], maxWidth = 16): RibbonSpan<T>[] {
-  const sorted = [...hidden].sort((a, b) => b.year - a.year)
+export function buildRibbon<T>(scale: TimeScale, hidden: { year: number; item: T }[], maxWidth = 16, project: (y: number, after?: boolean) => number = (y) => y): RibbonSpan<T>[] {
+  const newest = scale.bands[0].end
+  const sorted = hidden.map((entry) => entry.year > newest ? { ...entry, year: newest } : entry).sort((a, b) => b.year - a.year)
   const spans: RibbonSpan<T>[] = []
   let cursor = 0
   for (const band of scale.bands) {
@@ -42,8 +43,9 @@ export function buildRibbon<T>(scale: TimeScale, hidden: { year: number; item: T
       let from = segment.from
       while (from > segment.to + 1e-8) {
         const to = Math.max(segment.to, (Math.ceil(from / step - 1e-8) - 1) * step)
-        const top = segment.top + (segment.from - from) * pxPerYear
-        const height = (from - to) * pxPerYear
+        const rawTop = segment.top + (segment.from - from) * pxPerYear
+        const top = project(rawTop)
+        const height = project(rawTop + (from - to) * pxPerYear, true) - top
         const items: T[] = []
         while (cursor < sorted.length && sorted[cursor].year > from + 1e-8) cursor++
         while (cursor < sorted.length && sorted[cursor].year >= to &&
@@ -54,9 +56,9 @@ export function buildRibbon<T>(scale: TimeScale, hidden: { year: number; item: T
         from = to
       }
       const points = [
-        { y: segment.top, w: 1 },
+        { y: project(segment.top), w: 1 },
         ...bins.map((b) => ({ y: b.y, w: ribbonWidth(b.items.length, maxWidth) / 2 })),
-        { y: segment.top + segment.height, w: 1 },
+        { y: project(segment.top + segment.height, true), w: 1 },
       ]
       // Cubic smoothstep has no width overshoot, unlike unconstrained splines.
       let path = `M${-points[0].w},${points[0].y}`
@@ -70,19 +72,8 @@ export function buildRibbon<T>(scale: TimeScale, hidden: { year: number; item: T
         const a = points[i + 1], b = points[i], mid = (a.y + b.y) / 2
         path += ` C${a.w},${mid} ${b.w},${mid} ${b.w},${b.y}`
       }
-      spans.push({ top: segment.top, bottom: segment.top + segment.height, path: path + ' Z', bins })
+      spans.push({ top: project(segment.top), bottom: project(segment.top + segment.height, true), path: path + ' Z', bins })
     }
   }
   return spans
-}
-
-const monthFormatter = new Intl.DateTimeFormat('en', { month: 'short', timeZone: 'UTC' })
-
-export function periodLabel(bin: { from: number; to: number }): string {
-  const date = (year: number) => {
-    const y = Math.floor(year + 1e-7)
-    const month = Math.min(11, Math.floor((year - y) * 12 + 1e-5))
-    return `${monthFormatter.format(new Date(Date.UTC(y, month)))} ${y}`
-  }
-  return `${date(bin.to)} – ${date(bin.from)}`
 }

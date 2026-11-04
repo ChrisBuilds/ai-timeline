@@ -3,6 +3,7 @@
   import type { EventDetails, TimelineData, TimelineEvent, RemovedEvent } from './lib/types'
   import { createDetailsLoader } from './lib/details'
   import { ERAS } from './lib/eras'
+  import { buildGroups } from './lib/groups'
   import { animateSelection, captureSelection, selectionScroll } from './lib/selection-motion'
   import { buildScale, DEFAULT_SCALE } from './lib/scale'
   import { layout, priorityOrder, type Cluster } from './lib/layout'
@@ -92,7 +93,10 @@
   // Placement order depends on scores and date order only, so it is sorted once, not every frame.
   const priority = $derived(priorityOrder(events.map((e, i) => ({ item: e, y: -yearList[i], score: scoreList[i] }))))
 
-  const scale = $derived(buildScale(ERAS, yearList, now, zoom, {
+  // Partial dates and today's midday anchor can lie ahead of the current instant.
+  // Count them at the same newest marker that TimeScale.y already clamps them to.
+  const scaleYears = $derived(yearList.map((year) => Math.min(year, now)))
+  const baseScale = $derived(buildScale(ERAS, scaleYears, now, zoom, {
     ...DEFAULT_SCALE,
     headerPx: Math.max(72, LABEL_TOP + Math.max(0, ...labelHeights) + ANCHOR_OFFSET + 12),
     footerPx: (era) => {
@@ -106,7 +110,7 @@
   const layoutItems = $derived(events.map((e, i) => ({ item: e, y: 0, score: scoreList[i] })))
 
   const arranged = $derived.by(() => {
-    const s = scale
+    const s = baseScale
     const items = layoutItems
     const ys = yearList
     for (let i = 0; i < items.length; i++) items[i].y = s.y(ys[i])
@@ -123,7 +127,7 @@
         // The selected event always gets a card, without moving any card that is already shown.
         pin: selectedId ? byId.get(selectedId) : undefined,
         // Keep entries off the full-width era heading.
-        reserved: scale.bands.map((b, i) => ({
+        reserved: baseScale.bands.map((b, i) => ({
           lane: 0,
           top: b.top - 2,
           bottom: b.top + LABEL_TOP + (labelHeights[i] || 36) + 4,
@@ -131,6 +135,9 @@
       },
     )
   })
+
+  const grouped = $derived(buildGroups(baseScale, arranged.placed, arranged.clusters, years, eventHeight))
+  const scale = $derived(grouped.scale)
 
   const selected = $derived(selectedId ? byId.get(selectedId) ?? null : null)
   const backlinks = $derived(
@@ -454,7 +461,7 @@
     Scroll back in time. Zoom with <kbd>Ctrl</kbd> + scroll, a pinch, or <kbd>+</kbd> <kbd>−</kbd>. Press <kbd>/</kbd> to
     search. Missing something?
     <a href="https://github.com/ChrisBuilds/ai-timeline/issues/new/choose">Suggest an event</a>.
-    <span class="ribbon-help">A wider timeline means more events are hidden at this zoom.</span>
+    <span class="ribbon-help">Open a group to browse the events hidden at this zoom.</span>
   </p>
 </header>
 
@@ -498,18 +505,21 @@
     <div bind:this={timelineEl}>
       <Timeline
         {scale}
-        placed={arranged.placed}
-        clusters={arranged.clusters}
+        placed={grouped.placed}
+        groups={grouped.groups}
+        eraStats={grouped.stats}
+        hidden={grouped.hidden}
+        ribbonScale={baseScale}
+        ribbonProject={grouped.project}
         {spineX}
         {cardWidth}
         {selectedId}
         {highlightIds}
         {eventHeight}
         {relationLabels}
-        {years}
         {dimIds}
         matchIds={filtering ? matchIds : NONE}
-        onselect={(id) => select(id, false)}
+        onselect={(id, scroll = false) => select(id, scroll)}
         onexpand={expand}
         onpreview={preview}
         labelTop={LABEL_TOP}

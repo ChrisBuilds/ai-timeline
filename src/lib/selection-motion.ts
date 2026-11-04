@@ -15,7 +15,7 @@ export interface SelectionSnapshot {
 export function captureSelection(root: HTMLElement): SelectionSnapshot {
   const items = new Map<string, ItemSnapshot>()
   for (const node of root.querySelectorAll<HTMLElement>('[data-motion-key]')) {
-    const style = node.classList.contains('card') ? getComputedStyle(node) : null
+    const style = node.matches('.card, .event-group') ? getComputedStyle(node) : null
     items.set(node.dataset.motionKey!, {
       rect: node.getBoundingClientRect(),
       background: style?.backgroundColor,
@@ -58,7 +58,7 @@ export function animateSelection(root: HTMLElement, before: SelectionSnapshot): 
     const baseTransform = transform === 'none' ? '' : transform
     const start: Keyframe = { transform: `translate(${x}px, ${y}px) ${baseTransform}` }
     const end: Keyframe = { transform }
-    if (node.classList.contains('card')) {
+    if (node.matches('.card, .event-group')) {
       start.width = `${previous.rect.width}px`
       start.height = `${previous.rect.height}px`
       start.backgroundColor = previous.background
