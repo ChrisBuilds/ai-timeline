@@ -1,0 +1,25 @@
+id: 2023-07-11-anthropic-claude-2
+title: Anthropic releases Claude 2
+date: 2023-07-11
+summary: Anthropic released Claude 2 through its API and a public beta in the US and UK, with inputs of up to 100,000 tokens.
+description: |
+  Anthropic announced Claude 2 as a new model with improved performance and longer responses. Businesses could access it through the API, while people in the US and UK could use a public beta chat experience. Prompts could contain up to 100,000 tokens. Anthropic also reported improvements in coding, math, and reasoning; its performance comparisons were based on the company's own evaluations.
+category: model release
+tags:
+  - language model
+  - conversational AI
+organizations:
+  - Anthropic
+sources:
+  - url: https://www.anthropic.com/news/claude-2
+    title: Claude 2
+    publisher: Anthropic
+    accessed: 2026-11-04
+importance:
+  rubric:
+    capability: 3
+    adoption: 4
+    impact: 4
+    culture: 3
+issue: 87
+submitted_by: ChrisBuilds
