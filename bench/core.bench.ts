@@ -9,6 +9,7 @@ import { buildIndex, search } from '../src/lib/search'
 import { facets, matches, NO_FILTERS } from '../src/lib/filters'
 import { toYear } from '../src/lib/time'
 import { buildRibbon } from '../src/lib/ribbon'
+import { buildGroups } from '../src/lib/groups'
 import type { TimelineEvent } from '../src/lib/types'
 
 const NOW = 2026.84
@@ -21,6 +22,7 @@ for (const size of SIZES) {
   const events = generate(size, 7).events as TimelineEvent[]
   const years = events.map((e) => toYear(e.date))
   const index = buildIndex(events)
+  const yearMap = new Map(events.map((e, i) => [e.id, years[i]]))
 
   describe(`${size} events`, () => {
     for (const zoom of [1, 10]) {
@@ -32,16 +34,22 @@ for (const size of SIZES) {
       bench(`layout, zoom ${zoom}`, () => {
         layout(items, OPTS)
       }, { time: TIME })
-      const hidden = layout(items, OPTS).clusters.flatMap((c) => c.items.map((item) => ({ item, year: toYear(item.date) })))
-      bench(`ribbon, zoom ${zoom}`, () => { buildRibbon(scale, hidden) }, { time: TIME })
+      const arranged = layout(items, OPTS)
+      const grouped = buildGroups(scale, arranged.placed, arranged.clusters, yearMap, () => OPTS.cardHeight)
+      bench(`collapsed groups, zoom ${zoom}`, () => {
+        buildGroups(scale, arranged.placed, arranged.clusters, yearMap, () => OPTS.cardHeight)
+      }, { time: TIME })
+      const hidden = grouped.hidden
+      bench(`ribbon, zoom ${zoom}`, () => { buildRibbon(scale, hidden, 16, grouped.project) }, { time: TIME })
       const order = priorityOrder(events.map((e, i) => ({ item: e, y: -years[i], score: e.score })))
-      bench(`one zoom frame (scale, y(), layout with cached order), zoom ${zoom}`, () => {
+      bench(`one zoom frame (scale, layout, groups, ribbon), zoom ${zoom}`, () => {
         const s = buildScale(ERAS, years, NOW, zoom)
         const arranged = layout(
           events.map((e, i) => ({ item: e, y: s.y(years[i]), score: e.score })),
           { ...OPTS, order },
         )
-        buildRibbon(s, arranged.clusters.flatMap((c) => c.items.map((item) => ({ item, year: toYear(item.date) }))))
+        const groups = buildGroups(s, arranged.placed, arranged.clusters, yearMap, () => OPTS.cardHeight)
+        buildRibbon(s, groups.hidden, 16, groups.project)
       }, { time: TIME })
     }
     bench('buildIndex', () => {

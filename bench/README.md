@@ -6,7 +6,7 @@ pull request before it reaches the site.
 
 | Command | What it does |
 | --- | --- |
-| `npm run bench` | Micro-benchmarks (`bench/core.bench.ts`) for the work done on every zoom frame, filter change and keystroke: `buildScale`, `layout`, ribbon geometry, search and filters, at 1,000, 5,000 and 20,000 events. |
+| `npm run bench` | Micro-benchmarks (`bench/core.bench.ts`) for the work done on every zoom frame, filter change and keystroke: `buildScale`, `layout`, collapsed groups, projected ribbon geometry, search and filters, at 1,000, 5,000 and 20,000 events. |
 | `npm run build && npm run bench:browser` | Loads the built site in Chromium with synthetic data, with the CPU slowed 4x to stand in for a low-end phone, on a desktop and a phone viewport. Measures time to the first card, long tasks while loading, DOM size, frame times while zooming and scrolling, and how long filtering and selecting an event take. Options: `--sizes 1000,5000`, `--cpu 6`, `--json out.json`, `--budgets`. |
 | `npm run build && npm run bench:profile -- <load\|filter\|select\|zoom> [events]` | Records one interaction with Chromium's CPU profiler and lists the functions with the most self time. Build with `npx vite build --minify false` to see real function names. |
 

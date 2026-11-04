@@ -17,7 +17,17 @@ Width means events hidden by the current layout, including nonmatching events re
 
 `ribbon.ts` constructs equal-duration calendar bins within each era, selecting month, quarter, half-year, year or multi-year windows according to zoom. Partial end bins are clipped. Counts use an absolute capped logarithmic mapping from 2 to 16 pixels (12 on narrow layouts); extreme counts cannot make the ribbon dominate the interface. Cubic smoothstep joins avoid width overshoot. Paths end at era headers and compressed gaps, so density never bleeds across those spaces.
 
-The ribbon is neutral in both themes. Category, selection and filter colors do not alter its width or fill. Hover/focus reveals the period and count. A 44px-wide invisible button opens a nonmodal event list, limited to the 12 highest-priority events, plus a zoom action. All events remain reachable through zoom, search and keyboard navigation. Escape dismisses the list and returns focus to its ribbon target. Counts and periods are exposed in accessible labels.
+The ribbon is neutral in both themes. Category, selection and filter colors do not alter its width or fill. Persistent collapsed group rows provide discovery and interaction; the ribbon supplies a secondary density cue.
+
+## Collapsed event groups
+
+`groups.ts` collects chronological hidden runs between visible milestones, splitting at era boundaries and compressed empty spans. Each neutral row has a stack icon, an exact “N more events” count, actual month/year range and a chevron. Era headings show registered totals and the number shown as individual events at this zoom. Counts cover the entire collection, independent of viewport virtualization; filters reprioritize and dim events without removing their context.
+
+Groups reserve their own 64px display rows. A reversible projection adds non-time space around them and maps era headers, milestones, gaps, year ticks and ribbon paths into that space. Date navigation and zoom use the projected scale and its inverse. Group rows never take room away from selected cards or overlap headings. The underlying milestone selection is unchanged by this extra display space.
+
+Opening a group does not change zoom or reflow the timeline. Small groups show a simple chronological list. Groups larger than 12 events provide scoped title/date search and 12-item pages, making every event reachable at the current zoom. Pagination resets the list position, and Escape closes the browser and restores its originating button. The browser initially focuses its container so opening a group does not summon a phone keyboard. Selecting an event pins and navigates to it; an explicit optional action zooms into the period. Menu scroll/touch containment shares the detail sheet's guards.
+
+Run `npm run test:groups` for browser coverage in both themes at desktop, phone and 320px widths. Unit tests cover count conservation, chronology, era/gap boundaries, equal dates, selected-card collisions and date/position inversion. Core benchmarks include group construction and the complete projected zoom path.
 
 Zoom generally narrows the ribbon as hidden events become visible. Collision thresholds, bin changes and expanded selections can change hidden counts locally; width is not a claim about historical importance or absolute activity. Compressed empty spans are labeled “no recorded events.”
 
@@ -39,6 +49,6 @@ These animations run only during selection. Normal scroll and zoom never trigger
 
 Desktop selection reserves room for the detail panel. At tablet widths the panel is narrower. Phone details use a bottom sheet capped at 55vh; the selected entry is anchored above it and zoom controls stay in the timeline gutter. Theme and motion preferences, URL state, lazy-loaded details, filtering and date-anchored zoom are retained.
 
-The density model is independent of scrolling. SVG paths, hit regions and entries are rendered near the viewport using the existing chunked window. Geometry is rebuilt on layout changes, not on every scroll.
+The density model is independent of scrolling. SVG paths, group rows and entries are rendered near the viewport using the existing chunked window. Geometry is rebuilt on layout changes, not on every scroll.
 
-Run `npm run validate`, `npm run check`, `npm test`, and `npm run build`. The microbenchmarks include ribbon calculation and full zoom work at 1,000, 5,000 and 20,000 events. Run `npm run bench` and `npm run bench:browser -- --budgets`; `CHROMIUM_PATH` optionally selects an installed Chromium executable. Inspect light/dark themes at 320px, phone, tablet and desktop widths; check selected/related states, long titles, same-date events, era boundaries, quiet spans, density menus, deep links, filter changes, keyboard access and reduced motion.
+Run `npm run validate`, `npm run check`, `npm test`, and `npm run build`. The microbenchmarks include ribbon calculation and full zoom work at 1,000, 5,000 and 20,000 events. Run `npm run bench` and `npm run bench:browser -- --budgets`; `CHROMIUM_PATH` optionally selects an installed Chromium executable. Inspect light/dark themes at 320px, phone, tablet and desktop widths; check selected/related states, long titles, same-date events, era boundaries, quiet spans, group browsing, deep links, filter changes, keyboard access and reduced motion.

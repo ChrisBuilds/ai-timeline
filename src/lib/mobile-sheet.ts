@@ -1,3 +1,5 @@
+import { containScroll } from './scroll-containment'
+
 interface SheetOptions {
   content: () => HTMLElement | undefined
   reducedMotion: () => boolean
@@ -21,7 +23,6 @@ export function mobileSheet(node: HTMLElement, options: SheetOptions) {
   let distance = Number.parseFloat(node.style.translate.split(/\s+/)[1] ?? '0') || 0
   let suppressClick = false
   let snap: Animation | undefined
-  let touchY: number | null = null
   const isHandle = (target: EventTarget | null) => (target as Element | null)?.closest?.('[data-sheet-handle]')
   const translate = (y: number) => { distance = y; node.style.translate = `0px ${y}px` }
 
@@ -93,32 +94,7 @@ export function mobileSheet(node: HTMLElement, options: SheetOptions) {
     }
   }
 
-  const atEdge = (delta: number) => {
-    const content = options.content()
-    if (!content) return true
-    return delta < 0 ? content.scrollTop <= 1 :
-      delta > 0 && content.scrollTop + content.clientHeight >= content.scrollHeight - 1
-  }
-  function wheel(e: WheelEvent) {
-    e.stopPropagation() // Ctrl-wheel inside details must not zoom the timeline.
-    if (e.ctrlKey || !e.deltaY) return
-    if (isHandle(e.target)) {
-      e.preventDefault()
-      const content = options.content()
-      content?.scrollBy({ top: e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? content.clientHeight : 1), behavior: 'instant' })
-    } else if (atEdge(e.deltaY)) e.preventDefault()
-  }
-  function touchStart(e: TouchEvent) {
-    touchY = e.touches.length === 1 ? e.touches[0].clientY : null
-  }
-  function touchMove(e: TouchEvent) {
-    e.stopPropagation()
-    if (e.touches.length !== 1 || touchY === null) return
-    const y = e.touches[0].clientY
-    // CSS contains overscroll; this also covers short sheets and older touch browsers.
-    if (isHandle(e.target) || atEdge(touchY - y)) e.preventDefault()
-    touchY = y
-  }
+  const scrolling = containScroll(node, { content: options.content, handle: (target) => !!isHandle(target) })
 
   node.addEventListener('introstart', resume)
   node.addEventListener('pointerdown', start)
@@ -127,9 +103,6 @@ export function mobileSheet(node: HTMLElement, options: SheetOptions) {
   node.addEventListener('pointercancel', end)
   node.addEventListener('lostpointercapture', end)
   node.addEventListener('click', click, true)
-  node.addEventListener('wheel', wheel, { passive: false })
-  node.addEventListener('touchstart', touchStart, { passive: true })
-  node.addEventListener('touchmove', touchMove, { passive: false })
   return {
     destroy() {
       node.removeEventListener('introstart', resume)
@@ -139,9 +112,7 @@ export function mobileSheet(node: HTMLElement, options: SheetOptions) {
       node.removeEventListener('pointercancel', end)
       node.removeEventListener('lostpointercapture', end)
       node.removeEventListener('click', click, true)
-      node.removeEventListener('wheel', wheel)
-      node.removeEventListener('touchstart', touchStart)
-      node.removeEventListener('touchmove', touchMove)
+      scrolling.destroy()
       snap?.cancel()
       // Keep the dragged offset while Svelte runs the exit transition.
     },
