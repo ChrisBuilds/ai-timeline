@@ -2,15 +2,16 @@ id: 2015-12-11-openai-founded
 title: OpenAI announces its founding as a nonprofit
 date: "2015-12-11"
 summary: >-
-  OpenAI announced a nonprofit research organization intended to advance digital
-  intelligence for broad human benefit, with founders pledging up to $1 billion
-  over its first years.
+  OpenAI announced a nonprofit research organization; its founders and other
+  funders committed $1 billion, while it expected to spend only a tiny fraction
+  in the next few years.
 description: >-
   OpenAI announced its formation as a nonprofit AI research organization. The
   announcement described a mission to advance digital intelligence for the
-  benefit of humanity and said the founders had committed up to $1 billion over
-  the first years. This records the public announcement; it does not assert the
-  legal incorporation date.
+  benefit of humanity. It said the founders and other funders, including AWS,
+  Infosys and YC Research, had committed $1 billion, while OpenAI expected to
+  spend only a tiny fraction in the next few years. This records the public
+  announcement; it does not assert the legal incorporation date.
 category: company and funding
 organizations: [OpenAI]
 tags: [AI research, nonprofit]
