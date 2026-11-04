@@ -1,0 +1,41 @@
+id: 2022-08-22-stable-diffusion-public-release
+title: Stable Diffusion weights are publicly released
+date: "2022-08-22"
+summary: >-
+  Stability AI and collaborators made Stable Diffusion model weights publicly
+  available, enabling local text-to-image generation. The weights were released
+  under the CreativeML Open RAIL-M license, which permits broad use subject to
+  stated use restrictions.
+description: >-
+  Stability AI announced the public release of Stable Diffusion on 22 August
+  2022. The text-to-image model was developed with researchers associated with
+  CompVis at LMU Munich and Runway. Releasing weights, code and documentation
+  allowed users to run and adapt the model locally, including on consumer
+  hardware, while the CreativeML Open RAIL-M license retained restrictions on
+  certain uses; this was not an unrestricted public-domain release.
+category: model release
+organizations: [Stability AI, CompVis, Runway]
+tags: [image generation, diffusion, open weights]
+sources:
+  - url: https://stability.ai/news/stable-diffusion-public-release
+    title: Stable Diffusion Public Release
+    publisher: Stability AI
+    accessed: "2026-11-04"
+  - url: https://github.com/CompVis/stable-diffusion
+    title: Stable Diffusion
+    publisher: CompVis
+    accessed: "2026-11-04"
+  - url: https://huggingface.co/CompVis/stable-diffusion-v1-4
+    title: Stable Diffusion v1-4 model card
+    publisher: CompVis
+    accessed: "2026-11-04"
+  - url: https://huggingface.co/spaces/CompVis/stable-diffusion-license
+    title: CreativeML Open RAIL-M license
+    publisher: Hugging Face
+    accessed: "2026-11-04"
+artifacts:
+  - type: model
+    url: https://huggingface.co/CompVis/stable-diffusion-v1-4
+    title: Stable Diffusion v1-4
+importance:
+  rubric: {capability: 4, adoption: 4, impact: 4, culture: 4}
