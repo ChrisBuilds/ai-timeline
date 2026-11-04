@@ -1,0 +1,48 @@
+id: 2006-07-deep-belief-net-training
+title: Hinton, Osindero and Teh publish a deep-belief-net algorithm
+date: "2006-07"
+summary: >-
+  Geoffrey Hinton, Simon Osindero and Yee-Whye Teh present a greedy layer-by-layer
+  method for training deep belief networks and report results on handwritten digits.
+description: |
+  In *Neural Computation* 18(7), Hinton, Osindero and Teh described a fast,
+  greedy procedure for learning a deep belief network one layer at a time.
+  The top two layers form an undirected associative memory; the remaining
+  layers form a directed network. They used the learned weights to initialize
+  a fine-tuning procedure. On handwritten digit images, a network with three
+  hidden layers achieved 1.25% error on a 10,000-image test set, compared with
+  1.5% for the best backpropagation networks in the authors' stated comparison.
+
+  Later histories place this paper among the work marking the third wave of
+  deep learning, beginning around 2006. They also identify other contributions
+  from this period, so this paper was one part of the resurgence rather than
+  its sole starting point.
+category: research
+organizations: [University of Toronto, National University of Singapore]
+people: [Geoffrey Hinton, Simon Osindero, Yee-Whye Teh]
+tags: [deep belief networks, unsupervised learning, generative models, neural networks]
+sources:
+  - url: https://www.stats.ox.ac.uk/~teh/research/unsup/nc2006.pdf
+    title: A Fast Learning Algorithm for Deep Belief Nets
+    publisher: University of Oxford author archive
+    accessed: "2026-11-03"
+  - url: https://pubmed.ncbi.nlm.nih.gov/16764513/
+    title: A Fast Learning Algorithm for Deep Belief Nets (PubMed record)
+    publisher: U.S. National Library of Medicine
+    accessed: "2026-11-03"
+  - url: https://www.deeplearningbook.org/contents/intro.html
+    title: "Deep Learning, Section 1.2.1: The Many Names and Changing Fortunes of Neural Networks"
+    publisher: MIT Press
+    accessed: "2026-11-03"
+  - url: https://www.frontiersin.org/journals/artificial-intelligence/articles/10.3389/frai.2020.00004/full
+    title: An Introductory Review of Deep Learning for Prediction Models With Big Data
+    publisher: Frontiers in Artificial Intelligence
+    accessed: "2026-11-03"
+artifacts:
+  - type: paper
+    url: https://doi.org/10.1162/neco.2006.18.7.1527
+    title: Hinton, Osindero and Teh, A Fast Learning Algorithm for Deep Belief Nets (2006)
+importance:
+  rubric: {capability: 4, adoption: 3, impact: 4, culture: 1}
+issue: 37
+submitted_by: ChrisBuilds
