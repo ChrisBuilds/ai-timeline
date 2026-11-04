@@ -40,13 +40,26 @@ export function buildGroups<T extends GroupItem>(base: TimeScale, placed: Placed
     ...placed.map((card) => ({ item: card.item, raw: card.top + ANCHOR, card })),
     ...hidden.map(({ item, year }) => ({ item, raw: base.y(year), card: null })),
   ].sort((a, b) => a.raw - b.raw || Number(!a.card) - Number(!b.card))
+  // A displaced card can be displayed after hidden events on both sides of its
+  // true date. Keep those hidden runs separate even before reaching the card.
+  const dateBoundaries = placed.some((c) => Math.abs(c.top + ANCHOR - c.y) > 1e-6)
+    ? placed.map((c) => c.y).sort((a, b) => a - b) : []
+  function dateInterval(raw: number): number {
+    let lo = 0, hi = dateBoundaries.length
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1
+      if (dateBoundaries[mid] <= raw) lo = mid + 1
+      else hi = mid
+    }
+    return lo
+  }
   const stats = new Map<string, EraStats>(base.bands.map((b) => [b.era.id, { total: 0, shown: 0 }]))
   const cuts: Cut[] = []
   const groups: EventGroup<T>[] = []
   const cards: PlacedCard<T>[] = []
   let extra = 0
   let previousBottom = -Infinity
-  let pending: { raw: number; band: number; segment: number; items: T[] } | null = null
+  let pending: { raw: number; band: number; segment: number; interval: number; items: T[] } | null = null
 
   function flush() {
     if (!pending) return
@@ -73,11 +86,11 @@ export function buildGroups<T extends GroupItem>(base: TimeScale, placed: Placed
       cards.push(card)
       previousBottom = card.top + heightFor(card.item)
       stats.get(base.bands[band].era.id)!.shown++
-    } else if (pending && pending.band === band && pending.segment === segment) {
+    } else if (pending && pending.band === band && pending.segment === segment && pending.interval === dateInterval(entry.raw)) {
       pending.items.push(entry.item)
     } else {
       flush()
-      pending = { raw: entry.raw, band, segment, items: [entry.item] }
+      pending = { raw: entry.raw, band, segment, interval: dateInterval(entry.raw), items: [entry.item] }
     }
   }
   flush()

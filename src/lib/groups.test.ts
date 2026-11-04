@@ -126,3 +126,18 @@ it('keeps displaced same-date overview cards clear of hidden groups with truthfu
   for (let i = 1; i < rows.length; i++) expect(rows[i].top).toBeGreaterThanOrEqual(rows[i - 1].top + rows[i - 1].height)
   for (const c of out.placed) expect(c.y).toBeCloseTo(out.scale.y(years.get(c.item.id)!))
 })
+
+it('splits hidden runs at the true date of a displaced milestone', () => {
+  const events = [
+    { id: 'a', date: '2024-01-05' }, { id: 'b', date: '2024-01-03' },
+    { id: 'before', date: '2024-01-04' }, { id: 'after', date: '2024-01-02' },
+  ]
+  const years = new Map(events.map((e) => [e.id, toYear(e.date)]))
+  const base = buildScale(eras, [...years.values()], 2026.84, 1, { ...DEFAULT_SCALE, headerPx: 110, footerPx: 500 })
+  const arranged = layout(events.map((item) => ({ item, y: base.y(years.get(item.id)!), score: 50 })), {
+    lanes: 1, cardHeight: 100, gap: 10, anchorOffset: 18, clusterPx: 28, mustShow: (e) => e.id === 'a' || e.id === 'b',
+  })
+  const out = buildGroups(base, arranged.placed, arranged.clusters, years, () => 100)
+  expect(out.groups).toHaveLength(2)
+  expect(out.groups.map((g) => g.items.map((e) => e.id))).toEqual([['before'], ['after']])
+})
