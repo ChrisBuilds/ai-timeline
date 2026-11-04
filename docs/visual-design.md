@@ -52,3 +52,7 @@ Desktop selection reserves room for the detail panel. At tablet widths the panel
 The density model is independent of scrolling. SVG paths, group rows and entries are rendered near the viewport using the existing chunked window. Geometry is rebuilt on layout changes, not on every scroll.
 
 Run `npm run validate`, `npm run check`, `npm test`, and `npm run build`. The microbenchmarks include ribbon calculation and full zoom work at 1,000, 5,000 and 20,000 events. Run `npm run bench` and `npm run bench:browser -- --budgets`; `CHROMIUM_PATH` optionally selects an installed Chromium executable. Inspect light/dark themes at 320px, phone, tablet and desktop widths; check selected/related states, long titles, same-date events, era boundaries, quiet spans, group browsing, deep links, filter changes, keyboard access and reduced motion.
+
+## Overview milestones
+
+Historical significance and visibility are separate decisions; see [importance.md](importance.md). Explicitly designated overview milestones receive a full card even when their dates collide. Cards may move downward into reserved space while their true date markers stay fixed, joined by leader lines. Groups are inserted around displayed cards and retain every supporting event. Date projection and inverse navigation remain aligned with markers. Matching filters take precedence over faded milestones; selection still pins the chosen event.

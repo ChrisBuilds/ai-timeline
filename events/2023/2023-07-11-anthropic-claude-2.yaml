@@ -1,7 +1,8 @@
 id: 2023-07-11-anthropic-claude-2
 title: Anthropic releases Claude 2
 date: 2023-07-11
-summary: Anthropic released Claude 2 through its API and a public beta in the US and UK, with inputs of up to 100,000 tokens.
+summary: Anthropic released Claude 2 through its API and a public beta in the US and UK, with inputs
+  of up to 100,000 tokens.
 description: |
   Anthropic announced Claude 2 as a new model with improved performance and longer responses. Businesses could access it through the API, while people in the US and UK could use a public beta chat experience. Prompts could contain up to 100,000 tokens. Anthropic also reported improvements in coding, math, and reasoning; its performance comparisons were based on the company's own evaluations.
 category: model release
@@ -21,5 +22,61 @@ importance:
     adoption: 4
     impact: 4
     culture: 3
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment, based on the primary announcement read on 2026-11-04. Ratings are
+        editorial judgments; later product generations do not automatically increase this release’s
+        adoption.
+      dimensions:
+        influence:
+          rating: 3
+          confidence: medium
+          rationale: Expanded access to the Claude product line through its public beta and API.
+          evidence:
+            - https://www.anthropic.com/news/claude-2
+        adoption:
+          rating: 4
+          confidence: medium
+          rationale: The announcement reports business API use and identifies partner applications; its
+            general-user beta was limited to the US and UK.
+          evidence:
+            - https://www.anthropic.com/news/claude-2
+        capability:
+          rating: 3
+          confidence: high
+          rationale: Reported improved coding and reasoning while retaining the already-announced long-context
+            workflow.
+          evidence:
+            - https://www.anthropic.com/news/claude-2
+        society:
+          rating: 3
+          confidence: medium
+          rationale: Public chat access broadened reach beyond developer integrations, with regional limits.
+          evidence:
+            - https://www.anthropic.com/news/claude-2
+      comparisons:
+        - id: 2023-03-14-openai-gpt-4
+          rationale: "Compare this release’s contribution: Expanded access to the Claude product line through
+            its public beta and API. The comparison event OpenAI releases GPT-4 is assessed
+            separately, avoiding attribution of the entire product line to each release."
+        - id: 2023-03-14-anthropic-claude
+          rationale: "Compare this release’s contribution: Expanded access to the Claude product line through
+            its public beta and API. The comparison event Anthropic introduces Claude and Claude
+            Instant is assessed separately, avoiding attribution of the entire product line to each
+            release."
+      questions:
+        - Would independent longitudinal evidence change the release-specific adoption or influence
+          judgment?
+      review_after: 2027-02-04
+      review_triggers:
+        - New evidence of sustained adoption, successors, abandonment, or corrected attribution.
 issue: 87
 submitted_by: ChrisBuilds

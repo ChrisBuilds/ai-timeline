@@ -2,8 +2,8 @@ id: 2006-07-deep-belief-net-training
 title: Hinton, Osindero and Teh publish a deep-belief-net algorithm
 date: "2006-07"
 summary: >-
-  Geoffrey Hinton, Simon Osindero and Yee-Whye Teh present a greedy layer-by-layer
-  method for training deep belief networks and report results on handwritten digits.
+  Geoffrey Hinton, Simon Osindero and Yee-Whye Teh present a greedy layer-by-layer method for
+  training deep belief networks and report results on handwritten digits.
 description: |
   In *Neural Computation* 18(7), Hinton, Osindero and Teh described a fast,
   greedy procedure for learning a deep belief network one layer at a time.
@@ -18,9 +18,9 @@ description: |
   from this period, so this paper was one part of the resurgence rather than
   its sole starting point.
 category: research
-organizations: [University of Toronto, National University of Singapore]
-people: [Geoffrey Hinton, Simon Osindero, Yee-Whye Teh]
-tags: [deep belief networks, unsupervised learning, generative models, neural networks]
+organizations: [ University of Toronto, National University of Singapore ]
+people: [ Geoffrey Hinton, Simon Osindero, Yee-Whye Teh ]
+tags: [ deep belief networks, unsupervised learning, generative models, neural networks ]
 sources:
   - url: https://www.stats.ox.ac.uk/~teh/research/unsup/nc2006.pdf
     title: A Fast Learning Algorithm for Deep Belief Nets
@@ -43,6 +43,62 @@ artifacts:
     url: https://doi.org/10.1162/neco.2006.18.7.1527
     title: Hinton, Osindero and Teh, A Fast Learning Algorithm for Deep Belief Nets (2006)
 importance:
-  rubric: {capability: 4, adoption: 3, impact: 4, culture: 1}
+  rubric: { capability: 4, adoption: 3, impact: 4, culture: 1 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. Ratings are editorial judgments from the cited evidence, not measured counts or
+        claims of exclusive causation.
+      dimensions:
+        influence:
+          rating: 4
+          confidence: medium
+          rationale: Layer-wise training helped reopen work on deeper learned representations.
+          evidence:
+            - https://www.stats.ox.ac.uk/~teh/research/unsup/nc2006.pdf
+        adoption:
+          rating: 3
+          confidence: medium
+          rationale: The documented method belongs to a research practice rather than a ubiquitous end-user
+            product.
+          evidence:
+            - https://www.stats.ox.ac.uk/~teh/research/unsup/nc2006.pdf
+        capability:
+          rating: 4
+          confidence: high
+          rationale: Provided a practical greedy procedure for training deep belief networks.
+          evidence:
+            - https://www.stats.ox.ac.uk/~teh/research/unsup/nc2006.pdf
+        society:
+          rating: 1
+          confidence: medium
+          rationale: The paper establishes specialist impact rather than broad social reach.
+          evidence:
+            - https://www.stats.ox.ac.uk/~teh/research/unsup/nc2006.pdf
+      comparisons:
+        - id: 2009-06-imagenet-cvpr
+          rationale: "Relative rank remains provisional pending evidence review. This event: Layer-wise
+            training helped reopen work on deeper learned representations. Comparison event: The
+            later AlexNet result in the dataset demonstrates its role in evaluating learned vision
+            systems."
+        - id: 2012-09-30-alexnet-imagenet
+          rationale: "Lower overall significance under v2. This event: Layer-wise training helped reopen work
+            on deeper learned representations. Comparison event: The competition result marks a
+            decisive shift toward learned visual representations."
+      questions:
+        - Would independent longitudinal evidence change the adoption or downstream influence
+          judgment?
+      review_after: 2027-11-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.
 issue: 37
 submitted_by: ChrisBuilds

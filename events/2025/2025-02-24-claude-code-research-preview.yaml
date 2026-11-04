@@ -2,15 +2,81 @@ id: 2025-02-24-claude-code-research-preview
 title: Anthropic releases Claude Code as a research preview
 date: "2025-02-24"
 summary: >-
-  Alongside Claude 3.7 Sonnet, Anthropic introduces Claude Code, its first agentic
-  coding tool, which works on codebases directly from the terminal.
+  Alongside Claude 3.7 Sonnet, Anthropic introduces Claude Code, its first agentic coding tool,
+  which works on codebases directly from the terminal.
 category: product
-organizations: [Anthropic]
-tags: [coding agent, agents, developer tools]
+organizations: [ Anthropic ]
+tags: [ coding agent, agents, developer tools ]
 sources:
   - url: https://www.anthropic.com/news/claude-3-7-sonnet
     title: Claude 3.7 Sonnet and Claude Code
     publisher: Anthropic
     accessed: "2026-11-03"
+  - url: https://www.anthropic.com/news/anthropic-acquires-bun-as-claude-code-reaches-usd1b-milestone
+    title: Anthropic acquires Bun as Claude Code reaches $1B milestone
+    publisher: Anthropic
+    accessed: 2026-11-04
 importance:
-  rubric: {capability: 4, adoption: 4, impact: 4, culture: 3}
+  rubric: { capability: 4, adoption: 4, impact: 4, culture: 3 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. Ratings are editorial judgments from the cited evidence, not measured counts or
+        claims of exclusive causation.
+      dimensions:
+        influence:
+          rating: 4
+          confidence: medium
+          rationale: The initial preview introduced the terminal workflow that the later adoption report
+            identifies as the same continuing product.
+          evidence:
+            - https://www.anthropic.com/news/anthropic-acquires-bun-as-claude-code-reaches-usd1b-milestone
+        adoption:
+          rating: 4
+          confidence: medium
+          rationale: Anthropic reports enterprise use and substantial run-rate revenue after general
+            availability; these are vendor-reported signals.
+          evidence:
+            - https://www.anthropic.com/news/anthropic-acquires-bun-as-claude-code-reaches-usd1b-milestone
+        capability:
+          rating: 4
+          confidence: high
+          rationale: Integrated repository reading, editing, testing and command execution into delegated
+            engineering tasks.
+          evidence:
+            - https://www.anthropic.com/news/claude-3-7-sonnet
+        society:
+          rating: 3
+          confidence: medium
+          rationale: Its demonstrated reach is primarily developer workflows rather than general consumer
+            culture.
+          evidence:
+            - https://www.anthropic.com/news/anthropic-acquires-bun-as-claude-code-reaches-usd1b-milestone
+      comparisons:
+        - id: 2022-11-30-chatgpt-launch
+          rationale: "Lower overall significance under v2. This event: The initial preview introduced the
+            terminal workflow that the later adoption report identifies as the same continuing
+            product. Comparison event: The launch established access to the conversational product
+            whose continued use is documented in the later usage study."
+        - id: 1950-10-turing-computing-machinery-and-intelligence
+          rationale: "Lower overall significance under v2. This event: The initial preview introduced the
+            terminal workflow that the later adoption report identifies as the same continuing
+            product. Comparison event: Established the imitation game as a durable framing for
+            machine intelligence."
+      questions:
+        - Would independent longitudinal evidence change the adoption or downstream influence
+          judgment?
+      review_after: 2027-02-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.
+      overview_reason: "Overview milestone: The initial preview introduced the terminal workflow that the
+        later adoption report identifies as the same continuing product."

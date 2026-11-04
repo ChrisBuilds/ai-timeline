@@ -2,12 +2,12 @@ id: 1997-05-11-deep-blue-defeats-kasparov
 title: IBM's Deep Blue defeats world chess champion Garry Kasparov
 date: "1997-05-11"
 summary: >-
-  Deep Blue wins the sixth and final game of their rematch in New York, beating
-  Kasparov 3½–2½, the first match loss by a reigning world champion to a computer.
+  Deep Blue wins the sixth and final game of their rematch in New York, beating Kasparov 3½–2½, the
+  first match loss by a reigning world champion to a computer.
 category: benchmark milestone
-organizations: [IBM]
-people: [Garry Kasparov]
-tags: [chess, game playing, search]
+organizations: [ IBM ]
+people: [ Garry Kasparov ]
+tags: [ chess, game playing, search ]
 sources:
   - url: https://www.ibm.com/history/early-games
     title: The games that helped AI evolve
@@ -18,4 +18,63 @@ sources:
     publisher: Wikipedia
     accessed: "2026-11-03"
 importance:
-  rubric: {capability: 3, adoption: 2, impact: 4, culture: 5}
+  rubric: { capability: 3, adoption: 2, impact: 4, culture: 5 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. Ratings are editorial judgments from the cited evidence, not measured counts or
+        claims of exclusive causation.
+      dimensions:
+        influence:
+          rating: 3
+          confidence: medium
+          rationale: A benchmark landmark for game-playing systems, with narrower downstream generality than
+            learning architectures.
+          evidence:
+            - https://www.ibm.com/history/early-games
+        adoption:
+          rating: 1
+          confidence: medium
+          rationale: A single competition system is not evidence of broad practical adoption.
+          evidence:
+            - https://www.ibm.com/history/early-games
+        capability:
+          rating: 4
+          confidence: high
+          rationale: Defeated the reigning champion over a match, a major advance on this benchmark.
+          evidence:
+            - https://www.ibm.com/history/early-games
+        society:
+          rating: 5
+          confidence: medium
+          rationale: The match was a major public demonstration of machine performance.
+          evidence:
+            - https://www.ibm.com/history/early-games
+      comparisons:
+        - id: 2011-02-16-watson-jeopardy
+          rationale: "Higher overall significance under v2. This event: A benchmark landmark for game-playing
+            systems, with narrower downstream generality than learning architectures. Comparison
+            event: A prominent question-answering demonstration; later branded products are not
+            automatically credited to this match."
+        - id: 2016-03-12-alphago-defeats-lee-sedol
+          rationale: "Lower overall significance under v2. This event: A benchmark landmark for game-playing
+            systems, with narrower downstream generality than learning architectures. Comparison
+            event: A major demonstration of learned search and reinforcement learning, beyond the
+            earlier chess milestone."
+      questions:
+        - Would independent longitudinal evidence change the adoption or downstream influence
+          judgment?
+      review_after: 2027-11-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.
+      overview_reason: "Overview milestone: A benchmark landmark for game-playing systems, with narrower
+        downstream generality than learning architectures."

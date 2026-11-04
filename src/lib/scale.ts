@@ -10,6 +10,13 @@ import type { Era } from './eras'
  * events don't fill the screen.
  */
 
+/** Date projection before any footer display space is added. */
+export interface BandTime {
+  top: number
+  end: number
+  y(year: number): number
+}
+
 export interface ScaleOptions {
   /** Pixels for an era with no events, at zoom 1. */
   basePx: number
@@ -29,7 +36,7 @@ export interface ScaleOptions {
   /** Space at the top of each era for its name, before its time starts. Not zoomed. */
   headerPx?: number
   /** Non-time space for entries extending past the last date in each era. */
-  footerPx?: number | ((era: Era) => number)
+  footerPx?: number | ((era: Era, time: BandTime) => number)
   /** Smallest spacing between year marks; one time unit is at least this tall. */
   unitPx?: number
   /** Height of a compressed run of empty units. Leave out to never compress. */
@@ -209,7 +216,18 @@ export function buildScale(
       }
     }
 
-    y += typeof opts.footerPx === 'function' ? opts.footerPx(era) : opts.footerPx ?? 0
+    const timeEnd = y
+    const bandTop = top
+    const time: BandTime = {
+      top: bandTop, end: timeEnd,
+      y(year) {
+        if (year >= end) return bandTop + header
+        if (year <= start) return timeEnd
+        const segment = segmentForYear(segments, year)
+        return segment.top + ((segment.from - year) / (segment.from - segment.to)) * segment.height
+      },
+    }
+    y += typeof opts.footerPx === 'function' ? opts.footerPx(era, time) : opts.footerPx ?? 0
     const band = { era, start, end, top, height: y - top, count: years.length, step, segments }
     top = y
     return band

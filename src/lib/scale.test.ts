@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Era } from './eras'
-import { buildScale, effectiveCount, type ScaleOptions } from './scale'
+import { DEFAULT_SCALE, buildScale, effectiveCount, type ScaleOptions } from './scale'
 
 const eras: Era[] = [
   { id: 'new', name: 'New', start: 2020 },
@@ -127,4 +127,15 @@ describe('era footer space', () => {
     expect(b.y(1950)).toBe(b.bands[1].top + b.bands[1].height - 100)
     for (const year of [2025.5, 2020, 2010, 1950]) expect(b.year(b.y(year))).toBeCloseTo(year)
   })
+})
+
+it('offers a stable pre-footer date projection for actual milestone overflow', () => {
+  let projection: { top: number; end: number; y(year: number): number } | undefined
+  const scale = buildScale([{ id: 'test', name: 'Test', start: 2022 }], [2023, 2024], 2025, 1, {
+    ...DEFAULT_SCALE, gapPx: undefined,
+    footerPx: (_era, time) => { projection = time; return 300 },
+  })
+  expect(projection!.y(2022)).toBeCloseTo(projection!.end)
+  expect(projection!.y(2024)).toBeCloseTo(scale.y(2024))
+  expect(projection!.end + 300).toBeCloseTo(scale.bands[0].top + scale.bands[0].height)
 })

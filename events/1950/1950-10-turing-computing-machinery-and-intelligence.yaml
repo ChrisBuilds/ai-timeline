@@ -2,16 +2,16 @@ id: 1950-10-turing-computing-machinery-and-intelligence
 title: Turing asks "Can machines think?"
 date: "1950-10"
 summary: >-
-  Alan Turing's paper "Computing Machinery and Intelligence" proposes the imitation
-  game, later called the Turing test, as a practical stand-in for machine thinking.
+  Alan Turing's paper "Computing Machinery and Intelligence" proposes the imitation game, later
+  called the Turing test, as a practical stand-in for machine thinking.
 description: |
   Published in the journal *Mind* (vol. LIX, no. 236), the paper replaces the vague
   question "Can machines think?" with whether a digital computer could play the
   imitation game well enough to be indistinguishable from a human, and answers the
   main objections to that possibility.
 category: research
-people: [Alan Turing]
-tags: [turing test, foundations, philosophy of mind]
+people: [ Alan Turing ]
+tags: [ turing test, foundations, philosophy of mind ]
 sources:
   - url: https://academic.oup.com/mind/article/LIX/236/433/986238
     title: Computing Machinery and Intelligence (Mind, vol. LIX, no. 236, pp. 433-460)
@@ -22,4 +22,61 @@ sources:
     publisher: Wikipedia
     accessed: "2026-11-03"
 importance:
-  rubric: {capability: 2, adoption: 2, impact: 5, culture: 5}
+  rubric: { capability: 2, adoption: 2, impact: 5, culture: 5 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. Ratings are editorial judgments from the cited evidence, not measured counts or
+        claims of exclusive causation.
+      dimensions:
+        influence:
+          rating: 5
+          confidence: medium
+          rationale: Established the imitation game as a durable framing for machine intelligence.
+          evidence:
+            - https://en.wikipedia.org/wiki/Computing_Machinery_and_Intelligence
+        adoption:
+          rating: 4
+          confidence: medium
+          rationale: The test became a recurring reference in discussion of machine intelligence, rather than
+            a deployed product.
+          evidence:
+            - https://en.wikipedia.org/wiki/Computing_Machinery_and_Intelligence
+        capability:
+          rating: 5
+          confidence: high
+          rationale: Replaced an ill-defined question with a concrete conceptual evaluation.
+          evidence:
+            - https://en.wikipedia.org/wiki/Computing_Machinery_and_Intelligence
+        society:
+          rating: 5
+          confidence: medium
+          rationale: The enduring public framing extends well beyond specialist AI research.
+          evidence:
+            - https://en.wikipedia.org/wiki/Computing_Machinery_and_Intelligence
+      comparisons:
+        - id: 1956-06-dartmouth-workshop
+          rationale: "Higher overall significance under v2. This event: Established the imitation game as a
+            durable framing for machine intelligence. Comparison event: Named and organized a
+            research field whose institutional identity persisted."
+        - id: 1958-07-rosenblatt-perceptron
+          rationale: "Higher overall significance under v2. This event: Established the imitation game as a
+            durable framing for machine intelligence. Comparison event: A foundational learning
+            architecture, with later influence distinct from immediate deployment."
+      questions:
+        - Would independent longitudinal evidence change the adoption or downstream influence
+          judgment?
+      review_after: 2027-11-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.
+      overview_reason: "Overview milestone: Established the imitation game as a durable framing for
+        machine intelligence."

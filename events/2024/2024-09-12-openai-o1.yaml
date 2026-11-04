@@ -2,11 +2,11 @@ id: 2024-09-12-openai-o1
 title: OpenAI releases o1, its first reasoning model
 date: "2024-09-12"
 summary: >-
-  o1 spends extra compute thinking through a chain of thought before it answers,
-  and posts large gains on math, coding and science benchmarks.
+  o1 spends extra compute thinking through a chain of thought before it answers, and posts large
+  gains on math, coding and science benchmarks.
 category: model release
-organizations: [OpenAI]
-tags: [reasoning, chain of thought, test-time compute]
+organizations: [ OpenAI ]
+tags: [ reasoning, chain of thought, test-time compute ]
 sources:
   - url: https://openai.com/index/learning-to-reason-with-llms/
     title: Learning to reason with LLMs
@@ -17,4 +17,63 @@ related:
     relation: builds_on
     source: https://openai.com/index/learning-to-reason-with-llms/
 importance:
-  rubric: {capability: 5, adoption: 4, impact: 4, culture: 4}
+  rubric: { capability: 5, adoption: 4, impact: 4, culture: 4 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. Ratings are editorial judgments from the cited evidence, not measured counts or
+        claims of exclusive causation.
+      dimensions:
+        influence:
+          rating: 4
+          confidence: medium
+          rationale: Made reinforcement learning and additional inference compute central to a reasoning-model
+            release.
+          evidence:
+            - https://openai.com/index/learning-to-reason-with-llms/
+        adoption:
+          rating: 3
+          confidence: medium
+          rationale: The initial preview had restricted API access; launch availability is not a sustained
+            adoption measurement.
+          evidence:
+            - https://openai.com/index/learning-to-reason-with-llms/
+        capability:
+          rating: 4
+          confidence: high
+          rationale: Reported major gains on verifiable reasoning benchmarks using additional deliberation.
+          evidence:
+            - https://openai.com/index/learning-to-reason-with-llms/
+        society:
+          rating: 3
+          confidence: medium
+          rationale: The main documented reach is professional and technical rather than a new mass-market
+            interface.
+          evidence:
+            - https://openai.com/index/learning-to-reason-with-llms/
+      comparisons:
+        - id: 2023-02-24-meta-llama-research-release
+          rationale: "Higher overall significance under v2. This event: Made reinforcement learning and
+            additional inference compute central to a reasoning-model release. Comparison event: An
+            important research-access model family; later Llama releases are not all attributed to
+            this event."
+        - id: 2023-03-14-openai-gpt-4
+          rationale: "Lower overall significance under v2. This event: Made reinforcement learning and
+            additional inference compute central to a reasoning-model release. Comparison event:
+            Raised the frontier for subsequent model comparisons while building on earlier
+            language-model and interface work."
+      questions:
+        - Would independent longitudinal evidence change the adoption or downstream influence
+          judgment?
+      review_after: 2027-02-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.

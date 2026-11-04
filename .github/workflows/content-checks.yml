@@ -13,9 +13,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
       - run: npm ci
       - run: npm run validate
+      - name: Preserve assessment history
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: node scripts/assessment-history.mjs "$BASE_SHA"
+      - name: Importance comparison
+        run: npm run importance:report >> "$GITHUB_STEP_SUMMARY"
+      - name: Assessment review queue
+        run: npm run importance:review

@@ -2,12 +2,22 @@ id: 2014-06-10-generative-adversarial-networks
 title: Ian Goodfellow and colleagues introduce generative adversarial networks
 date: "2014-06-10"
 summary: >-
-  Ian Goodfellow and colleagues publish a framework that trains a generator and
-  discriminator in competition, demonstrating it on several image datasets.
+  Ian Goodfellow and colleagues publish a framework that trains a generator and discriminator in
+  competition, demonstrating it on several image datasets.
 category: research
-organizations: [Université de Montréal]
-people: [Ian Goodfellow, Jean Pouget-Abadie, Mehdi Mirza, Bing Xu, David Warde-Farley, Sherjil Ozair, Aaron Courville, Yoshua Bengio]
-tags: [generative-models, gan, image-generation]
+organizations: [ Université de Montréal ]
+people:
+  [
+    Ian Goodfellow,
+    Jean Pouget-Abadie,
+    Mehdi Mirza,
+    Bing Xu,
+    David Warde-Farley,
+    Sherjil Ozair,
+    Aaron Courville,
+    Yoshua Bengio
+  ]
+tags: [ generative-models, gan, image-generation ]
 sources:
   - url: https://arxiv.org/abs/1406.2661
     title: Generative Adversarial Nets
@@ -22,4 +32,61 @@ artifacts:
     url: https://arxiv.org/abs/1406.2661
     title: Generative Adversarial Nets (arXiv)
 importance:
-  rubric: {capability: 4, adoption: 4, impact: 4, culture: 2}
+  rubric: { capability: 4, adoption: 4, impact: 4, culture: 2 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. Ratings are editorial judgments from the cited evidence, not measured counts or
+        claims of exclusive causation.
+      dimensions:
+        influence:
+          rating: 4
+          confidence: medium
+          rationale: Introduced an influential framework for training generative models through an adversarial
+            objective.
+          evidence:
+            - https://arxiv.org/abs/1406.2661
+        adoption:
+          rating: 4
+          confidence: medium
+          rationale: Assess uptake of the method in generative modeling rather than general public usage.
+          evidence:
+            - https://arxiv.org/abs/1406.2661
+        capability:
+          rating: 4
+          confidence: high
+          rationale: Offered a distinct generative training framework demonstrated on generated samples.
+          evidence:
+            - https://arxiv.org/abs/1406.2661
+        society:
+          rating: 2
+          confidence: medium
+          rationale: Later generated media has wider reach, but the paper is not credited with every later
+            image product.
+          evidence:
+            - https://arxiv.org/abs/1406.2661
+      comparisons:
+        - id: 2012-09-30-alexnet-imagenet
+          rationale: "Lower overall significance under v2. This event: Introduced an influential framework for
+            training generative models through an adversarial objective. Comparison event: The
+            competition result marks a decisive shift toward learned visual representations."
+        - id: 2017-06-12-attention-is-all-you-need
+          rationale: "Lower overall significance under v2. This event: Introduced an influential framework for
+            training generative models through an adversarial objective. Comparison event: BERT,
+            GPT-3 and other later events provide concrete examples of the architecture being built
+            upon."
+      questions:
+        - Would independent longitudinal evidence change the adoption or downstream influence
+          judgment?
+      review_after: 2027-11-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.

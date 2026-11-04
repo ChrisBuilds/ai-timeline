@@ -33,6 +33,41 @@ export interface Related {
   source?: string
 }
 
+export type DimensionName = 'influence' | 'adoption' | 'capability' | 'society'
+export interface DimensionAssessment {
+  rating: number | null
+  confidence: 'low' | 'medium' | 'high'
+  rationale: string
+  evidence: string[]
+}
+export interface ImportanceAssessment {
+  id: string
+  assessed_at: string
+  rubric_version: 'v2'
+  status: 'accepted' | 'provisional'
+  reviewer: string
+  rationale: string
+  dimensions: Record<DimensionName, DimensionAssessment>
+  comparisons: { id: string; rationale: string }[]
+  questions: string[]
+  review_after: string
+  review_triggers: string[]
+  overview_reason?: string
+  override?: number
+  override_reason?: string
+  override_review_after?: string
+}
+export interface Importance {
+  /** Original v1 inputs, retained verbatim; original assessment date is unknown. */
+  rubric?: { capability: number; adoption: number; impact: number; culture: number }
+  legacy?: { rubric_version: 'v1'; migrated_at: string }
+  current?: string
+  assessments?: ImportanceAssessment[]
+  override?: number
+  override_reason?: string
+  override_review_after?: string
+}
+
 /** One event in full, as written in events/ and in data/events.json. */
 export interface EventRecord {
   id: string
@@ -48,11 +83,7 @@ export interface EventRecord {
   sources: Source[]
   artifacts?: Artifact[]
   related?: Related[]
-  importance: {
-    rubric: { capability: number; adoption: number; impact: number; culture: number }
-    override?: number
-    override_reason?: string
-  }
+  importance: Importance
   aliases?: string[]
   disputed?: { issue: number; reason: string }
   developing?: { since: string; recheck: string; issue?: number }
@@ -61,6 +92,10 @@ export interface EventRecord {
   /** Computed at build time by scripts/importance.mjs. */
   score: number
   tier: 1 | 2 | 3 | 4
+  overview?: boolean
+  score_status?: 'accepted' | 'provisional' | 'legacy'
+  score_basis?: string
+  score_range?: [number, number]
 }
 
 export interface RemovedEvent {

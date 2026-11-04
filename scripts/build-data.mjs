@@ -17,7 +17,7 @@ import { fileURLToPath } from 'node:url'
 import Ajv2020 from 'ajv/dist/2020.js'
 import addFormats from 'ajv-formats'
 import YAML from 'yaml'
-import { computeScore, tierOf } from './importance.mjs'
+import { importanceSummary, assessmentErrors } from './importance.mjs'
 import { splitEvent } from './split-event.mjs'
 import { checkNotes } from './notes.mjs'
 
@@ -96,6 +96,7 @@ for (const file of files) {
     errors.push(`${rel}: end_date is before date`)
   }
   for (const e of checkNotes(data)) errors.push(`${rel}: ${e}`)
+  for (const error of assessmentErrors(data.importance)) errors.push(`${rel}: ${error}`)
   events.push({ ...data, _file: rel })
 }
 
@@ -123,8 +124,19 @@ for (const r of Array.isArray(removed) ? removed : []) {
   }
 }
 
+// Historic comparisons may outlive a removed event. Tombstones keep those
+// assessments immutable; live related links still require an existing target.
+const comparisonIds = new Set([...byId.keys(), ...(Array.isArray(removed) ? removed : []).map((r) => r.id)])
 // Related links must point at real events, not at themselves.
 for (const ev of events) {
+  for (const a of ev.importance.assessments ?? []) {
+    for (const comparison of a.comparisons) {
+      if (comparison.id === ev.id || !comparisonIds.has(comparison.id)) errors.push(`${ev._file}: invalid comparison ${comparison.id}`)
+    }
+    for (const dimension of Object.values(a.dimensions)) for (const url of dimension.evidence) {
+      if (!ev.sources.some((s) => s.url === url)) errors.push(`${ev._file}: assessment evidence missing from sources: ${url}`)
+    }
+  }
   for (const link of ev.related ?? []) {
     if (link.id === ev.id) errors.push(`${ev._file}: related links to itself`)
     else if (!byId.has(link.id)) errors.push(`${ev._file}: related id ${link.id} does not exist`)
@@ -164,8 +176,7 @@ if (!checkOnly) {
     generated: new Date().toISOString(),
     events: events
       .map(({ _file, ...ev }) => {
-        const score = computeScore(ev.importance)
-        return { ...ev, score, tier: tierOf(score) }
+        return { ...ev, ...importanceSummary(ev.importance) }
       })
       .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0)),
     removed: Array.isArray(removed) ? removed : [],

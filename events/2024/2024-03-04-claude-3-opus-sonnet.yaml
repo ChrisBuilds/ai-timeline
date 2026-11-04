@@ -2,22 +2,78 @@ id: 2024-03-04-claude-3-opus-sonnet
 title: Anthropic releases Claude 3 Opus and Sonnet
 date: "2024-03-04"
 summary: >-
-  Anthropic released Claude 3 Opus and Sonnet with vision capabilities; the
-  announcement said Haiku would become available later.
+  Anthropic released Claude 3 Opus and Sonnet with vision capabilities; the announcement said Haiku
+  would become available later.
 description: >-
-  Anthropic announced the Claude 3 family, describing Opus, Sonnet and Haiku as
-  models with vision capabilities and different balances of intelligence,
-  speed and cost. Opus and Sonnet were available that day through Claude and
-  the API; Haiku was announced for a later release.
+  Anthropic announced the Claude 3 family, describing Opus, Sonnet and Haiku as models with vision
+  capabilities and different balances of intelligence, speed and cost. Opus and Sonnet were
+  available that day through Claude and the API; Haiku was announced for a later release.
 category: model release
-organizations: [Anthropic]
-tags: [large language model, multimodal, vision]
+organizations: [ Anthropic ]
+tags: [ large language model, multimodal, vision ]
 sources:
   - url: https://www.anthropic.com/news/claude-3-family
     title: Introducing the next generation of Claude
     publisher: Anthropic
     accessed: "2026-11-04"
 importance:
-  rubric: {capability: 4, adoption: 4, impact: 4, culture: 3}
+  rubric: { capability: 4, adoption: 4, impact: 4, culture: 3 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment, based on the primary announcement read on 2026-11-04. Ratings are
+        editorial judgments; later product generations do not automatically increase this release’s
+        adoption.
+      dimensions:
+        influence:
+          rating: 4
+          confidence: medium
+          rationale: Established multimodal capabilities across a model family with distinct cost and latency
+            options.
+          evidence:
+            - https://www.anthropic.com/news/claude-3-family
+        adoption:
+          rating: 4
+          confidence: medium
+          rationale: Opus and Sonnet were available through chat and the API; availability is distinguished
+            from measured sustained usage.
+          evidence:
+            - https://www.anthropic.com/news/claude-3-family
+        capability:
+          rating: 4
+          confidence: high
+          rationale: Added vision and stronger reported reasoning and coding benchmarks to the Claude line.
+          evidence:
+            - https://www.anthropic.com/news/claude-3-family
+        society:
+          rating: 3
+          confidence: medium
+          rationale: Broader access and multimodal professional applications extended institutional reach.
+          evidence:
+            - https://www.anthropic.com/news/claude-3-family
+      comparisons:
+        - id: 2023-03-14-openai-gpt-4
+          rationale: "Compare this release’s contribution: Established multimodal capabilities across a model
+            family with distinct cost and latency options. The comparison event OpenAI releases
+            GPT-4 is assessed separately, avoiding attribution of the entire product line to each
+            release."
+        - id: 2023-03-14-anthropic-claude
+          rationale: "Compare this release’s contribution: Established multimodal capabilities across a model
+            family with distinct cost and latency options. The comparison event Anthropic introduces
+            Claude and Claude Instant is assessed separately, avoiding attribution of the entire
+            product line to each release."
+      questions:
+        - Would independent longitudinal evidence change the release-specific adoption or influence
+          judgment?
+      review_after: 2027-02-04
+      review_triggers:
+        - New evidence of sustained adoption, successors, abandonment, or corrected attribution.
 issue: 89
 submitted_by: ChrisBuilds

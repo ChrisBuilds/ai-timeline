@@ -2,8 +2,8 @@ id: 2009-06-imagenet-cvpr
 title: Deng and colleagues introduce the ImageNet database
 date: "2009-06"
 summary: >-
-  Jia Deng and colleagues introduce ImageNet, a WordNet-organized image database
-  that contained 3.2 million images across 5,247 synsets in their CVPR 2009 paper.
+  Jia Deng and colleagues introduce ImageNet, a WordNet-organized image database that contained 3.2
+  million images across 5,247 synsets in their CVPR 2009 paper.
 description: |
   The paper presents ImageNet as a large-scale resource for visual recognition,
   organized using WordNet's hierarchy. It describes 3.2 million images across
@@ -11,9 +11,9 @@ description: |
   The paper appeared in the CVPR 2009 proceedings; the conference ran June 20–25,
   but the exact day of this presentation is not confirmed.
 category: research
-organizations: [Princeton University]
-people: [Jia Deng, Wei Dong, Richard Socher, Li-Jia Li, Kai Li, Li Fei-Fei]
-tags: [ImageNet, computer vision, image datasets, visual recognition, benchmark]
+organizations: [ Princeton University ]
+people: [ Jia Deng, Wei Dong, Richard Socher, Li-Jia Li, Kai Li, Li Fei-Fei ]
+tags: [ ImageNet, computer vision, image datasets, visual recognition, benchmark ]
 sources:
   - url: https://www.image-net.org/static_files/papers/imagenet_cvpr09.pdf
     title: "ImageNet: A Large-Scale Hierarchical Image Database"
@@ -32,6 +32,65 @@ artifacts:
     url: https://doi.org/10.1109/CVPR.2009.5206848
     title: "ImageNet: A Large-Scale Hierarchical Image Database"
 importance:
-  rubric: {capability: 3, adoption: 4, impact: 4, culture: 2}
+  rubric: { capability: 3, adoption: 4, impact: 4, culture: 2 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. The existing curated account is retained, but unavailable source content prevents
+        confirming downstream influence.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: The later AlexNet result in the dataset demonstrates its role in evaluating learned
+            vision systems.
+          evidence:
+            - https://www.image-net.org/static_files/papers/imagenet_cvpr09.pdf
+        adoption:
+          rating: 5
+          confidence: low
+          rationale: The benchmark became shared infrastructure for comparing vision models.
+          evidence:
+            - https://www.image-net.org/static_files/papers/imagenet_cvpr09.pdf
+        capability:
+          rating: 4
+          confidence: low
+          rationale: Organized labeled visual data at a scale enabling substantially different experiments.
+          evidence:
+            - https://www.image-net.org/static_files/papers/imagenet_cvpr09.pdf
+        society:
+          rating: 2
+          confidence: low
+          rationale: Its institutional research reach is clearer than direct public interaction.
+          evidence:
+            - https://www.image-net.org/static_files/papers/imagenet_cvpr09.pdf
+      comparisons:
+        - id: 2006-07-deep-belief-net-training
+          rationale: "Relative rank remains provisional pending evidence review. This event: The later AlexNet
+            result in the dataset demonstrates its role in evaluating learned vision systems.
+            Comparison event: Layer-wise training helped reopen work on deeper learned
+            representations."
+        - id: 2012-09-30-alexnet-imagenet
+          rationale: "Relative rank remains provisional pending evidence review. This event: The later AlexNet
+            result in the dataset demonstrates its role in evaluating learned vision systems.
+            Comparison event: The competition result marks a decisive shift toward learned visual
+            representations."
+      questions:
+        - Reopen the unavailable primary or retrospective source and verify the downstream influence
+          rating.
+      review_after: 2026-12-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.
+      overview_reason: "Overview milestone: The later AlexNet result in the dataset demonstrates its role
+        in evaluating learned vision systems."
 issue: 38
 submitted_by: ChrisBuilds

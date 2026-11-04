@@ -2,24 +2,80 @@ id: 2024-10-09-nobel-chemistry-protein-ai
 title: Nobel Prize in Chemistry recognizes protein design and prediction
 date: "2024-10-09"
 summary: >-
-  The 2024 Chemistry Nobel gave half the prize to David Baker for computational
-  protein design and the other half jointly to Demis Hassabis and John Jumper
-  for protein structure prediction.
+  The 2024 Chemistry Nobel gave half the prize to David Baker for computational protein design and
+  the other half jointly to Demis Hassabis and John Jumper for protein structure prediction.
 description: >-
-  The Royal Swedish Academy of Sciences awarded half of the 2024 Nobel Prize in
-  Chemistry to David Baker for computational protein design, and the other half
-  jointly to Demis Hassabis and John Jumper for protein structure prediction.
-  This records the Chemistry announcement on 9 October. It is distinct from the
-  Physics Nobel announced the previous day for foundational work enabling
+  The Royal Swedish Academy of Sciences awarded half of the 2024 Nobel Prize in Chemistry to David
+  Baker for computational protein design, and the other half jointly to Demis Hassabis and John
+  Jumper for protein structure prediction. This records the Chemistry announcement on 9 October. It
+  is distinct from the Physics Nobel announced the previous day for foundational work enabling
   machine learning with artificial neural networks.
 category: culture and society
-organizations: [Royal Swedish Academy of Sciences]
-people: [David Baker, Demis Hassabis, John Jumper]
-tags: [Nobel Prize, protein structure, protein design, machine learning]
+organizations: [ Royal Swedish Academy of Sciences ]
+people: [ David Baker, Demis Hassabis, John Jumper ]
+tags: [ Nobel Prize, protein structure, protein design, machine learning ]
 sources:
   - url: https://www.nobelprize.org/prizes/chemistry/2024/press-release/
     title: "The Nobel Prize in Chemistry 2024"
     publisher: Nobel Prize
     accessed: "2026-11-04"
 importance:
-  rubric: {capability: 3, adoption: 3, impact: 5, culture: 5}
+  rubric: { capability: 3, adoption: 3, impact: 5, culture: 5 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. The existing curated account is retained, but unavailable source content prevents
+        confirming downstream influence.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: The award recognizes prior protein design and prediction work; influence of that work is
+            scored separately.
+          evidence:
+            - https://www.nobelprize.org/prizes/chemistry/2024/press-release/
+        adoption:
+          rating: 1
+          confidence: low
+          rationale: Receipt of a prize does not itself establish new adoption of protein tools.
+          evidence:
+            - https://www.nobelprize.org/prizes/chemistry/2024/press-release/
+        capability:
+          rating: 0
+          confidence: low
+          rationale: The announcement is recognition rather than a new protein-prediction result.
+          evidence:
+            - https://www.nobelprize.org/prizes/chemistry/2024/press-release/
+        society:
+          rating: 4
+          confidence: low
+          rationale: The award is substantial scientific institutional recognition of computational protein
+            work.
+          evidence:
+            - https://www.nobelprize.org/prizes/chemistry/2024/press-release/
+      comparisons:
+        - id: 2024-10-08-nobel-physics-neural-networks
+          rationale: "Relative rank remains provisional pending evidence review. This event: The award
+            recognizes prior protein design and prediction work; influence of that work is scored
+            separately. Comparison event: Recognition strengthens the institutional standing of
+            earlier work, without recreating that technical contribution."
+        - id: 1950-10-turing-computing-machinery-and-intelligence
+          rationale: "Relative rank remains provisional pending evidence review. This event: The award
+            recognizes prior protein design and prediction work; influence of that work is scored
+            separately. Comparison event: Established the imitation game as a durable framing for
+            machine intelligence."
+      questions:
+        - Reopen the unavailable primary or retrospective source and verify the downstream influence
+          rating.
+      review_after: 2026-12-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.

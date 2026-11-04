@@ -2,19 +2,18 @@ id: 2024-08-01-eu-ai-act-enters-force
 title: EU Artificial Intelligence Act enters into force
 date: "2024-08-01"
 summary: >-
-  Regulation (EU) 2024/1689 entered into force, establishing the European Union's
-  harmonised rules for artificial intelligence. The Act's provisions apply in
-  stages rather than all beginning on this date.
+  Regulation (EU) 2024/1689 entered into force, establishing the European Union's harmonised rules
+  for artificial intelligence. The Act's provisions apply in stages rather than all beginning on
+  this date.
 description: >-
-  The European Artificial Intelligence Act was published in the Official
-  Journal on 12 July 2024 and entered into force 20 days later, on 1 August.
-  Entry into force made the Regulation part of EU law; it did not mean every
-  obligation applied immediately. Article 113 sets phased application dates,
-  with most provisions applying from 2 August 2026 and some provisions applying
-  earlier or later.
+  The European Artificial Intelligence Act was published in the Official Journal on 12 July 2024 and
+  entered into force 20 days later, on 1 August. Entry into force made the Regulation part of EU
+  law; it did not mean every obligation applied immediately. Article 113 sets phased application
+  dates, with most provisions applying from 2 August 2026 and some provisions applying earlier or
+  later.
 category: policy and regulation
-organizations: [European Union]
-tags: [AI regulation, European Union, governance]
+organizations: [ European Union ]
+tags: [ AI regulation, European Union, governance ]
 sources:
   - url: https://commission.europa.eu/news-and-media/news/ai-act-enters-force-2024-08-01_en
     title: AI Act enters into force
@@ -25,4 +24,64 @@ sources:
     publisher: EUR-Lex
     accessed: "2026-11-04"
 importance:
-  rubric: {capability: 1, adoption: 4, impact: 4, culture: 3}
+  rubric: { capability: 1, adoption: 4, impact: 4, culture: 3 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. Ratings are editorial judgments from the cited evidence, not measured counts or
+        claims of exclusive causation.
+      dimensions:
+        influence:
+          rating: 4
+          confidence: medium
+          rationale: Established a harmonized regulatory framework; long-term enforcement effects require
+            reassessment.
+          evidence:
+            - https://commission.europa.eu/news-and-media/news/ai-act-enters-force-2024-08-01_en
+        adoption:
+          rating: 4
+          confidence: medium
+          rationale: Assess statutory institutional coverage rather than assuming voluntary compliance or
+            technical uptake.
+          evidence:
+            - https://commission.europa.eu/news-and-media/news/ai-act-enters-force-2024-08-01_en
+        capability:
+          rating: 3
+          confidence: high
+          rationale: Provided a substantial governance framework rather than a model-performance improvement.
+          evidence:
+            - https://commission.europa.eu/news-and-media/news/ai-act-enters-force-2024-08-01_en
+        society:
+          rating: 5
+          confidence: medium
+          rationale: The regulation directly addresses rights, safety and obligations across EU institutions
+            and deployers.
+          evidence:
+            - https://commission.europa.eu/news-and-media/news/ai-act-enters-force-2024-08-01_en
+      comparisons:
+        - id: 1973-lighthill-report
+          rationale: "Relative rank remains provisional pending evidence review. This event: Established a
+            harmonized regulatory framework; long-term enforcement effects require reassessment.
+            Comparison event: Associated with a change in British research funding; the existing
+            history cautions against simple causal claims."
+        - id: 1950-10-turing-computing-machinery-and-intelligence
+          rationale: "Lower overall significance under v2. This event: Established a harmonized regulatory
+            framework; long-term enforcement effects require reassessment. Comparison event:
+            Established the imitation game as a durable framing for machine intelligence."
+      questions:
+        - Would independent longitudinal evidence change the adoption or downstream influence
+          judgment?
+      review_after: 2027-02-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.
+      overview_reason: "Overview milestone: Established a harmonized regulatory framework; long-term
+        enforcement effects require reassessment."

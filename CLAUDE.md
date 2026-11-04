@@ -62,8 +62,7 @@ Before researching anything:
 - `sources`: primary source first. Set `accessed` to today.
 - Unverified details: if you are unsure of a detail, drop it. Keep it only if it is worth having, and then put `{citation needed}` straight after the claim in the `description`, and list it in the PR research note. Never state an unverified detail as fact. If the exact day is unconfirmed, use a month-precision date and say so in the note.
 - In-text notes: never put research caveats in parentheses in the text. Use `{citation needed}` for a low-confidence claim, and `{note: …}` for any other remark about the text, such as how a source was read. The site shows them as superscripts, with notes listed under the description. Markers go only in `description`; `npm run validate` rejects them in the title or summary, and rejects the old "(low confidence; additional citation needed)" wording.
-- `importance.rubric`: rate capability leap, adoption, industry or policy impact, and cultural reach, each 1 to 5. Only a maintainer sets `override`, and it always needs `override_reason`.
-  Until measured signals exist, the score is computed from the rubric alone by `scripts/importance.mjs`: half the average rating plus half the highest rating, scaled to 0 to 100. Tiers: 85 and above is a landmark, 65 a major event, 40 notable, below that detail.
+- Importance: follow [`docs/importance.md`](docs/importance.md). Use the v2 anchored dimensions (downstream influence 35%, relevant-audience adoption 30%, capability/conceptual advance 25%, societal/institutional reach 10%). Append dated, evidence-backed records to `importance.assessments` and select `importance.current`; never rewrite earlier judgments or the frozen v1 rubric. Record per-dimension rationale/confidence/evidence, two or three comparison events, open questions, reviewer and review deadline/triggers. Unknown ratings are null and provisional; retain the established published score pending acceptance. Overrides need reasons and review dates. Overview designation needs a separate editorial argument and is not a reason to inflate a score.
 - `related`: at most 3 links, each direct and stated by a source, with that source in `source`. Types are `builds_on`, `responds_to` and `supersedes`. Never link two events only because they share a topic.
 - Set `issue` to the canonical issue number and `submitted_by` to the submitter's handle.
 
@@ -73,7 +72,8 @@ Run `npm run validate`, then open a PR that closes the issue. The PR body must i
 
 - the sources checked and what each confirmed
 - confidence: high, medium or low
-- the proposed rubric scores and why
+- the previous and proposed component ratings and scores, rubric version, evidence and comparison events
+- confidence, attribution limits, open questions, next review date/triggers and any overview designation reason
 - anything uncertain or worth a second look
 - the 👍 count on the issue and the voters' account ages, when importance is in question
 
@@ -81,7 +81,7 @@ Then comment on the issue with the outcome.
 
 ## Updates
 
-Update issues change one or more of: a source, an artifact, a fact, importance, or related links. Every change needs evidence, except importance, which needs a written argument. Keep valid old sources. Save a Wayback Machine snapshot in `archived_url` when a source looks fragile. Note old and new values in the PR body.
+Update issues change one or more of: a source, an artifact, a fact, importance, or related links. Every change needs evidence. Importance changes additionally need a written comparison against the anchored rubric and earlier assessment. Keep valid old sources. Save a Wayback Machine snapshot in `archived_url` when a source looks fragile. Append the new importance assessment rather than rewriting history. Run `npm run importance:report` and `npm run importance:review`, and note old and new values in the PR body.
 
 ## Removing events
 

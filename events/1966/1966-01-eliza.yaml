@@ -2,9 +2,8 @@ id: 1966-01-eliza
 title: Weizenbaum publishes ELIZA, the first chatbot
 date: "1966-01"
 summary: >-
-  Joseph Weizenbaum of MIT describes ELIZA, a program that converses in text by
-  matching keywords and rephrasing the user's words, most famously as a Rogerian
-  psychotherapist.
+  Joseph Weizenbaum of MIT describes ELIZA, a program that converses in text by matching keywords
+  and rephrasing the user's words, most famously as a Rogerian psychotherapist.
 description: |
   Weizenbaum's paper appeared in *Communications of the ACM* (vol. 9, no. 1,
   pp. 36-45). ELIZA ran on MIT's MAC time-sharing system and was written in
@@ -20,12 +19,13 @@ description: |
   effect". In 2025 researchers reported finding a printout of an early version of
   the code in Weizenbaum's MIT archives and running it on a restored CTSS.
 category: research
-organizations: [MIT]
-people: [Joseph Weizenbaum]
-tags: [chatbot, natural language, ELIZA effect, symbolic AI]
+organizations: [ MIT ]
+people: [ Joseph Weizenbaum ]
+tags: [ chatbot, natural language, ELIZA effect, symbolic AI ]
 sources:
   - url: http://web.stanford.edu/class/linguist238/p36-weizenabaum.pdf
-    title: "ELIZA: A Computer Program for the Study of Natural Language Communication Between Man and Machine (Communications of the ACM 9(1), January 1966)"
+    title: "ELIZA: A Computer Program for the Study of Natural Language Communication Between Man and
+      Machine (Communications of the ACM 9(1), January 1966)"
     publisher: Association for Computing Machinery (copy hosted by Stanford)
     accessed: "2026-11-03"
   - url: https://api.crossref.org/works/10.1145/365153.365168
@@ -44,6 +44,63 @@ artifacts:
     url: https://arxiv.org/abs/2501.06707
     title: ELIZA Reanimated (arXiv, 2025)
 importance:
-  rubric: {capability: 3, adoption: 2, impact: 3, culture: 4}
+  rubric: { capability: 3, adoption: 2, impact: 3, culture: 4 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. Ratings are editorial judgments from the cited evidence, not measured counts or
+        claims of exclusive causation.
+      dimensions:
+        influence:
+          rating: 3
+          confidence: medium
+          rationale: Established an early conversational interaction pattern and questions about perceived
+            understanding.
+          evidence:
+            - https://arxiv.org/abs/2501.06707
+        adoption:
+          rating: 2
+          confidence: medium
+          rationale: The restored system and original description support research use, not mass adoption.
+          evidence:
+            - https://arxiv.org/abs/2501.06707
+        capability:
+          rating: 3
+          confidence: high
+          rationale: Rule-based conversation was a substantial demonstration, without general language
+            understanding.
+          evidence:
+            - https://arxiv.org/abs/2501.06707
+        society:
+          rating: 4
+          confidence: medium
+          rationale: The ELIZA effect remains a reference for interpreting human responses to chatbots.
+          evidence:
+            - https://arxiv.org/abs/2501.06707
+      comparisons:
+        - id: 1958-07-rosenblatt-perceptron
+          rationale: "Lower overall significance under v2. This event: Established an early conversational
+            interaction pattern and questions about perceived understanding. Comparison event: A
+            foundational learning architecture, with later influence distinct from immediate
+            deployment."
+        - id: 1956-06-dartmouth-workshop
+          rationale: "Lower overall significance under v2. This event: Established an early conversational
+            interaction pattern and questions about perceived understanding. Comparison event: Named
+            and organized a research field whose institutional identity persisted."
+      questions:
+        - Would independent longitudinal evidence change the adoption or downstream influence
+          judgment?
+      review_after: 2027-11-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.
 issue: 32
 submitted_by: ChrisBuilds

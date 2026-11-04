@@ -6,6 +6,7 @@
   import type { Filters } from './filters'
   import { parseDescription } from './markdown'
   import Inline from './Inline.svelte'
+  import ImportanceDetails from './ImportanceDetails.svelte'
   import { cubicOut } from 'svelte/easing'
   import { SELECTION_DURATION } from './selection-motion'
   import { mobileSheet } from './mobile-sheet'
@@ -300,6 +301,10 @@
         </li>
       {/each}
     </ul>
+  {/if}
+
+  {#if details?.importance}
+    <ImportanceDetails importance={details.importance} {event} {byId} {onselect} />
   {/if}
 
   <h3>Sources</h3>

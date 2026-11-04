@@ -2,9 +2,9 @@ id: 1986-10-09-backpropagation
 title: Rumelhart, Hinton and Williams popularise backpropagation
 date: "1986-10-09"
 summary: >-
-  David Rumelhart, Geoffrey Hinton and Ronald Williams publish "Learning
-  representations by back-propagating errors" in Nature, a widely cited account of
-  training multi-layer neural networks by backpropagation.
+  David Rumelhart, Geoffrey Hinton and Ronald Williams publish "Learning representations by
+  back-propagating errors" in Nature, a widely cited account of training multi-layer neural networks
+  by backpropagation.
 description: |
   The paper appeared in *Nature* vol. 323, issue 6088, pp. 533-536, in October
   1986; the Nature article page gives the publication date as 9 October 1986.{note:
@@ -19,8 +19,8 @@ description: |
   trained today.{citation needed}
 category: research
 organizations: []
-people: [David Rumelhart, Geoffrey Hinton, Ronald Williams]
-tags: [backpropagation, neural networks, deep learning, representation learning]
+people: [ David Rumelhart, Geoffrey Hinton, Ronald Williams ]
+tags: [ backpropagation, neural networks, deep learning, representation learning ]
 sources:
   - url: https://ui.adsabs.harvard.edu/abs/1986Natur.323..533R/abstract
     title: "Learning representations by back-propagating errors (NASA ADS record, Nature 323, 533)"
@@ -33,8 +33,69 @@ sources:
 artifacts:
   - type: paper
     url: https://doi.org/10.1038/323533a0
-    title: Rumelhart, Hinton and Williams, Learning representations by back-propagating errors (Nature, 1986)
+    title: Rumelhart, Hinton and Williams, Learning representations by back-propagating errors (Nature,
+      1986)
 importance:
-  rubric: {capability: 4, adoption: 5, impact: 4, culture: 2}
+  rubric: { capability: 4, adoption: 5, impact: 4, culture: 2 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. The existing curated account is retained, but unavailable source content prevents
+        confirming downstream influence.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: Training hidden representations became a foundation for subsequent neural-network work.
+          evidence:
+            - https://ui.adsabs.harvard.edu/abs/1986Natur.323..533R/abstract
+        adoption:
+          rating: 5
+          confidence: low
+          rationale: This is a retrospective judgment about the training method, with attribution to
+            popularisation rather than invention.
+          evidence:
+            - https://ui.adsabs.harvard.edu/abs/1986Natur.323..533R/abstract
+        capability:
+          rating: 4
+          confidence: low
+          rationale: Made multilayer representation learning practical to communicate and reproduce.
+          evidence:
+            - https://ui.adsabs.harvard.edu/abs/1986Natur.323..533R/abstract
+        society:
+          rating: 2
+          confidence: low
+          rationale: Broader recognition concerns the underlying research, not direct consumer use of this
+            paper.
+          evidence:
+            - https://ui.adsabs.harvard.edu/abs/1986Natur.323..533R/abstract
+      comparisons:
+        - id: 1989-12-01-lecun-zip-code-recognition
+          rationale: "Relative rank remains provisional pending evidence review. This event: Training hidden
+            representations became a foundation for subsequent neural-network work. Comparison
+            event: The event description traces constrained recognition networks into later document
+            systems."
+        - id: 1997-11-15-hochreiter-schmidhuber-lstm
+          rationale: "Relative rank remains provisional pending evidence review. This event: Training hidden
+            representations became a foundation for subsequent neural-network work. Comparison
+            event: Later sequence-to-sequence work cited in the event establishes direct
+            architectural influence."
+      questions:
+        - Reopen the unavailable primary or retrospective source and verify the downstream influence
+          rating.
+      review_after: 2026-12-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.
+      overview_reason: "Overview milestone: Training hidden representations became a foundation for
+        subsequent neural-network work."
 issue: 34
 submitted_by: ChrisBuilds

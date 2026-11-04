@@ -64,7 +64,7 @@
   const events = $derived.by(() => {
     if (!data) return []
     const year = new Map(data.events.map((e) => [e, toYear(e.date)]))
-    return [...data.events].sort((a, b) => year.get(b)! - year.get(a)!)
+    return [...data.events].sort((a, b) => year.get(b)! - year.get(a)! || a.id.localeCompare(b.id))
   })
   const byId = $derived(new Map(events.map((e) => [e.id, e])))
   const aliasTo = $derived(new Map(events.flatMap((e) => (e.aliases ?? []).map((a) => [a, e.id] as const))))
@@ -93,15 +93,30 @@
   // Placement order depends on scores and date order only, so it is sorted once, not every frame.
   const priority = $derived(priorityOrder(events.map((e, i) => ({ item: e, y: -yearList[i], score: scoreList[i] }))))
 
+  // Required indexes depend on data and filters, not on zoom frames.
+  const overviewOrder = $derived(Int32Array.from(events.flatMap((e, i) =>
+    e.overview && (!filtering || matchIds.has(e.id)) ? [i] : [])))
+
   // Partial dates and today's midday anchor can lie ahead of the current instant.
   // Count them at the same newest marker that TimeScale.y already clamps them to.
   const scaleYears = $derived(yearList.map((year) => Math.min(year, now)))
+  const overviewByEra = $derived(new Map(ERAS.map((era) => [era.id,
+    events.filter((e) => e.overview && years.get(e.id)! >= era.start && years.get(e.id)! < (era.end ?? now + 1)),
+  ])))
   const baseScale = $derived(buildScale(ERAS, scaleYears, now, zoom, {
     ...DEFAULT_SCALE,
     headerPx: Math.max(72, LABEL_TOP + Math.max(0, ...labelHeights) + ANCHOR_OFFSET + 12),
-    footerPx: (era) => {
+    footerPx: (era, time) => {
       const year = selectedId ? years.get(selectedId) : undefined
-      return (year !== undefined && year >= era.start && year < (era.end ?? now + 1) ? selectedHeight : CARD_HEIGHT + 28) - ANCHOR_OFFSET + 12
+      const normal = (year !== undefined && year >= era.start && year < (era.end ?? now + 1) ? selectedHeight : CARD_HEIGHT + 28) - ANCHOR_OFFSET + 12
+      // Simulate only mandatory cards to reserve their actual overflow. This
+      // handles same-date milestones without large empty tails in quiet eras.
+      let bottom = time.top + LABEL_TOP + (labelHeights[ERAS.indexOf(era)] || 36) + 4
+      for (const event of overviewByEra.get(era.id) ?? []) {
+        const top = Math.max(time.y(years.get(event.id)!) - ANCHOR_OFFSET, bottom + 10)
+        bottom = top + eventHeight(event) + 10
+      }
+      return Math.max(normal, bottom + 10 - time.end)
     },
   }))
 
@@ -118,6 +133,7 @@
       items,
       {
         order: priority,
+        requiredOrder: overviewOrder,
         lanes: 1,
         cardHeight: CARD_HEIGHT,
         heightFor: eventHeight,
@@ -268,7 +284,8 @@
     if (year === undefined) return
     // A zoom glide re-anchors the scroll every frame, which would cancel this scroll.
     stopZoomAnimation()
-    scrollTo({ top: timelineTop() + scale.y(year) - (innerWidth < 720 ? toolbarHeight + 40 : innerHeight / 3), behavior })
+    const cardY = grouped.placed.find((p) => p.item.id === id)?.top
+    scrollTo({ top: timelineTop() + (cardY === undefined ? scale.y(year) : cardY + ANCHOR_OFFSET) - (innerWidth < 720 ? toolbarHeight + 40 : innerHeight / 3), behavior })
   }
 
   async function select(id: string | null, scroll = true, animate = ready && !reducedMotion) {

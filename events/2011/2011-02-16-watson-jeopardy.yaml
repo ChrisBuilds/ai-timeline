@@ -2,9 +2,8 @@ id: 2011-02-16-watson-jeopardy
 title: IBM Watson wins Jeopardy!
 date: "2011-02-16"
 summary: >-
-  IBM's Watson question-answering system defeated former Jeopardy! champions
-  Ken Jennings and Brad Rutter in the final televised match of a three-day
-  competition.
+  IBM's Watson question-answering system defeated former Jeopardy! champions Ken Jennings and Brad
+  Rutter in the final televised match of a three-day competition.
 description: |
   The two-game match aired February 14–16, 2011. On the final episode, Watson
   finished with $77,147, ahead of Jennings at $24,000 and Rutter at $21,600.
@@ -12,9 +11,9 @@ description: |
   players on a fast-paced television quiz show and brought AI to a broad
   audience.
 category: benchmark milestone
-organizations: [IBM]
-people: [Ken Jennings, Brad Rutter]
-tags: [question answering, natural language processing, Jeopardy!, television]
+organizations: [ IBM ]
+people: [ Ken Jennings, Brad Rutter ]
+tags: [ question answering, natural language processing, Jeopardy!, television ]
 sources:
   - url: https://www.ibm.com/history/watson-jeopardy
     title: Watson on Jeopardy!
@@ -25,4 +24,62 @@ sources:
     publisher: Carnegie Mellon University
     accessed: "2026-11-04"
 importance:
-  rubric: {capability: 3, adoption: 2, impact: 3, culture: 4}
+  rubric: { capability: 3, adoption: 2, impact: 3, culture: 4 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. Ratings are editorial judgments from the cited evidence, not measured counts or
+        claims of exclusive causation.
+      dimensions:
+        influence:
+          rating: 3
+          confidence: medium
+          rationale: A prominent question-answering demonstration; later branded products are not
+            automatically credited to this match.
+          evidence:
+            - https://www.ibm.com/history/watson-jeopardy
+        adoption:
+          rating: 1
+          confidence: medium
+          rationale: Contest participation is not evidence of deployment of the contest system.
+          evidence:
+            - https://www.ibm.com/history/watson-jeopardy
+        capability:
+          rating: 4
+          confidence: high
+          rationale: Combined question interpretation, retrieval and answer ranking in a difficult
+            competition.
+          evidence:
+            - https://www.ibm.com/history/watson-jeopardy
+        society:
+          rating: 4
+          confidence: medium
+          rationale: The televised match brought AI question answering to a broad public audience.
+          evidence:
+            - https://www.ibm.com/history/watson-jeopardy
+      comparisons:
+        - id: 2016-03-12-alphago-defeats-lee-sedol
+          rationale: "Lower overall significance under v2. This event: A prominent question-answering
+            demonstration; later branded products are not automatically credited to this match.
+            Comparison event: A major demonstration of learned search and reinforcement learning,
+            beyond the earlier chess milestone."
+        - id: 2020-11-30-alphafold2-casp14
+          rationale: "Lower overall significance under v2. This event: A prominent question-answering
+            demonstration; later branded products are not automatically credited to this match.
+            Comparison event: The later protein-science recognition in the timeline supports
+            enduring scientific significance."
+      questions:
+        - Would independent longitudinal evidence change the adoption or downstream influence
+          judgment?
+      review_after: 2027-11-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.

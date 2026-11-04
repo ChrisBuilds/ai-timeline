@@ -147,3 +147,41 @@ describe('variable event heights', () => {
     }
   })
 })
+
+describe('overview milestones', () => {
+  it('represents nearby and same-date milestones without inflating their scores', () => {
+    const items = [
+      { item: 'overview-a', y: 100, score: 70 },
+      { item: 'overview-b', y: 100, score: 60 },
+      { item: 'higher-score', y: 110, score: 99 },
+    ]
+    const result = layout(items, { ...opts, mustShow: (item) => item.startsWith('overview') })
+    expect(result.placed.map((p) => p.item)).toEqual(['overview-a', 'overview-b'])
+    expect(result.placed[1].top).toBeGreaterThanOrEqual(result.placed[0].top + opts.cardHeight + 2 * opts.gap)
+    expect(result.placed.map((p) => p.y)).toEqual([100, 100]) // truthful date anchors
+    expect(result.clusters.flatMap((c) => c.items)).toEqual(['higher-score'])
+  })
+  it('keeps overview cards clear of headings and is deterministic at repeated zoom positions', () => {
+    const items = [{ item: 'overview', y: 110, score: 50 }]
+    const options = { ...opts, mustShow: () => true, reserved: [{ lane: 0, top: 80, bottom: 140 }] }
+    const first = layout(items, options)
+    expect(first.placed[0].top).toBeGreaterThanOrEqual(140 + opts.gap)
+    expect(layout(items, options)).toEqual(first)
+  })
+  it('allows matching events to win when a milestone does not match active filters', () => {
+    const items = [{ item: 'faded-overview', y: 100, score: 95 }, { item: 'matching', y: 110, score: 1050 }]
+    expect(layout(items, { ...opts, mustShow: () => false }).placed.map((p) => p.item)).toEqual(['matching'])
+  })
+})
+
+it('reuses cached overview indexes across zoom frames', () => {
+  const order = new Int32Array([0, 1])
+  const items = [{ item: 'a', y: 100, score: 10 }, { item: 'b', y: 110, score: 20 }]
+  const first = layout(items, { ...opts, requiredOrder: order })
+  expect(first.placed).toHaveLength(2)
+  items[1].y = 400
+  const expanded = layout(items, { ...opts, requiredOrder: order })
+  expect(expanded.placed).toHaveLength(2)
+  expect(expanded.placed[1].top).toBe(400 - opts.anchorOffset)
+  expect(Array.from(order)).toEqual([0, 1])
+})

@@ -2,15 +2,79 @@ id: 2022-11-30-chatgpt-launch
 title: OpenAI launches ChatGPT
 date: "2022-11-30"
 summary: >-
-  OpenAI releases ChatGPT as a free research preview, bringing conversational AI to
-  the general public and setting off the generative AI boom.
+  OpenAI releases ChatGPT as a free research preview, bringing conversational AI to the general
+  public and setting off the generative AI boom.
 category: product
-organizations: [OpenAI]
-tags: [chatbot, large language model, consumer]
+organizations: [ OpenAI ]
+tags: [ chatbot, large language model, consumer ]
 sources:
   - url: https://openai.com/index/chatgpt/
     title: Introducing ChatGPT
     publisher: OpenAI
     accessed: "2026-11-03"
+  - url: https://openai.com/index/how-people-are-using-chatgpt/
+    title: How people are using ChatGPT
+    publisher: OpenAI
+    accessed: 2026-11-04
 importance:
-  rubric: {capability: 3, adoption: 5, impact: 5, culture: 5}
+  rubric: { capability: 3, adoption: 5, impact: 5, culture: 5 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. Ratings are editorial judgments from the cited evidence, not measured counts or
+        claims of exclusive causation.
+      dimensions:
+        influence:
+          rating: 5
+          confidence: medium
+          rationale: The launch established access to the conversational product whose continued use is
+            documented in the later usage study.
+          evidence:
+            - https://openai.com/index/how-people-are-using-chatgpt/
+        adoption:
+          rating: 5
+          confidence: medium
+          rationale: The later usage study documents broad uptake across personal and professional activities.
+          evidence:
+            - https://openai.com/index/how-people-are-using-chatgpt/
+        capability:
+          rating: 3
+          confidence: high
+          rationale: The launch applied existing instruction-following methods through a substantially more
+            accessible dialogue interface.
+          evidence:
+            - https://openai.com/index/chatgpt/
+        society:
+          rating: 5
+          confidence: medium
+          rationale: The usage study supports sustained everyday reach beyond specialist technical audiences.
+          evidence:
+            - https://openai.com/index/how-people-are-using-chatgpt/
+      comparisons:
+        - id: 2025-02-24-claude-code-research-preview
+          rationale: "Higher overall significance under v2. This event: The launch established access to the
+            conversational product whose continued use is documented in the later usage study.
+            Comparison event: The initial preview introduced the terminal workflow that the later
+            adoption report identifies as the same continuing product."
+        - id: 1950-10-turing-computing-machinery-and-intelligence
+          rationale: "Lower overall significance under v2. This event: The launch established access to the
+            conversational product whose continued use is documented in the later usage study.
+            Comparison event: Established the imitation game as a durable framing for machine
+            intelligence."
+      questions:
+        - Would independent longitudinal evidence change the adoption or downstream influence
+          judgment?
+      review_after: 2027-02-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.
+      overview_reason: "Overview milestone: The launch established access to the conversational product
+        whose continued use is documented in the later usage study."

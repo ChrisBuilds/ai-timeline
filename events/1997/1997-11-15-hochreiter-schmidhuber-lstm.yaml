@@ -2,8 +2,8 @@ id: 1997-11-15-hochreiter-schmidhuber-lstm
 title: Hochreiter and Schmidhuber publish their LSTM paper
 date: "1997-11-15"
 summary: >-
-  Sepp Hochreiter and Jürgen Schmidhuber publish a journal account of long
-  short-term memory, a recurrent network architecture designed to learn across long time gaps.
+  Sepp Hochreiter and Jürgen Schmidhuber publish a journal account of long short-term memory, a
+  recurrent network architecture designed to learn across long time gaps.
 description: |
   *Neural Computation* published Hochreiter and Schmidhuber's paper on 15
   November 1997. It describes a recurrent architecture with memory units and
@@ -21,9 +21,9 @@ description: |
   its translation model; this marks a shift in machine translation, not the
   disappearance of LSTMs from every application.
 category: research
-organizations: [Technische Universität München, IDSIA]
-people: [Sepp Hochreiter, Jürgen Schmidhuber]
-tags: [long short-term memory, recurrent neural networks, sequence modeling, gradient descent]
+organizations: [ Technische Universität München, IDSIA ]
+people: [ Sepp Hochreiter, Jürgen Schmidhuber ]
+tags: [ long short-term memory, recurrent neural networks, sequence modeling, gradient descent ]
 sources:
   - url: https://people.idsia.ch/~juergen/lstm1997-2024head.pdf
     title: Long Short-Term Memory
@@ -46,6 +46,66 @@ artifacts:
     url: https://doi.org/10.1162/neco.1997.9.8.1735
     title: Hochreiter and Schmidhuber, Long Short-Term Memory (1997)
 importance:
-  rubric: {capability: 4, adoption: 3, impact: 4, culture: 1}
+  rubric: { capability: 4, adoption: 3, impact: 4, culture: 1 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. Ratings are editorial judgments from the cited evidence, not measured counts or
+        claims of exclusive causation.
+      dimensions:
+        influence:
+          rating: 5
+          confidence: medium
+          rationale: Later sequence-to-sequence work cited in the event establishes direct architectural
+            influence.
+          evidence:
+            - https://papers.neurips.cc/paper_files/paper/2014/file/5a18e133cbf9f257297f410bb7eca942-Paper.pdf
+            - https://proceedings.neurips.cc/paper_files/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf
+        adoption:
+          rating: 5
+          confidence: medium
+          rationale: Assess the architecture across sequence modeling, not readership at publication.
+          evidence:
+            - https://papers.neurips.cc/paper_files/paper/2014/file/5a18e133cbf9f257297f410bb7eca942-Paper.pdf
+            - https://proceedings.neurips.cc/paper_files/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf
+        capability:
+          rating: 4
+          confidence: high
+          rationale: Gated memory addressed learning across long sequence gaps.
+          evidence:
+            - https://pubmed.ncbi.nlm.nih.gov/9377276/
+        society:
+          rating: 1
+          confidence: medium
+          rationale: Its direct historical contribution is technical rather than a public launch.
+          evidence:
+            - https://pubmed.ncbi.nlm.nih.gov/9377276/
+      comparisons:
+        - id: 1989-12-01-lecun-zip-code-recognition
+          rationale: "Relative rank remains provisional pending evidence review. This event: Later
+            sequence-to-sequence work cited in the event establishes direct architectural influence.
+            Comparison event: The event description traces constrained recognition networks into
+            later document systems."
+        - id: 2006-07-deep-belief-net-training
+          rationale: "Higher overall significance under v2. This event: Later sequence-to-sequence work cited
+            in the event establishes direct architectural influence. Comparison event: Layer-wise
+            training helped reopen work on deeper learned representations."
+      questions:
+        - Would independent longitudinal evidence change the adoption or downstream influence
+          judgment?
+      review_after: 2027-11-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.
+      overview_reason: "Overview milestone: Later sequence-to-sequence work cited in the event establishes
+        direct architectural influence."
 issue: 36
 submitted_by: ChrisBuilds
