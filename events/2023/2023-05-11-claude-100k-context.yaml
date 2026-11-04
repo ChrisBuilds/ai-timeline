@@ -1,0 +1,23 @@
+id: 2023-05-11-claude-100k-context
+title: Anthropic expands Claude's context window to 100,000 tokens
+date: "2023-05-11"
+summary: >-
+  Anthropic expanded Claude's context window from 9,000 to 100,000 tokens and
+  made the larger window available through its API.
+description: >-
+  Anthropic announced that Claude's context window had grown from 9,000 to
+  100,000 tokens, with the larger window available through its API. The company
+  said this let users submit hundreds of pages of material for analysis in one
+  request.
+category: model release
+organizations: [Anthropic]
+tags: [large language model, context window, API]
+sources:
+  - url: https://www.anthropic.com/news/100k-context-windows
+    title: Introducing 100K context windows
+    publisher: Anthropic
+    accessed: "2026-11-04"
+importance:
+  rubric: {capability: 4, adoption: 3, impact: 3, culture: 2}
+issue: 86
+submitted_by: ChrisBuilds
