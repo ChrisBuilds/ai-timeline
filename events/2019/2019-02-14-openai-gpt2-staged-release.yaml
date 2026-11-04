@@ -28,7 +28,7 @@ sources:
     publisher: arXiv
     accessed: "2026-11-04"
   - url: https://openai.com/index/gpt-2-1-5b-release/
-    title: GPT-2: 1.5B release
+    title: "GPT-2: 1.5B release"
     publisher: OpenAI
     accessed: "2026-11-04"
 artifacts:
