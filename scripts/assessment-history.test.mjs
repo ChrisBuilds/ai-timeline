@@ -53,3 +53,37 @@ describe('assessment records', () => {
     }
   })
 })
+
+it('retains immutable comparisons when the referenced event is removed through a tombstone', async () => {
+  // Exercise the real builder in an isolated fixture repository, not a replica
+  // of its reference check. No source files or checked-out event data are edited.
+  const { mkdtempSync, mkdirSync, writeFileSync, cpSync, symlinkSync, rmSync } = await import('node:fs')
+  const { tmpdir } = await import('node:os')
+  const { join } = await import('node:path')
+  const { fileURLToPath } = await import('node:url')
+  const { spawn } = await import('node:child_process')
+  const root = fileURLToPath(new URL('../', import.meta.url))
+  const dir = mkdtempSync(join(tmpdir(), 'importance-tombstone-'))
+  try {
+    cpSync(join(root, 'scripts'), join(dir, 'scripts'), { recursive: true })
+    cpSync(join(root, 'schema'), join(dir, 'schema'), { recursive: true })
+    symlinkSync(join(root, 'node_modules'), join(dir, 'node_modules'), 'dir')
+    const e = sample()
+    const ids = e.importance.assessments[0].comparisons.map((c) => c.id)
+    mkdirSync(join(dir, 'events/2022'), { recursive: true })
+    writeFileSync(join(dir, `events/2022/${e.id}.yaml`), YAML.stringify(e))
+    writeFileSync(join(dir, 'removed.yaml'), YAML.stringify(ids.map((id) => ({ id, reason: 'out-of-scope' }))))
+    const result = await new Promise((resolve, reject) => {
+      const child = spawn(process.execPath, ['scripts/build-data.mjs', '--check'], { cwd: dir })
+      let output = ''
+      child.stdout.on('data', (data) => { output += String(data) })
+      child.stderr.on('data', (data) => { output += String(data) })
+      child.once('error', reject)
+      child.once('exit', (code) => resolve({ code, output }))
+    })
+    expect(result.output).toContain('1 event(s) valid.')
+    expect(result.code).toBe(0)
+  } finally {
+    rmSync(dir, { recursive: true, force: true })
+  }
+})

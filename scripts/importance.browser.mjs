@@ -92,6 +92,10 @@ try {
     delete detail.importance.legacy
     detail.importance.assessments[0].status = 'provisional'
     detail.importance.assessments[0].dimensions.influence.rating = null
+    const comparison = data.events.find((item) => item.id === detail.importance.assessments[0].comparisons[0].id)
+    comparison.aliases = [...(comparison.aliases ?? []), '1900-prior-comparison']
+    detail.importance.assessments[0].comparisons[0].id = '1900-prior-comparison'
+    detail.importance.assessments[0].comparisons[1].id = '1900-removed-comparison'
     await page.route('**/data/index.json', (route) => route.fulfill({ json: data }))
     await page.route(`**/data/details/${e.id}.json`, (route) => route.fulfill({ json: detail }))
     await page.goto(base + `#e=${e.id}`)
@@ -103,6 +107,11 @@ try {
     assert(text.includes('55–90'))
     assert(text.includes('Unknown'))
     assert(!text.includes('Original assessment'))
+    const comparisons = page.locator('.importance .comparison')
+    assert.equal(await comparisons.first().innerText(), comparison.title, 'comparison alias was not resolved')
+    assert.equal(await comparisons.last().isDisabled(), true, 'removed comparison should remain readable without broken navigation')
+    await comparisons.first().click()
+    await page.waitForFunction((id) => document.querySelector('.card.selected')?.id === id, comparison.id)
     await page.close()
   }
   assert.deepEqual(errors, [])

@@ -11,6 +11,9 @@
     influence: 'Downstream influence · 35%', adoption: 'Adoption and practical reach · 30%',
     capability: 'Capability or conceptual advance · 25%', society: 'Societal and institutional reach · 10%',
   }
+  function comparisonTarget(id: string) {
+    return byId.get(id) ?? [...byId.values()].find((e) => e.aliases?.includes(id))
+  }
   let evidenceOpen = $state(false)
   const current = $derived(importance.assessments?.find((a) => a.id === importance.current))
   const history = $derived([...(importance.assessments ?? [])].sort((a, b) => b.assessed_at.localeCompare(a.assessed_at) || b.id.localeCompare(a.id)))
@@ -49,7 +52,8 @@
       {#if assessment.overview_reason}<p><strong>Overview milestone.</strong> {assessment.overview_reason}</p>{/if}
       <h4>Comparisons</h4>
       {#each assessment.comparisons as comparison}
-        <p><button class="comparison" onclick={() => onselect(comparison.id)}>{byId.get(comparison.id)?.title ?? comparison.id}</button><br />{comparison.rationale}</p>
+        {@const target = comparisonTarget(comparison.id)}
+        <p><button class="comparison" disabled={!target} onclick={() => { if (target) onselect(target.id) }}>{target?.title ?? `${comparison.id} (no longer on the timeline)`}</button><br />{comparison.rationale}</p>
       {/each}
       {#if assessment.questions.length}
         <h4>Open questions</h4>
@@ -84,5 +88,6 @@
   .confidence { color: var(--muted); font-size: 0.78rem; }
   a, .comparison { color: var(--context-accent); overflow-wrap: anywhere; }
   .comparison { border: 0; background: none; padding: 0; font: inherit; text-align: left; text-decoration: underline; cursor: pointer; }
+  .comparison:disabled { color: var(--muted); text-decoration: none; cursor: default; }
   ul { padding-left: 20px; }
 </style>

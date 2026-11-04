@@ -124,11 +124,14 @@ for (const r of Array.isArray(removed) ? removed : []) {
   }
 }
 
+// Historic comparisons may outlive a removed event. Tombstones keep those
+// assessments immutable; live related links still require an existing target.
+const comparisonIds = new Set([...byId.keys(), ...(Array.isArray(removed) ? removed : []).map((r) => r.id)])
 // Related links must point at real events, not at themselves.
 for (const ev of events) {
   for (const a of ev.importance.assessments ?? []) {
     for (const comparison of a.comparisons) {
-      if (comparison.id === ev.id || !byId.has(comparison.id)) errors.push(`${ev._file}: invalid comparison ${comparison.id}`)
+      if (comparison.id === ev.id || !comparisonIds.has(comparison.id)) errors.push(`${ev._file}: invalid comparison ${comparison.id}`)
     }
     for (const dimension of Object.values(a.dimensions)) for (const url of dimension.evidence) {
       if (!ev.sources.some((s) => s.url === url)) errors.push(`${ev._file}: assessment evidence missing from sources: ${url}`)
