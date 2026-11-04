@@ -38,7 +38,7 @@ A missing observation is **unknown** (`rating: null`), not a zero. A provisional
 
 The schema and data builder validate records, completeness, comparison references, evidence references, review dates and current pointers. CI compares event files with the PR base and rejects edits or deletions of existing assessment records or frozen original inputs. Event removal still follows the documented removal workflow. Overrides require a written reason and review date. Frozen original overrides retain their original reason without fabricating a retrospective expiry; they affect v1 reproduction and provisional fallback, not accepted v2 ratings. Expiry sends an override to the review queue; it does not silently change published scores.
 
-The slim index exports the published score, tier, overview flag, score status, basis assessment ID and provisional bounds. Full assessment history, evidence and review information remain in the details endpoint and downloadable full dataset. The detail panel displays these records, including the original rubric and unknown original date.
+The slim index exports the published score, tier, overview flag, score status, basis assessment ID and provisional bounds. Full assessment history, evidence and review information remain in the details endpoint and downloadable full dataset. The detail panel shows the current score, status and assessment/review dates immediately. Opening “Assessment evidence and history” renders component ratings, confidence, rationale, sources and prior records, including the original rubric and unknown original date. Deferring this longer content keeps event selection responsive.
 
 ## Reassessment queue
 

@@ -11,6 +11,8 @@
     influence: 'Downstream influence · 35%', adoption: 'Adoption and practical reach · 30%',
     capability: 'Capability or conceptual advance · 25%', society: 'Societal and institutional reach · 10%',
   }
+  let evidenceOpen = $state(false)
+  const current = $derived(importance.assessments?.find((a) => a.id === importance.current))
   const history = $derived([...(importance.assessments ?? [])].sort((a, b) => b.assessed_at.localeCompare(a.assessed_at) || b.id.localeCompare(a.id)))
 </script>
 
@@ -21,6 +23,10 @@
   {:else}
   <p><strong>{event.score}/100</strong> · {event.score_status === 'provisional' ? 'Retained score while reassessment is provisional' : event.score_status === 'legacy' ? 'Legacy assessment' : 'Accepted assessment'}</p>
   {/if}
+  {#if current}<p>Assessed {current.assessed_at} · Review by {current.review_after}</p>{/if}
+  <details class="assessment-evidence" ontoggle={(e) => { evidenceOpen = e.currentTarget.open }}>
+    <summary>Assessment evidence and history</summary>
+  {#if evidenceOpen}
   {#each history as assessment (assessment.id)}
     {@const range = scoreRange(assessment)}
     <details open={assessment.id === importance.current}>
@@ -62,6 +68,8 @@
     {#if importance.override !== undefined}<p>Original override: {importance.override}. {importance.override_reason}</p>{/if}
   </details>
   {/if}
+  {/if}
+  </details>
 </section>
 
 <style>
