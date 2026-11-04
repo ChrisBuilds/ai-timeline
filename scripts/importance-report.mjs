@@ -25,5 +25,5 @@ if (process.argv.includes('--review')) {
 } else {
   console.log('| Event | v1 | Published | v2 rubric / bounds | Status | Overview |')
   console.log('| --- | ---: | ---: | ---: | --- | --- |')
-  for (const r of rows) console.log(`| ${r.title} | ${r.previous} | ${r.score} | ${r.candidate ? [...new Set(r.candidate)].join('–') : '—'} | ${r.score_status} | ${r.overview ? 'Yes' : ''} |`)
+  for (const r of rows) console.log(`| ${r.title} | ${r.previous ?? '—'} | ${r.score} | ${r.candidate ? [...new Set(r.candidate)].join('–') : '—'} | ${r.score_status} | ${r.overview ? 'Yes' : ''} |`)
 }

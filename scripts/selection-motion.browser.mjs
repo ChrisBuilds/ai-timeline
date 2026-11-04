@@ -23,7 +23,9 @@ try {
  browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined })
 const errors=[]
 const base=`http://127.0.0.1:${port}/ai-timeline/`
-const id='2024-09-12-openai-o1'
+// A designated overview milestone remains a card after details close. Hidden
+// event selection is covered separately by importance.browser.mjs.
+const id='2022-11-30-chatgpt-launch'
 for (const viewport of [{width:390,height:844},{width:320,height:740},{width:1280,height:900}]) {
  const page=await browser.newPage({viewport,reducedMotion:'no-preference',colorScheme:'dark'})
  page.on('pageerror',e=>errors.push(String(e)))
@@ -125,7 +127,7 @@ for (const {os,pref,expectMotion} of [
  await page.goto(base + `#e=${id}&z=4`)
  await page.locator('.card.selected').waitFor()
  await page.evaluate(() => scrollBy(0, 1000))
- await page.getByRole('combobox', { name: 'Search events' }).fill('OpenAI o1')
+ await page.getByRole('combobox', { name: 'Search events' }).fill('ChatGPT')
  await page.getByRole('combobox', { name: 'Search events' }).press('Enter')
  await page.locator('.card.selected').waitFor()
  await page.waitForTimeout(80)
@@ -143,7 +145,7 @@ for (const viewport of [{ width: 390, height: 844 }, { width: 320, height: 740 }
    reducedMotion: viewport.width === 390 ? 'reduce' : 'no-preference' })
  page.on('pageerror', e => errors.push(String(e)))
  await page.goto(base + '#z=4')
- await page.getByRole('combobox', { name: 'Search events' }).fill('OpenAI o1')
+ await page.getByRole('combobox', { name: 'Search events' }).fill('ChatGPT')
  await page.getByRole('combobox', { name: 'Search events' }).press('Enter')
  await page.locator('.panel .source').first().waitFor()
  await page.waitForTimeout(450)
@@ -199,21 +201,21 @@ for (const viewport of [{ width: 390, height: 844 }, { width: 320, height: 740 }
  await swipe(x, handleY, handleY + 160)
  await page.waitForTimeout(450)
  assert.equal(await page.locator('.panel').count(), 0, 'downward handle drag did not dismiss')
- await page.getByRole('combobox', { name: 'Search events' }).fill('OpenAI o1')
+ await page.getByRole('combobox', { name: 'Search events' }).fill('ChatGPT')
  await page.getByRole('combobox', { name: 'Search events' }).press('Enter')
  await page.waitForTimeout(450)
  await page.getByRole('button', { name: 'Dismiss details', exact: true }).focus()
  await page.keyboard.press('Enter')
  await page.waitForTimeout(450)
  assert.equal(await page.locator('.panel').count(), 0, 'handle cannot be activated with the keyboard')
- await page.getByRole('combobox', { name: 'Search events' }).fill('OpenAI o1')
+ await page.getByRole('combobox', { name: 'Search events' }).fill('ChatGPT')
  await page.getByRole('combobox', { name: 'Search events' }).press('Enter')
  await page.waitForTimeout(450)
  if (viewport.width === 320) {
    const box = await handle.boundingBox()
    const y = box.y + box.height / 2
    await swipe(x, y, y + 160)
-   await page.getByRole('combobox', { name: 'Search events' }).fill('OpenAI o1')
+   await page.getByRole('combobox', { name: 'Search events' }).fill('ChatGPT')
    await page.getByRole('combobox', { name: 'Search events' }).press('Enter')
    await page.waitForTimeout(450)
    assert(Math.abs((await page.locator('.panel').boundingBox()).y - initial.y) < 1, 'reopening a dragged sheet retained its dismissed offset')

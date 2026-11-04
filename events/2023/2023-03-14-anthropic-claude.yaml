@@ -2,21 +2,78 @@ id: 2023-03-14-anthropic-claude
 title: Anthropic introduces Claude and Claude Instant
 date: "2023-03-14"
 summary: >-
-  Anthropic introduced Claude and Claude Instant, offering the models through
-  partner integrations and an API access program.
+  Anthropic introduced Claude and Claude Instant, offering the models through partner integrations
+  and an API access program.
 description: >-
-  Anthropic described Claude as a conversational assistant available through
-  partner products and its developer console. Claude Instant was presented as a
-  faster, lighter, lower-cost version. Access was offered by request.
+  Anthropic described Claude as a conversational assistant available through partner products and
+  its developer console. Claude Instant was presented as a faster, lighter, lower-cost version.
+  Access was offered by request.
 category: model release
-organizations: [Anthropic]
-tags: [large language model, conversational AI]
+organizations: [ Anthropic ]
+tags: [ large language model, conversational AI ]
 sources:
   - url: https://www.anthropic.com/news/introducing-claude
     title: Introducing Claude
     publisher: Anthropic
     accessed: "2026-11-04"
 importance:
-  rubric: {capability: 3, adoption: 3, impact: 3, culture: 2}
+  rubric: { capability: 3, adoption: 3, impact: 3, culture: 2 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment, based on the primary announcement read on 2026-11-04. Ratings are
+        editorial judgments; later product generations do not automatically increase this release’s
+        adoption.
+      dimensions:
+        influence:
+          rating: 4
+          confidence: medium
+          rationale: Established the continuing Claude assistant line through partner products and an API
+            program.
+          evidence:
+            - https://www.anthropic.com/news/introducing-claude
+        adoption:
+          rating: 3
+          confidence: medium
+          rationale: The announcement names concrete partner integrations; it does not establish unrestricted
+            access or later model usage.
+          evidence:
+            - https://www.anthropic.com/news/introducing-claude
+        capability:
+          rating: 3
+          confidence: high
+          rationale: Offered a capable conversational assistant rather than a new general architecture.
+          evidence:
+            - https://www.anthropic.com/news/introducing-claude
+        society:
+          rating: 2
+          confidence: medium
+          rationale: Initial reach was mainly partner applications and developers.
+          evidence:
+            - https://www.anthropic.com/news/introducing-claude
+      comparisons:
+        - id: 2023-03-14-openai-gpt-4
+          rationale: "Compare this release’s contribution: Established the continuing Claude assistant line
+            through partner products and an API program. The comparison event OpenAI releases GPT-4
+            is assessed separately, avoiding attribution of the entire product line to each
+            release."
+        - id: 2025-02-24-claude-code-research-preview
+          rationale: "Compare this release’s contribution: Established the continuing Claude assistant line
+            through partner products and an API program. The comparison event Anthropic releases
+            Claude Code as a research preview is assessed separately, avoiding attribution of the
+            entire product line to each release."
+      questions:
+        - Would independent longitudinal evidence change the release-specific adoption or influence
+          judgment?
+      review_after: 2027-02-04
+      review_triggers:
+        - New evidence of sustained adoption, successors, abandonment, or corrected attribution.
 issue: 85
 submitted_by: ChrisBuilds

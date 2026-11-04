@@ -173,3 +173,15 @@ describe('overview milestones', () => {
     expect(layout(items, { ...opts, mustShow: () => false }).placed.map((p) => p.item)).toEqual(['matching'])
   })
 })
+
+it('reuses cached overview indexes across zoom frames', () => {
+  const order = new Int32Array([0, 1])
+  const items = [{ item: 'a', y: 100, score: 10 }, { item: 'b', y: 110, score: 20 }]
+  const first = layout(items, { ...opts, requiredOrder: order })
+  expect(first.placed).toHaveLength(2)
+  items[1].y = 400
+  const expanded = layout(items, { ...opts, requiredOrder: order })
+  expect(expanded.placed).toHaveLength(2)
+  expect(expanded.placed[1].top).toBe(400 - opts.anchorOffset)
+  expect(Array.from(order)).toEqual([0, 1])
+})

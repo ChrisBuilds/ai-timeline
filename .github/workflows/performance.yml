@@ -7,10 +7,10 @@ name: Performance
 # Results are in the run summary and in the bench-results artifact.
 on:
   pull_request:
-    paths: ['src/**', 'bench/**', 'scripts/selection-motion.browser.mjs', 'scripts/groups.browser.mjs', 'index.html', 'vite.config.ts', 'package.json', 'package-lock.json', '.github/workflows/performance.yml']
+    paths: ['src/**', 'bench/**', 'scripts/selection-motion.browser.mjs', 'scripts/importance.browser.mjs', 'scripts/groups.browser.mjs', 'index.html', 'vite.config.ts', 'package.json', 'package-lock.json', '.github/workflows/performance.yml']
   push:
     branches: [main]
-    paths: ['src/**', 'bench/**', 'scripts/selection-motion.browser.mjs', 'scripts/groups.browser.mjs', 'index.html', 'vite.config.ts', 'package.json', 'package-lock.json']
+    paths: ['src/**', 'bench/**', 'scripts/selection-motion.browser.mjs', 'scripts/importance.browser.mjs', 'scripts/groups.browser.mjs', 'index.html', 'vite.config.ts', 'package.json', 'package-lock.json']
   workflow_dispatch:
 
 permissions:
@@ -56,6 +56,8 @@ jobs:
         run: node scripts/selection-motion.browser.mjs
       - name: Collapsed group browser checks
         run: node scripts/groups.browser.mjs
+      - name: Importance and overview browser checks
+        run: node scripts/importance.browser.mjs
       - name: Summary
         if: always()
         run: |

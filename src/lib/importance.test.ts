@@ -80,3 +80,15 @@ describe('tiers', () => {
     expect(tierOf(score)).toBe(tier)
   })
 })
+
+it('supports new v2-only events without inventing a legacy assessment', () => {
+  const a = assessment()
+  const imp: Importance = { current: a.id, assessments: [a] }
+  expect(legacyScore(imp)).toBeNull()
+  expect(importanceSummary(imp)).toMatchObject({ score: 90, score_basis: a.id, score_status: 'accepted' })
+  a.status = 'provisional'
+  a.dimensions.influence.rating = null
+  a.questions = ['Verify downstream influence.']
+  expect(computeScore(imp)).toBeNull()
+  expect(importanceSummary(imp)).toMatchObject({ score: 55, score_basis: 'v2-lower-bound', score_status: 'provisional', score_range: [55, 90] })
+})

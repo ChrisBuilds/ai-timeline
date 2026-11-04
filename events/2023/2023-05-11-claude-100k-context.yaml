@@ -2,22 +2,79 @@ id: 2023-05-11-claude-100k-context
 title: Anthropic expands Claude's context window to 100,000 tokens
 date: "2023-05-11"
 summary: >-
-  Anthropic expanded Claude's context window from 9,000 to 100,000 tokens and
-  made the larger window available through its API.
+  Anthropic expanded Claude's context window from 9,000 to 100,000 tokens and made the larger window
+  available through its API.
 description: >-
-  Anthropic announced that Claude's context window had grown from 9,000 to
-  100,000 tokens, with the larger window available through its API. The company
-  said this let users submit hundreds of pages of material for analysis in one
-  request.
+  Anthropic announced that Claude's context window had grown from 9,000 to 100,000 tokens, with the
+  larger window available through its API. The company said this let users submit hundreds of pages
+  of material for analysis in one request.
 category: model release
-organizations: [Anthropic]
-tags: [large language model, context window, API]
+organizations: [ Anthropic ]
+tags: [ large language model, context window, API ]
 sources:
   - url: https://www.anthropic.com/news/100k-context-windows
     title: Introducing 100K context windows
     publisher: Anthropic
     accessed: "2026-11-04"
 importance:
-  rubric: {capability: 4, adoption: 3, impact: 3, culture: 2}
+  rubric: { capability: 4, adoption: 3, impact: 3, culture: 2 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment, based on the primary announcement read on 2026-11-04. Ratings are
+        editorial judgments; later product generations do not automatically increase this release’s
+        adoption.
+      dimensions:
+        influence:
+          rating: 3
+          confidence: medium
+          rationale: Long context expanded document and codebase workflows without crediting every later
+            context extension to this release.
+          evidence:
+            - https://www.anthropic.com/news/100k-context-windows
+        adoption:
+          rating: 3
+          confidence: medium
+          rationale: API availability and a partner demonstration support practical specialist use, not a
+            measured market share.
+          evidence:
+            - https://www.anthropic.com/news/100k-context-windows
+        capability:
+          rating: 4
+          confidence: high
+          rationale: Expanded input capacity substantially, enabling analysis of much longer material in one
+            request.
+          evidence:
+            - https://www.anthropic.com/news/100k-context-windows
+        society:
+          rating: 2
+          confidence: medium
+          rationale: The documented applications focus on professional document analysis.
+          evidence:
+            - https://www.anthropic.com/news/100k-context-windows
+      comparisons:
+        - id: 2023-03-14-openai-gpt-4
+          rationale: "Compare this release’s contribution: Long context expanded document and codebase
+            workflows without crediting every later context extension to this release. The
+            comparison event OpenAI releases GPT-4 is assessed separately, avoiding attribution of
+            the entire product line to each release."
+        - id: 2023-03-14-anthropic-claude
+          rationale: "Compare this release’s contribution: Long context expanded document and codebase
+            workflows without crediting every later context extension to this release. The
+            comparison event Anthropic introduces Claude and Claude Instant is assessed separately,
+            avoiding attribution of the entire product line to each release."
+      questions:
+        - Would independent longitudinal evidence change the release-specific adoption or influence
+          judgment?
+      review_after: 2027-02-04
+      review_triggers:
+        - New evidence of sustained adoption, successors, abandonment, or corrected attribution.
 issue: 86
 submitted_by: ChrisBuilds

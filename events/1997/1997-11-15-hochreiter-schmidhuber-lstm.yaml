@@ -67,13 +67,15 @@ importance:
           rationale: Later sequence-to-sequence work cited in the event establishes direct architectural
             influence.
           evidence:
-            - https://pubmed.ncbi.nlm.nih.gov/9377276/
+            - https://papers.neurips.cc/paper_files/paper/2014/file/5a18e133cbf9f257297f410bb7eca942-Paper.pdf
+            - https://proceedings.neurips.cc/paper_files/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf
         adoption:
           rating: 5
           confidence: medium
           rationale: Assess the architecture across sequence modeling, not readership at publication.
           evidence:
-            - https://pubmed.ncbi.nlm.nih.gov/9377276/
+            - https://papers.neurips.cc/paper_files/paper/2014/file/5a18e133cbf9f257297f410bb7eca942-Paper.pdf
+            - https://proceedings.neurips.cc/paper_files/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf
         capability:
           rating: 4
           confidence: high

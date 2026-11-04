@@ -2,21 +2,78 @@ id: 2023-11-21-claude-2-1
 title: Anthropic releases Claude 2.1
 date: "2023-11-21"
 summary: >-
-  Anthropic released Claude 2.1 with a 200,000-token context window and beta
-  tool use for orchestrating developer-defined functions and APIs.
+  Anthropic released Claude 2.1 with a 200,000-token context window and beta tool use for
+  orchestrating developer-defined functions and APIs.
 description: >-
-  Claude 2.1 became available through Anthropic's API and powered Claude's chat
-  experience. The 200,000-token context window was available to Claude Pro users;
-  API tool use launched in beta.
+  Claude 2.1 became available through Anthropic's API and powered Claude's chat experience. The
+  200,000-token context window was available to Claude Pro users; API tool use launched in beta.
 category: model release
-organizations: [Anthropic]
-tags: [large language model, long context, tool use]
+organizations: [ Anthropic ]
+tags: [ large language model, long context, tool use ]
 sources:
   - url: https://www.anthropic.com/news/claude-2-1
     title: Introducing Claude 2.1
     publisher: Anthropic
     accessed: "2026-11-04"
 importance:
-  rubric: {capability: 4, adoption: 3, impact: 3, culture: 2}
+  rubric: { capability: 4, adoption: 3, impact: 3, culture: 2 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment, based on the primary announcement read on 2026-11-04. Ratings are
+        editorial judgments; later product generations do not automatically increase this release’s
+        adoption.
+      dimensions:
+        influence:
+          rating: 3
+          confidence: medium
+          rationale: Beta tool use and longer context expanded integration options; this is distinct from
+            later autonomous coding tools.
+          evidence:
+            - https://www.anthropic.com/news/claude-2-1
+        adoption:
+          rating: 3
+          confidence: medium
+          rationale: The announcement establishes chat and API availability, but does not isolate adoption of
+            this release from the Claude line.
+          evidence:
+            - https://www.anthropic.com/news/claude-2-1
+        capability:
+          rating: 4
+          confidence: high
+          rationale: Added a 200K context window and beta orchestration of developer-defined functions and
+            APIs.
+          evidence:
+            - https://www.anthropic.com/news/claude-2-1
+        society:
+          rating: 2
+          confidence: medium
+          rationale: The documented use cases are mainly enterprise and developer workflows.
+          evidence:
+            - https://www.anthropic.com/news/claude-2-1
+      comparisons:
+        - id: 2023-03-14-openai-gpt-4
+          rationale: "Compare this release’s contribution: Beta tool use and longer context expanded
+            integration options; this is distinct from later autonomous coding tools. The comparison
+            event OpenAI releases GPT-4 is assessed separately, avoiding attribution of the entire
+            product line to each release."
+        - id: 2023-03-14-anthropic-claude
+          rationale: "Compare this release’s contribution: Beta tool use and longer context expanded
+            integration options; this is distinct from later autonomous coding tools. The comparison
+            event Anthropic introduces Claude and Claude Instant is assessed separately, avoiding
+            attribution of the entire product line to each release."
+      questions:
+        - Would independent longitudinal evidence change the release-specific adoption or influence
+          judgment?
+      review_after: 2027-02-04
+      review_triggers:
+        - New evidence of sustained adoption, successors, abandonment, or corrected attribution.
 issue: 88
 submitted_by: ChrisBuilds

@@ -37,7 +37,7 @@ export function buildGroups<T extends GroupItem>(base: TimeScale, placed: Placed
   const hidden = clusters.flatMap((c) => c.items.map((item) => ({ item, year: years.get(item.id)! })))
   // Milestones precede hidden items at equal dates, keeping inserted space below their marker.
   const entries = [
-    ...placed.map((card) => ({ item: card.item, raw: card.y, card })),
+    ...placed.map((card) => ({ item: card.item, raw: card.top + ANCHOR, card })),
     ...hidden.map(({ item, year }) => ({ item, raw: base.y(year), card: null })),
   ].sort((a, b) => a.raw - b.raw || Number(!a.card) - Number(!b.card))
   const stats = new Map<string, EraStats>(base.bands.map((b) => [b.era.id, { total: 0, shown: 0 }]))
@@ -114,5 +114,8 @@ export function buildGroups<T extends GroupItem>(base: TimeScale, placed: Placed
     y: (year) => project(base.y(year)), year: (y) => base.year(unproject(y)),
     ticks: () => base.ticks().map((t) => ({ ...t, y: project(t.y) })),
   }
+  // Displaced overview cards can straddle a group insertion. Project their true
+  // date marker separately from their displayed top so leaders remain truthful.
+  for (const card of cards) card.y = project(base.y(years.get(card.item.id)!))
   return { scale, placed: cards, groups, stats, hidden, project }
 }

@@ -367,9 +367,6 @@
     "importance": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "rubric"
-      ],
       "properties": {
         "rubric": {
           "type": "object",
@@ -438,14 +435,17 @@
       },
       "dependentRequired": {
         "override": [
+          "rubric",
           "override_reason"
         ],
         "assessments": [
-          "current",
-          "legacy"
+          "current"
         ],
         "current": [
           "assessments"
+        ],
+        "legacy": [
+          "rubric"
         ]
       },
       "allOf": [
@@ -474,6 +474,46 @@
             "properties": {
               "override_review_after": {}
             }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "rubric": {},
+              "assessments": {}
+            },
+            "required": [
+              "rubric",
+              "assessments"
+            ]
+          },
+          "then": {
+            "properties": {
+              "legacy": {}
+            },
+            "required": [
+              "legacy"
+            ]
+          }
+        }
+      ],
+      "anyOf": [
+        {
+          "required": [
+            "rubric"
+          ],
+          "properties": {
+            "rubric": {}
+          }
+        },
+        {
+          "required": [
+            "current",
+            "assessments"
+          ],
+          "properties": {
+            "current": {},
+            "assessments": {}
           }
         }
       ]

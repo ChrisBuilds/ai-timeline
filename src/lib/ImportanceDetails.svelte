@@ -16,7 +16,11 @@
 
 <section class="importance" aria-label="Historical significance">
   <h3>Historical significance</h3>
+  {#if event.score_basis === 'v2-lower-bound'}
+    <p><strong>No accepted point score.</strong> Provisional range: {event.score_range?.join('–')}/100. Placement uses its lower bound.</p>
+  {:else}
   <p><strong>{event.score}/100</strong> · {event.score_status === 'provisional' ? 'Retained score while reassessment is provisional' : event.score_status === 'legacy' ? 'Legacy assessment' : 'Accepted assessment'}</p>
+  {/if}
   {#each history as assessment (assessment.id)}
     {@const range = scoreRange(assessment)}
     <details open={assessment.id === importance.current}>
@@ -49,6 +53,7 @@
       <ul>{#each assessment.review_triggers as trigger}<li>{trigger}</li>{/each}</ul>
     </details>
   {/each}
+  {#if importance.rubric}
   <details>
     <summary>Original assessment · v1 · {legacyScore(importance)}/100</summary>
     <p>Original assessment date unknown.{importance.legacy ? ` Preserved on ${importance.legacy.migrated_at}.` : ''}</p>
@@ -56,6 +61,7 @@
     <p>Original formula: half the average plus half the maximum, scaled from 1–5 to 0–100.</p>
     {#if importance.override !== undefined}<p>Original override: {importance.override}. {importance.override_reason}</p>{/if}
   </details>
+  {/if}
 </section>
 
 <style>

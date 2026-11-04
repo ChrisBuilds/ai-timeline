@@ -18,6 +18,8 @@ export interface Cluster<T> {
 }
 
 export interface LayoutOptions<T = unknown> {
+  /** Cached required indexes in chronological (ascending y) order. */
+  requiredOrder?: ArrayLike<number>
   /** Overview milestones are placed first and shifted down when necessary. */
   mustShow?: (item: T) => boolean
   lanes: number
@@ -104,10 +106,11 @@ export function layout<T>(items: Positioned<T>[], opts: LayoutOptions<T>) {
 
   // Preserve overview milestones even on the same date. Date anchors stay put;
   // leaders connect any shifted cards. Callers reserve footer space per band.
-  const required = opts.mustShow ? Array.from({ length: n }, (_, i) => i)
+  const required = opts.requiredOrder ?? (opts.mustShow ? Array.from({ length: n }, (_, i) => i)
     .filter((i) => opts.mustShow?.(items[i].item))
-    .sort((a, b) => items[a].y - items[b].y || a - b) : []
-  for (const i of required) {
+    .sort((a, b) => items[a].y - items[b].y || a - b) : [])
+  for (let k = 0; k < required.length; k++) {
+    const i = required[k]
     let bestLane = 0
     let bestTop = Infinity
     for (let lane = 0; lane < lanes.length; lane++) {

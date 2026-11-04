@@ -19,6 +19,7 @@ export function currentAssessment(importance) {
 /** @param {import('../src/lib/types').Importance} importance */
 export function legacyScore(importance) {
   if (typeof importance.override === 'number') return importance.override
+  if (!importance.rubric) return null
   const ratings = Object.values(importance.rubric)
   const mean = ratings.reduce((a, b) => a + b, 0) / ratings.length
   return Math.round(((0.5 * mean + 0.5 * Math.max(...ratings) - 1) / 4) * 100)
@@ -55,14 +56,18 @@ export function computeScore(importance) {
 export function importanceSummary(importance) {
   const current = currentAssessment(importance)
   const accepted = current?.status === 'accepted' ? current : importance.assessments?.filter((a) => a.status === 'accepted' && a.assessed_at <= (current?.assessed_at ?? '9999')).sort((a, b) => b.assessed_at.localeCompare(a.assessed_at) || b.id.localeCompare(a.id))[0]
-  const score = accepted ? computeScore({ ...importance, current: accepted.id }) : legacyScore(importance)
-  if (score === null) throw new Error('Accepted assessments must be complete')
+  const established = accepted ? computeScore({ ...importance, current: accepted.id }) : legacyScore(importance)
+  if (accepted && established === null) throw new Error('Accepted assessments must be complete')
+  // New provisional events have no established point score. The index needs a
+  // numeric placement key: explicitly use the interval's lower bound, while the
+  // detail UI displays the interval and provenance rather than a point score.
+  const score = established ?? (current ? scoreRange(current)[0] : 0)
   return {
     score,
     tier: tierOf(score),
     overview: Boolean(current?.overview_reason),
     score_status: current?.status ?? 'legacy',
-    score_basis: accepted?.id ?? 'v1',
+    score_basis: accepted?.id ?? (importance.rubric ? 'v1' : 'v2-lower-bound'),
     ...(current?.status === 'provisional' ? { score_range: scoreRange(current) } : {}),
   }
 }

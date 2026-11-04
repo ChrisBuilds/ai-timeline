@@ -59,7 +59,7 @@ export interface ImportanceAssessment {
 }
 export interface Importance {
   /** Original v1 inputs, retained verbatim; original assessment date is unknown. */
-  rubric: { capability: number; adoption: number; impact: number; culture: number }
+  rubric?: { capability: number; adoption: number; impact: number; culture: number }
   legacy?: { rubric_version: 'v1'; migrated_at: string }
   current?: string
   assessments?: ImportanceAssessment[]

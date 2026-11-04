@@ -40,3 +40,11 @@ The `description` supports a small, safe set of markdown: `*italic*` (for journa
 ## Add events by hand
 
 Branch as `event/<event-id>`, add `events/<year>/<event-id>.yaml` following `schema/event.schema.json` and the rules in `CLAUDE.md`, run `npm run validate`, and open a PR titled `Event: …`.
+
+## Importance and reassessment
+
+Use the anchored rubric and research procedure in [docs/importance.md](docs/importance.md). Evaluate significance with evidence available today, relative to the event's relevant audience. Cite dimension-specific evidence, compare two or three named events, and explain attribution to this event rather than its later product line.
+
+Append a dated assessment with a version, reviewer, confidence, rationale and review deadline/triggers. Preserve the original rubric and earlier records. Use null for missing evidence and provisional status until the judgment is complete. Overview milestones need a separate written justification; do not inflate a score to force visibility.
+
+Run `npm run importance:report` for before/after scores and `npm run importance:review` for the review queue. New evidence of influence, adoption, failure or abandonment can trigger reassessment at any age. There is no automatic age decay.

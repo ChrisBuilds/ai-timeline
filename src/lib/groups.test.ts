@@ -107,3 +107,22 @@ describe('collapsed groups', () => {
     expect(out.scale.y(2024)).toBe(out.base.y(2024))
   })
 })
+
+it('keeps displaced same-date overview cards clear of hidden groups with truthful date markers', () => {
+  const events = [
+    { id: 'first', date: '2024-01-01', score: 60, overview: true },
+    { id: 'second', date: '2024-01-01', score: 50, overview: true },
+    { id: 'hidden', date: '2024-01-01', score: 99, overview: false },
+    { id: 'later-hidden', date: '2023-12-01', score: 10, overview: false },
+  ]
+  const years = new Map(events.map((e) => [e.id, toYear(e.date)]))
+  const base = buildScale(eras, [...years.values()], 2026.84, 1, { ...DEFAULT_SCALE, headerPx: 110, footerPx: 500 })
+  const arranged = layout(events.map((item) => ({ item, y: base.y(years.get(item.id)!), score: item.score })), {
+    lanes: 1, cardHeight: 100, gap: 10, anchorOffset: 18, clusterPx: 28, mustShow: (e) => e.overview,
+  })
+  const out = buildGroups(base, arranged.placed, arranged.clusters, years, () => 100)
+  expect(out.placed.filter((c) => c.item.overview)).toHaveLength(2)
+  const rows = [...out.placed.map((c) => ({ top: c.top, height: 100 })), ...out.groups].sort((a, b) => a.top - b.top)
+  for (let i = 1; i < rows.length; i++) expect(rows[i].top).toBeGreaterThanOrEqual(rows[i - 1].top + rows[i - 1].height)
+  for (const c of out.placed) expect(c.y).toBeCloseTo(out.scale.y(years.get(c.item.id)!))
+})

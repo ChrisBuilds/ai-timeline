@@ -27,6 +27,12 @@ describe('assessment records', () => {
     a.override_review_after = '2027-02-04'
     expect(validate(e)).toBe(true)
   })
+  it('allows v2-only new events without an invented original rubric', () => {
+    const e = sample()
+    delete e.importance.rubric
+    delete e.importance.legacy
+    expect(validate(e)).toBe(true)
+  })
   it('allows appending reassessments and selecting an earlier accepted record', () => {
     const before = sample().importance
     const after = structuredClone(before)
