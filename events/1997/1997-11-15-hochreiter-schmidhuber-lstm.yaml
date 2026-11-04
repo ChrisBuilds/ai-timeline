@@ -1,0 +1,51 @@
+id: 1997-11-15-hochreiter-schmidhuber-lstm
+title: Hochreiter and Schmidhuber publish their LSTM paper
+date: "1997-11-15"
+summary: >-
+  Sepp Hochreiter and Jürgen Schmidhuber publish a journal account of long
+  short-term memory, a recurrent network architecture designed to learn across long time gaps.
+description: |
+  *Neural Computation* published Hochreiter and Schmidhuber's paper on 15
+  November 1997. It describes a recurrent architecture with memory units and
+  multiplicative gates, designed to preserve error flow across long sequence
+  gaps. In artificial-data experiments, the authors reported learning tasks
+  with time lags exceeding 1,000 steps. This was the journal publication, not
+  the first appearance of LSTM: the paper cites the authors' 1995 technical
+  report and conference work presented in 1996.
+
+  LSTMs later became a major approach to sequence modeling. In 2014, Sutskever,
+  Vinyals and Le used stacked LSTMs for English-to-French sequence-to-sequence
+  translation, outperforming a phrase-based system on the WMT 2014 test set.
+  The Transformer paper in 2017 described recurrent networks as common in
+  sequence transduction and replaced recurrent layers with self-attention for
+  its translation model; this marks a shift in machine translation, not the
+  disappearance of LSTMs from every application.
+category: research
+organizations: [Technische Universität München, IDSIA]
+people: [Sepp Hochreiter, Jürgen Schmidhuber]
+tags: [long short-term memory, recurrent neural networks, sequence modeling, gradient descent]
+sources:
+  - url: https://people.idsia.ch/~juergen/lstm1997-2024head.pdf
+    title: Long Short-Term Memory
+    publisher: IDSIA author archive
+    accessed: "2026-11-03"
+  - url: https://pubmed.ncbi.nlm.nih.gov/9377276/
+    title: Long short-term memory (PubMed record)
+    publisher: U.S. National Library of Medicine
+    accessed: "2026-11-03"
+  - url: https://papers.neurips.cc/paper_files/paper/2014/file/5a18e133cbf9f257297f410bb7eca942-Paper.pdf
+    title: Sequence to Sequence Learning with Neural Networks
+    publisher: Neural Information Processing Systems
+    accessed: "2026-11-03"
+  - url: https://proceedings.neurips.cc/paper_files/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf
+    title: Attention Is All You Need
+    publisher: Neural Information Processing Systems
+    accessed: "2026-11-03"
+artifacts:
+  - type: paper
+    url: https://doi.org/10.1162/neco.1997.9.8.1735
+    title: Hochreiter and Schmidhuber, Long Short-Term Memory (1997)
+importance:
+  rubric: {capability: 4, adoption: 3, impact: 4, culture: 1}
+issue: 36
+submitted_by: ChrisBuilds
