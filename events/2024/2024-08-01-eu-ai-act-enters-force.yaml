@@ -1,0 +1,28 @@
+id: 2024-08-01-eu-ai-act-enters-force
+title: EU Artificial Intelligence Act enters into force
+date: "2024-08-01"
+summary: >-
+  Regulation (EU) 2024/1689 entered into force, establishing the European Union's
+  harmonised rules for artificial intelligence. The Act's provisions apply in
+  stages rather than all beginning on this date.
+description: >-
+  The European Artificial Intelligence Act was published in the Official
+  Journal on 12 July 2024 and entered into force 20 days later, on 1 August.
+  Entry into force made the Regulation part of EU law; it did not mean every
+  obligation applied immediately. Article 113 sets phased application dates,
+  with most provisions applying from 2 August 2026 and some provisions applying
+  earlier or later.
+category: policy and regulation
+organizations: [European Union]
+tags: [AI regulation, European Union, governance]
+sources:
+  - url: https://commission.europa.eu/news-and-media/news/ai-act-enters-force-2024-08-01_en
+    title: AI Act enters into force
+    publisher: European Commission
+    accessed: "2026-11-04"
+  - url: https://eur-lex.europa.eu/eli/reg/2024/1689/oj
+    title: Regulation (EU) 2024/1689
+    publisher: EUR-Lex
+    accessed: "2026-11-04"
+importance:
+  rubric: {capability: 1, adoption: 4, impact: 4, culture: 3}
