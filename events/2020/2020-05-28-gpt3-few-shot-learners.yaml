@@ -2,20 +2,18 @@ id: 2020-05-28-gpt3-few-shot-learners
 title: OpenAI researchers publish GPT-3 few-shot learning results
 date: "2020-05-28"
 summary: >-
-  Brown and colleagues describe GPT-3, a 175-billion-parameter language model
-  that performs a range of tasks from examples or instructions in its prompt,
-  without gradient updates at inference time.
+  Brown and colleagues describe GPT-3, a 175-billion-parameter language model that performs a range
+  of tasks from examples or instructions in its prompt, without gradient updates at inference time.
 description: >-
-  The paper "Language Models are Few-Shot Learners" evaluates GPT-3 in zero-shot,
-  one-shot and few-shot settings. Its results show that scaling the model can
-  improve in-context task performance, though performance varies by task and
-  does not remove the need for fine-tuning or task-specific systems in every
-  application. This event records the paper's public posting, not the later
-  GPT-3 API beta.
+  The paper "Language Models are Few-Shot Learners" evaluates GPT-3 in zero-shot, one-shot and
+  few-shot settings. Its results show that scaling the model can improve in-context task
+  performance, though performance varies by task and does not remove the need for fine-tuning or
+  task-specific systems in every application. This event records the paper's public posting, not the
+  later GPT-3 API beta.
 category: research
-organizations: [OpenAI]
-people: [Tom B. Brown, Benjamin Mann, Nick Ryder, Melanie Subbiah, Jared Kaplan]
-tags: [language model, few-shot learning, scaling]
+organizations: [ OpenAI ]
+people: [ Tom B. Brown, Benjamin Mann, Nick Ryder, Melanie Subbiah, Jared Kaplan ]
+tags: [ language model, few-shot learning, scaling ]
 sources:
   - url: https://arxiv.org/abs/2005.14165
     title: Language Models are Few-Shot Learners
@@ -30,4 +28,63 @@ artifacts:
     url: https://arxiv.org/abs/2005.14165
     title: Language Models are Few-Shot Learners
 importance:
-  rubric: {capability: 4, adoption: 4, impact: 5, culture: 3}
+  rubric: { capability: 4, adoption: 4, impact: 5, culture: 3 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. Ratings are editorial judgments from the cited evidence, not measured counts or
+        claims of exclusive causation.
+      dimensions:
+        influence:
+          rating: 5
+          confidence: medium
+          rationale: The paper established in-context few-shot behavior as a major direction in language
+            modeling.
+          evidence:
+            - https://arxiv.org/abs/2005.14165
+        adoption:
+          rating: 4
+          confidence: medium
+          rationale: Assess the research approach; API adoption belongs to a separate release history.
+          evidence:
+            - https://arxiv.org/abs/2005.14165
+        capability:
+          rating: 4
+          confidence: high
+          rationale: Demonstrated broad few-shot task performance at larger model scale, with stated task
+            limitations.
+          evidence:
+            - https://arxiv.org/abs/2005.14165
+        society:
+          rating: 3
+          confidence: medium
+          rationale: Generated text and potential misuse extended discussion beyond benchmark performance.
+          evidence:
+            - https://arxiv.org/abs/2005.14165
+      comparisons:
+        - id: 2018-10-11-bert-pretraining
+          rationale: "Lower overall significance under v2. This event: The paper established in-context
+            few-shot behavior as a major direction in language modeling. Comparison event:
+            Established bidirectional pretraining as a reusable approach across
+            language-understanding tasks."
+        - id: 2022-01-28-chain-of-thought-prompting
+          rationale: "Higher overall significance under v2. This event: The paper established in-context
+            few-shot behavior as a major direction in language modeling. Comparison event: The later
+            o1 and R1 events demonstrate reasoning trajectories becoming a major modeling concern."
+      questions:
+        - Would independent longitudinal evidence change the adoption or downstream influence
+          judgment?
+      review_after: 2027-11-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.
+      overview_reason: "Overview milestone: The paper established in-context few-shot behavior as a major
+        direction in language modeling."

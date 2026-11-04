@@ -2,12 +2,12 @@ id: 2017-06-12-attention-is-all-you-need
 title: '"Attention Is All You Need" introduces the Transformer'
 date: "2017-06-12"
 summary: >-
-  Researchers at Google propose the Transformer, an architecture built entirely on
-  attention that becomes the foundation of modern large language models.
+  Researchers at Google propose the Transformer, an architecture built entirely on attention that
+  becomes the foundation of modern large language models.
 category: research
-organizations: [Google Brain, Google Research]
-people: [Ashish Vaswani, Noam Shazeer, Niki Parmar]
-tags: [transformer, attention, architecture]
+organizations: [ Google Brain, Google Research ]
+people: [ Ashish Vaswani, Noam Shazeer, Niki Parmar ]
+tags: [ transformer, attention, architecture ]
 sources:
   - url: https://arxiv.org/abs/1706.03762
     title: Attention Is All You Need
@@ -18,4 +18,65 @@ artifacts:
     url: https://arxiv.org/abs/1706.03762
     title: Attention Is All You Need (arXiv)
 importance:
-  rubric: {capability: 5, adoption: 5, impact: 5, culture: 3}
+  rubric: { capability: 5, adoption: 5, impact: 5, culture: 3 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. Ratings are editorial judgments from the cited evidence, not measured counts or
+        claims of exclusive causation.
+      dimensions:
+        influence:
+          rating: 5
+          confidence: medium
+          rationale: BERT, GPT-3 and other later events provide concrete examples of the architecture being
+            built upon.
+          evidence:
+            - https://arxiv.org/abs/1706.03762
+        adoption:
+          rating: 5
+          confidence: medium
+          rationale: Transformer-based language modeling became established practice across subsequent models.
+          evidence:
+            - https://arxiv.org/abs/1706.03762
+        capability:
+          rating: 5
+          confidence: high
+          rationale: Introduced an attention-only architecture with strong translation results and training
+            advantages.
+          evidence:
+            - https://arxiv.org/abs/1706.03762
+        society:
+          rating: 3
+          confidence: medium
+          rationale: Broad reach derives through later systems, with credit shared with their own launch
+            events.
+          evidence:
+            - https://arxiv.org/abs/1706.03762
+      comparisons:
+        - id: 2018-10-11-bert-pretraining
+          rationale: "Higher overall significance under v2. This event: BERT, GPT-3 and other later events
+            provide concrete examples of the architecture being built upon. Comparison event:
+            Established bidirectional pretraining as a reusable approach across
+            language-understanding tasks."
+        - id: 2014-06-10-generative-adversarial-networks
+          rationale: "Higher overall significance under v2. This event: BERT, GPT-3 and other later events
+            provide concrete examples of the architecture being built upon. Comparison event:
+            Introduced an influential framework for training generative models through an
+            adversarial objective."
+      questions:
+        - Would independent longitudinal evidence change the adoption or downstream influence
+          judgment?
+      review_after: 2027-11-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.
+      overview_reason: "Overview milestone: BERT, GPT-3 and other later events provide concrete examples
+        of the architecture being built upon."

@@ -2,20 +2,18 @@ id: 2022-08-22-stable-diffusion-public-release
 title: Stable Diffusion weights are publicly released
 date: "2022-08-22"
 summary: >-
-  Stability AI and collaborators made Stable Diffusion model weights publicly
-  available, enabling local text-to-image generation. The weights were released
-  under the CreativeML Open RAIL-M license, which permits broad use subject to
-  stated use restrictions.
+  Stability AI and collaborators made Stable Diffusion model weights publicly available, enabling
+  local text-to-image generation. The weights were released under the CreativeML Open RAIL-M
+  license, which permits broad use subject to stated use restrictions.
 description: >-
-  Stability AI announced the public release of Stable Diffusion on 22 August
-  2022. The text-to-image model was developed with researchers associated with
-  CompVis at LMU Munich and Runway. Releasing weights, code and documentation
-  allowed users to run and adapt the model locally, including on consumer
-  hardware, while the CreativeML Open RAIL-M license retained restrictions on
-  certain uses; this was not an unrestricted public-domain release.
+  Stability AI announced the public release of Stable Diffusion on 22 August 2022. The text-to-image
+  model was developed with researchers associated with CompVis at LMU Munich and Runway. Releasing
+  weights, code and documentation allowed users to run and adapt the model locally, including on
+  consumer hardware, while the CreativeML Open RAIL-M license retained restrictions on certain uses;
+  this was not an unrestricted public-domain release.
 category: model release
-organizations: [Stability AI, CompVis, Runway]
-tags: [image generation, diffusion, open weights]
+organizations: [ Stability AI, CompVis, Runway ]
+tags: [ image generation, diffusion, open weights ]
 sources:
   - url: https://stability.ai/news/stable-diffusion-public-release
     title: Stable Diffusion Public Release
@@ -38,4 +36,64 @@ artifacts:
     url: https://stability.ai/news/stable-diffusion-public-release
     title: Stable Diffusion Public Release
 importance:
-  rubric: {capability: 4, adoption: 4, impact: 4, culture: 4}
+  rubric: { capability: 4, adoption: 4, impact: 4, culture: 4 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. Ratings are editorial judgments from the cited evidence, not measured counts or
+        claims of exclusive causation.
+      dimensions:
+        influence:
+          rating: 4
+          confidence: medium
+          rationale: Public weights enabled local experimentation and adaptation beyond a hosted interface.
+          evidence:
+            - https://github.com/CompVis/stable-diffusion
+        adoption:
+          rating: 4
+          confidence: medium
+          rationale: Code and weights broadened practical access; availability alone is not a measured user
+            count.
+          evidence:
+            - https://github.com/CompVis/stable-diffusion
+        capability:
+          rating: 4
+          confidence: high
+          rationale: Made text-to-image generation practical locally rather than inventing diffusion itself.
+          evidence:
+            - https://github.com/CompVis/stable-diffusion
+        society:
+          rating: 4
+          confidence: medium
+          rationale: Accessible generation and use restrictions brought broader questions about generated
+            media.
+          evidence:
+            - https://github.com/CompVis/stable-diffusion
+      comparisons:
+        - id: 2023-02-24-meta-llama-research-release
+          rationale: "Higher overall significance under v2. This event: Public weights enabled local
+            experimentation and adaptation beyond a hosted interface. Comparison event: An important
+            research-access model family; later Llama releases are not all attributed to this
+            event."
+        - id: 2023-03-14-openai-gpt-4
+          rationale: "Comparable overall significance under v2. This event: Public weights enabled local
+            experimentation and adaptation beyond a hosted interface. Comparison event: Raised the
+            frontier for subsequent model comparisons while building on earlier language-model and
+            interface work."
+      questions:
+        - Would independent longitudinal evidence change the adoption or downstream influence
+          judgment?
+      review_after: 2027-02-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.
+      overview_reason: "Overview milestone: Public weights enabled local experimentation and adaptation
+        beyond a hosted interface."

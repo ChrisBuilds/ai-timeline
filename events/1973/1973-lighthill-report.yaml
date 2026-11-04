@@ -2,9 +2,9 @@ id: 1973-lighthill-report
 title: The Lighthill report criticises AI research in Britain
 date: "1973"
 summary: >-
-  Sir James Lighthill's survey for the UK Science Research Council, "Artificial
-  Intelligence: A General Survey", concluded that AI had failed to meet its promises
-  outside narrow domains, and it is often credited with cutting UK funding.
+  Sir James Lighthill's survey for the UK Science Research Council, "Artificial Intelligence: A
+  General Survey", concluded that AI had failed to meet its promises outside narrow domains, and it
+  is often credited with cutting UK funding.
 description: |
   The Science Research Council asked Lighthill, a Cambridge applied mathematician from
   outside the field, to appraise AI research. The SRC chair wrote to him in September
@@ -25,9 +25,9 @@ description: |
   figures for the cuts and notes that the criticisms resonated beyond the UK. The month of
   publication is not confirmed.
 category: policy and regulation
-organizations: [Science Research Council]
-people: [James Lighthill]
-tags: [AI winter, funding, United Kingdom]
+organizations: [ Science Research Council ]
+people: [ James Lighthill ]
+tags: [ AI winter, funding, United Kingdom ]
 sources:
   - url: https://www.chilton-computing.org.uk/inf/literature/reports/lighthill_report/p001.htm
     title: "Artificial Intelligence: A General Survey (Part I of the Lighthill Report)"
@@ -42,7 +42,8 @@ sources:
     publisher: The British Journal for the History of Science (Jon Agar)
     accessed: "2026-11-03"
   - url: https://discovery-pp.ucl.ac.uk/id/eprint/10105726
-    title: What is science for? The Lighthill report on artificial intelligence reinterpreted (accepted manuscript)
+    title: What is science for? The Lighthill report on artificial intelligence reinterpreted (accepted
+      manuscript)
     publisher: UCL Discovery (Jon Agar)
     accessed: "2026-11-03"
 artifacts:
@@ -50,6 +51,63 @@ artifacts:
     url: http://www.chilton-computing.org.uk/inf/literature/reports/lighthill_report/contents.htm
     title: "Artificial Intelligence: a paper symposium, full text (Chilton Computing)"
 importance:
-  rubric: {capability: 1, adoption: 2, impact: 4, culture: 3}
+  rubric: { capability: 1, adoption: 2, impact: 4, culture: 3 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. The existing curated account is retained, but unavailable source content prevents
+        confirming downstream influence.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: Associated with a change in British research funding; the existing history cautions
+            against simple causal claims.
+          evidence:
+            - https://www.chilton-computing.org.uk/inf/literature/reports/lighthill_report/p001.htm
+        adoption:
+          rating: 2
+          confidence: low
+          rationale: Institutional consideration is distinct from adoption of a technical system.
+          evidence:
+            - https://www.chilton-computing.org.uk/inf/literature/reports/lighthill_report/p001.htm
+        capability:
+          rating: 1
+          confidence: low
+          rationale: The report offered criticism rather than an enabling technical advance.
+          evidence:
+            - https://www.chilton-computing.org.uk/inf/literature/reports/lighthill_report/p001.htm
+        society:
+          rating: 4
+          confidence: low
+          rationale: Its relevance concerns research institutions and funding rather than consumer popularity.
+          evidence:
+            - https://www.chilton-computing.org.uk/inf/literature/reports/lighthill_report/p001.htm
+      comparisons:
+        - id: 1950-10-turing-computing-machinery-and-intelligence
+          rationale: "Relative rank remains provisional pending evidence review. This event: Associated with a
+            change in British research funding; the existing history cautions against simple causal
+            claims. Comparison event: Established the imitation game as a durable framing for
+            machine intelligence."
+        - id: 2024-08-01-eu-ai-act-enters-force
+          rationale: "Relative rank remains provisional pending evidence review. This event: Associated with a
+            change in British research funding; the existing history cautions against simple causal
+            claims. Comparison event: Established a harmonized regulatory framework; long-term
+            enforcement effects require reassessment."
+      questions:
+        - Reopen the unavailable primary or retrospective source and verify the downstream influence
+          rating.
+      review_after: 2026-12-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.
 issue: 33
 submitted_by: ChrisBuilds

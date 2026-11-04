@@ -2,9 +2,9 @@ id: 2025-01-20-deepseek-r1
 title: DeepSeek releases R1 as an open reasoning model
 date: "2025-01-20"
 summary: >-
-  Chinese lab DeepSeek released DeepSeek-R1, a reasoning model it reported as on par
-  with OpenAI's o1, with open weights under the MIT licence; a week later Nvidia lost
-  nearly $600 billion in market value in a record one-day fall.
+  Chinese lab DeepSeek released DeepSeek-R1, a reasoning model it reported as on par with OpenAI's
+  o1, with open weights under the MIT licence; a week later Nvidia lost nearly $600 billion in
+  market value in a record one-day fall.
 description: |
   DeepSeek-R1 is a mixture-of-experts model with 671 billion total and 37 billion
   activated parameters. Its technical report, posted to arXiv on January 22, 2025,
@@ -18,8 +18,8 @@ description: |
   loss at $589 billion and Reuters at about $593 billion, the largest one-day loss
   in market value on record.
 category: model release
-organizations: [DeepSeek]
-tags: [reasoning, reinforcement learning, open weights, test-time compute]
+organizations: [ DeepSeek ]
+tags: [ reasoning, reinforcement learning, open weights, test-time compute ]
 sources:
   - url: https://api-docs.deepseek.com/news/news250120
     title: DeepSeek-R1 Release
@@ -55,6 +55,66 @@ related:
     relation: responds_to
     source: https://arxiv.org/abs/2501.12948
 importance:
-  rubric: {capability: 4, adoption: 4, impact: 5, culture: 4}
+  rubric: { capability: 4, adoption: 4, impact: 5, culture: 4 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. Ratings are editorial judgments from the cited evidence, not measured counts or
+        claims of exclusive causation.
+      dimensions:
+        influence:
+          rating: 4
+          confidence: medium
+          rationale: Open weights and distillation support reuse of reasoning methods; durable influence
+            merits continued review.
+          evidence:
+            - https://api-docs.deepseek.com/news/news250120
+        adoption:
+          rating: 3
+          confidence: medium
+          rationale: Released weights establish accessibility, not a measured share of deployed reasoning
+            systems.
+          evidence:
+            - https://api-docs.deepseek.com/news/news250120
+        capability:
+          rating: 4
+          confidence: high
+          rationale: Demonstrated reinforcement-learned reasoning and smaller distilled models with
+            vendor-reported comparisons.
+          evidence:
+            - https://api-docs.deepseek.com/news/news250120
+        society:
+          rating: 4
+          confidence: medium
+          rationale: The documented market reaction establishes public and financial reach without proving
+            permanent technical dominance.
+          evidence:
+            - https://api-docs.deepseek.com/news/news250120
+      comparisons:
+        - id: 2024-09-12-openai-o1
+          rationale: "Higher overall significance under v2. This event: Open weights and distillation support
+            reuse of reasoning methods; durable influence merits continued review. Comparison event:
+            Made reinforcement learning and additional inference compute central to a
+            reasoning-model release."
+        - id: 2023-02-24-meta-llama-research-release
+          rationale: "Higher overall significance under v2. This event: Open weights and distillation support
+            reuse of reasoning methods; durable influence merits continued review. Comparison event:
+            An important research-access model family; later Llama releases are not all attributed
+            to this event."
+      questions:
+        - Would independent longitudinal evidence change the adoption or downstream influence
+          judgment?
+      review_after: 2027-02-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.
 issue: 50
 submitted_by: ChrisBuilds

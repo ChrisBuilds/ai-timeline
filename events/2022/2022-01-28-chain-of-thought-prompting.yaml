@@ -2,12 +2,12 @@ id: 2022-01-28-chain-of-thought-prompting
 title: Chain-of-thought prompting elicits reasoning in language models
 date: "2022-01-28"
 summary: >-
-  Google researchers show that prompting a large model to write out intermediate
-  reasoning steps sharply improves its results on math and logic problems.
+  Google researchers show that prompting a large model to write out intermediate reasoning steps
+  sharply improves its results on math and logic problems.
 category: research
-organizations: [Google Research]
-people: [Jason Wei]
-tags: [reasoning, chain of thought, prompting]
+organizations: [ Google Research ]
+people: [ Jason Wei ]
+tags: [ reasoning, chain of thought, prompting ]
 sources:
   - url: https://arxiv.org/abs/2201.11903
     title: Chain-of-Thought Prompting Elicits Reasoning in Large Language Models
@@ -18,4 +18,59 @@ artifacts:
     url: https://arxiv.org/abs/2201.11903
     title: Chain-of-Thought Prompting (arXiv)
 importance:
-  rubric: {capability: 4, adoption: 4, impact: 4, culture: 2}
+  rubric: { capability: 4, adoption: 4, impact: 4, culture: 2 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. Ratings are editorial judgments from the cited evidence, not measured counts or
+        claims of exclusive causation.
+      dimensions:
+        influence:
+          rating: 4
+          confidence: medium
+          rationale: The later o1 and R1 events demonstrate reasoning trajectories becoming a major modeling
+            concern.
+          evidence:
+            - https://arxiv.org/abs/2201.11903
+        adoption:
+          rating: 4
+          confidence: medium
+          rationale: The method is reusable prompting practice rather than a standalone consumer service.
+          evidence:
+            - https://arxiv.org/abs/2201.11903
+        capability:
+          rating: 4
+          confidence: high
+          rationale: The paper demonstrates substantial improvements from intermediate reasoning examples.
+          evidence:
+            - https://arxiv.org/abs/2201.11903
+        society:
+          rating: 2
+          confidence: medium
+          rationale: Its direct documented contribution remains mainly technical.
+          evidence:
+            - https://arxiv.org/abs/2201.11903
+      comparisons:
+        - id: 2020-05-28-gpt3-few-shot-learners
+          rationale: "Lower overall significance under v2. This event: The later o1 and R1 events demonstrate
+            reasoning trajectories becoming a major modeling concern. Comparison event: The paper
+            established in-context few-shot behavior as a major direction in language modeling."
+        - id: 2018-10-11-bert-pretraining
+          rationale: "Lower overall significance under v2. This event: The later o1 and R1 events demonstrate
+            reasoning trajectories becoming a major modeling concern. Comparison event: Established
+            bidirectional pretraining as a reusable approach across language-understanding tasks."
+      questions:
+        - Would independent longitudinal evidence change the adoption or downstream influence
+          judgment?
+      review_after: 2027-02-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.

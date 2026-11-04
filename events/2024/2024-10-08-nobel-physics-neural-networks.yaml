@@ -2,25 +2,80 @@ id: 2024-10-08-nobel-physics-neural-networks
 title: Nobel Prize in Physics recognizes neural-network foundations
 date: "2024-10-08"
 summary: >-
-  The 2024 Physics Nobel was awarded to John Hopfield and Geoffrey Hinton for
-  foundational discoveries and inventions that enable machine learning with
-  artificial neural networks.
+  The 2024 Physics Nobel was awarded to John Hopfield and Geoffrey Hinton for foundational
+  discoveries and inventions that enable machine learning with artificial neural networks.
 description: >-
-  The Royal Swedish Academy of Sciences awarded the 2024 Nobel Prize in Physics
-  to John J. Hopfield and Geoffrey E. Hinton for foundational discoveries and
-  inventions enabling machine learning with artificial neural networks.
-  Hopfield was recognized for associative memory, and Hinton for methods that
-  can autonomously discover properties in data. This records the Physics
-  announcement on 8 October; the separate Chemistry Nobel announcement followed
-  on 9 October and recognized different work.
+  The Royal Swedish Academy of Sciences awarded the 2024 Nobel Prize in Physics to John J. Hopfield
+  and Geoffrey E. Hinton for foundational discoveries and inventions enabling machine learning with
+  artificial neural networks. Hopfield was recognized for associative memory, and Hinton for methods
+  that can autonomously discover properties in data. This records the Physics announcement on 8
+  October; the separate Chemistry Nobel announcement followed on 9 October and recognized different
+  work.
 category: culture and society
-organizations: [Royal Swedish Academy of Sciences]
-people: [John J. Hopfield, Geoffrey E. Hinton]
-tags: [Nobel Prize, neural networks, machine learning]
+organizations: [ Royal Swedish Academy of Sciences ]
+people: [ John J. Hopfield, Geoffrey E. Hinton ]
+tags: [ Nobel Prize, neural networks, machine learning ]
 sources:
   - url: https://www.nobelprize.org/prizes/physics/2024/press-release/
     title: "The Nobel Prize in Physics 2024"
     publisher: Nobel Prize
     accessed: "2026-11-04"
 importance:
-  rubric: {capability: 2, adoption: 3, impact: 4, culture: 5}
+  rubric: { capability: 2, adoption: 3, impact: 4, culture: 5 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. The existing curated account is retained, but unavailable source content prevents
+        confirming downstream influence.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: Recognition strengthens the institutional standing of earlier work, without recreating
+            that technical contribution.
+          evidence:
+            - https://www.nobelprize.org/prizes/physics/2024/press-release/
+        adoption:
+          rating: 1
+          confidence: low
+          rationale: Award recognition is distinct from adoption of the research methods.
+          evidence:
+            - https://www.nobelprize.org/prizes/physics/2024/press-release/
+        capability:
+          rating: 0
+          confidence: low
+          rationale: The prize announcement introduces no new model or learning method.
+          evidence:
+            - https://www.nobelprize.org/prizes/physics/2024/press-release/
+        society:
+          rating: 4
+          confidence: low
+          rationale: A major scientific institution publicly recognized neural-network foundations.
+          evidence:
+            - https://www.nobelprize.org/prizes/physics/2024/press-release/
+      comparisons:
+        - id: 2024-10-09-nobel-chemistry-protein-ai
+          rationale: "Relative rank remains provisional pending evidence review. This event: Recognition
+            strengthens the institutional standing of earlier work, without recreating that
+            technical contribution. Comparison event: The award recognizes prior protein design and
+            prediction work; influence of that work is scored separately."
+        - id: 1950-10-turing-computing-machinery-and-intelligence
+          rationale: "Relative rank remains provisional pending evidence review. This event: Recognition
+            strengthens the institutional standing of earlier work, without recreating that
+            technical contribution. Comparison event: Established the imitation game as a durable
+            framing for machine intelligence."
+      questions:
+        - Reopen the unavailable primary or retrospective source and verify the downstream influence
+          rating.
+      review_after: 2026-12-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.

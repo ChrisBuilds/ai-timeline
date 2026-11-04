@@ -2,20 +2,18 @@ id: 2023-02-24-meta-llama-research-release
 title: Meta announces LLaMA and grants researchers access
 date: "2023-02-24"
 summary: >-
-  Meta announced LLaMA, a family of language models from 7B to 65B parameters,
-  and offered access to researchers through an application under a
-  noncommercial license.
+  Meta announced LLaMA, a family of language models from 7B to 65B parameters, and offered access to
+  researchers through an application under a noncommercial license.
 description: >-
-  Meta introduced LLaMA as a family of foundation language models trained
-  across 7B, 13B, 33B, and 65B parameter sizes. The announcement offered model
-  weights to academic researchers, government and civil society organizations,
-  and industry research laboratories through an application process, under a
-  noncommercial research license. This records the restricted initial release;
-  it does not describe LLaMA as an unrestricted open-source release or conflate
-  it with the later public leak or LLaMA 2.
+  Meta introduced LLaMA as a family of foundation language models trained across 7B, 13B, 33B, and
+  65B parameter sizes. The announcement offered model weights to academic researchers, government
+  and civil society organizations, and industry research laboratories through an application
+  process, under a noncommercial research license. This records the restricted initial release; it
+  does not describe LLaMA as an unrestricted open-source release or conflate it with the later
+  public leak or LLaMA 2.
 category: model release
-organizations: [Meta AI]
-tags: [language models, LLaMA, research access]
+organizations: [ Meta AI ]
+tags: [ language models, LLaMA, research access ]
 sources:
   - url: https://ai.meta.com/blog/large-language-model-llama-meta-ai/
     title: "Introducing LLaMA: A foundational, 65-billion-parameter language model"
@@ -30,4 +28,61 @@ artifacts:
     url: https://arxiv.org/abs/2302.13971
     title: "LLaMA: Open and Efficient Foundation Language Models"
 importance:
-  rubric: {capability: 3, adoption: 4, impact: 4, culture: 3}
+  rubric: { capability: 3, adoption: 4, impact: 4, culture: 3 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. Ratings are editorial judgments from the cited evidence, not measured counts or
+        claims of exclusive causation.
+      dimensions:
+        influence:
+          rating: 4
+          confidence: medium
+          rationale: An important research-access model family; later Llama releases are not all attributed to
+            this event.
+          evidence:
+            - https://arxiv.org/abs/2302.13971
+        adoption:
+          rating: 4
+          confidence: medium
+          rationale: Assess researcher reuse under the initial application-based license, not unrestricted
+            public availability.
+          evidence:
+            - https://arxiv.org/abs/2302.13971
+        capability:
+          rating: 3
+          confidence: high
+          rationale: Demonstrated efficient smaller language models rather than a new basic architecture.
+          evidence:
+            - https://arxiv.org/abs/2302.13971
+        society:
+          rating: 2
+          confidence: medium
+          rationale: The initial event primarily served research institutions.
+          evidence:
+            - https://arxiv.org/abs/2302.13971
+      comparisons:
+        - id: 2023-03-14-openai-gpt-4
+          rationale: "Lower overall significance under v2. This event: An important research-access model
+            family; later Llama releases are not all attributed to this event. Comparison event:
+            Raised the frontier for subsequent model comparisons while building on earlier
+            language-model and interface work."
+        - id: 2022-08-22-stable-diffusion-public-release
+          rationale: "Lower overall significance under v2. This event: An important research-access model
+            family; later Llama releases are not all attributed to this event. Comparison event:
+            Public weights enabled local experimentation and adaptation beyond a hosted interface."
+      questions:
+        - Would independent longitudinal evidence change the adoption or downstream influence
+          judgment?
+      review_after: 2027-02-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.

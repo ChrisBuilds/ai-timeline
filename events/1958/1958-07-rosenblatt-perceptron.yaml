@@ -2,8 +2,8 @@ id: 1958-07-rosenblatt-perceptron
 title: Rosenblatt demonstrates the perceptron, a machine that learns
 date: "1958-07"
 summary: >-
-  The US Office of Naval Research unveiled Frank Rosenblatt's perceptron, a program run on an
-  IBM 704 that taught itself to tell punch cards marked on the left from cards marked on the right.
+  The US Office of Naval Research unveiled Frank Rosenblatt's perceptron, a program run on an IBM
+  704 that taught itself to tell punch cards marked on the left from cards marked on the right.
 description: |
   Frank Rosenblatt of the Cornell Aeronautical Laboratory developed the perceptron, a
   simple model of a neuron whose connection strengths are adjusted from examples. In
@@ -17,12 +17,13 @@ description: |
   Review* on April 23, 1958 and published in volume 65, issue 6 of that year. It
   reports experiments simulating the perceptron on the IBM 704.
 category: research
-organizations: [Office of Naval Research, Cornell Aeronautical Laboratory]
-people: [Frank Rosenblatt]
-tags: [perceptron, neural networks, machine learning, connectionism]
+organizations: [ Office of Naval Research, Cornell Aeronautical Laboratory ]
+people: [ Frank Rosenblatt ]
+tags: [ perceptron, neural networks, machine learning, connectionism ]
 sources:
   - url: https://homepages.math.uic.edu/~lreyzin/papers/rosenblatt58.pdf
-    title: "The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain (Psychological Review, vol. 65, no. 6, pp. 386-408)"
+    title: "The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain
+      (Psychological Review, vol. 65, no. 6, pp. 386-408)"
     publisher: American Psychological Association
     accessed: "2026-11-03"
   - url: https://nbb.cornell.edu/news/professors-perceptron-paved-way-ai-60-years-too-soon
@@ -34,6 +35,63 @@ artifacts:
     url: https://homepages.math.uic.edu/~lreyzin/papers/rosenblatt58.pdf
     title: Rosenblatt, The Perceptron (Psychological Review, 1958)
 importance:
-  rubric: {capability: 3, adoption: 2, impact: 4, culture: 4}
+  rubric: { capability: 3, adoption: 2, impact: 4, culture: 4 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. Ratings are editorial judgments from the cited evidence, not measured counts or
+        claims of exclusive causation.
+      dimensions:
+        influence:
+          rating: 4
+          confidence: medium
+          rationale: A foundational learning architecture, with later influence distinct from immediate
+            deployment.
+          evidence:
+            - https://nbb.cornell.edu/news/professors-perceptron-paved-way-ai-60-years-too-soon
+        adoption:
+          rating: 2
+          confidence: medium
+          rationale: The demonstration and simulations establish early experimental use, not widespread
+            deployment.
+          evidence:
+            - https://nbb.cornell.edu/news/professors-perceptron-paved-way-ai-60-years-too-soon
+        capability:
+          rating: 4
+          confidence: high
+          rationale: Demonstrated adjustment of connection strengths from examples.
+          evidence:
+            - https://nbb.cornell.edu/news/professors-perceptron-paved-way-ai-60-years-too-soon
+        society:
+          rating: 3
+          confidence: medium
+          rationale: The Cornell retrospective documents substantial public attention and later historical
+            significance.
+          evidence:
+            - https://nbb.cornell.edu/news/professors-perceptron-paved-way-ai-60-years-too-soon
+      comparisons:
+        - id: 1956-06-dartmouth-workshop
+          rationale: "Lower overall significance under v2. This event: A foundational learning architecture,
+            with later influence distinct from immediate deployment. Comparison event: Named and
+            organized a research field whose institutional identity persisted."
+        - id: 1950-10-turing-computing-machinery-and-intelligence
+          rationale: "Lower overall significance under v2. This event: A foundational learning architecture,
+            with later influence distinct from immediate deployment. Comparison event: Established
+            the imitation game as a durable framing for machine intelligence."
+      questions:
+        - Would independent longitudinal evidence change the adoption or downstream influence
+          judgment?
+      review_after: 2027-11-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.
 issue: 31
 submitted_by: ChrisBuilds

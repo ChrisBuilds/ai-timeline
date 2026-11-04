@@ -2,8 +2,8 @@ id: 1989-12-01-lecun-zip-code-recognition
 title: LeCun and colleagues train a network to recognize ZIP-code digits
 date: "1989-12-01"
 summary: >-
-  Yann LeCun and six Bell Labs colleagues apply backpropagation through a
-  constrained network to classify normalized images of handwritten U.S. ZIP-code digits.
+  Yann LeCun and six Bell Labs colleagues apply backpropagation through a constrained network to
+  classify normalized images of handwritten U.S. ZIP-code digits.
 description: |
   LeCun and six colleagues at AT&T Bell Laboratories published the paper in
   *Neural Computation* 1(4), pp. 541–551. They applied backpropagation to a
@@ -19,7 +19,7 @@ description: |
   commercial use. These are reports by the system's developers; the papers give
   conflicting check-volume figures, so none is included here.
 category: research
-organizations: [AT&T Bell Laboratories, U.S. Postal Service]
+organizations: [ AT&T Bell Laboratories, U.S. Postal Service ]
 people:
   - Yann LeCun
   - Bernhard E. Boser
@@ -28,7 +28,13 @@ people:
   - Richard E. Howard
   - Wayne E. Hubbard
   - Lawrence D. Jackel
-tags: [convolutional neural networks, backpropagation, handwritten digit recognition, optical character recognition]
+tags:
+  [
+    convolutional neural networks,
+    backpropagation,
+    handwritten digit recognition,
+    optical character recognition
+  ]
 sources:
   - url: https://doi.org/10.1162/neco.1989.1.4.541
     title: Backpropagation Applied to Handwritten Zip Code Recognition
@@ -47,7 +53,65 @@ artifacts:
     url: https://doi.org/10.1162/neco.1989.1.4.541
     title: LeCun et al., Backpropagation Applied to Handwritten Zip Code Recognition (1989)
 importance:
-  rubric: {capability: 3, adoption: 2, impact: 3, culture: 1}
+  rubric: { capability: 3, adoption: 2, impact: 3, culture: 1 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. The existing curated account is retained, but unavailable source content prevents
+        confirming downstream influence.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: The event description traces constrained recognition networks into later document
+            systems.
+          evidence:
+            - https://doi.org/10.1162/neco.1989.1.4.541
+        adoption:
+          rating: 3
+          confidence: low
+          rationale: Later papers report commercial check-reading use; this does not establish mass use of the
+            1989 experiment itself.
+          evidence:
+            - https://doi.org/10.1162/neco.1989.1.4.541
+        capability:
+          rating: 4
+          confidence: low
+          rationale: Demonstrated learning in a task-constrained architecture on handwritten digits.
+          evidence:
+            - https://doi.org/10.1162/neco.1989.1.4.541
+        society:
+          rating: 1
+          confidence: low
+          rationale: The documented reach is primarily specialist and industrial.
+          evidence:
+            - https://doi.org/10.1162/neco.1989.1.4.541
+      comparisons:
+        - id: 1986-10-09-backpropagation
+          rationale: "Relative rank remains provisional pending evidence review. This event: The event
+            description traces constrained recognition networks into later document systems.
+            Comparison event: Training hidden representations became a foundation for subsequent
+            neural-network work."
+        - id: 1997-11-15-hochreiter-schmidhuber-lstm
+          rationale: "Relative rank remains provisional pending evidence review. This event: The event
+            description traces constrained recognition networks into later document systems.
+            Comparison event: Later sequence-to-sequence work cited in the event establishes direct
+            architectural influence."
+      questions:
+        - Reopen the unavailable primary or retrospective source and verify the downstream influence
+          rating.
+      review_after: 2026-12-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.
 related:
   - id: 1986-10-09-backpropagation
     relation: builds_on

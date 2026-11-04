@@ -2,19 +2,17 @@ id: 2015-12-11-openai-founded
 title: OpenAI announces its founding as a nonprofit
 date: "2015-12-11"
 summary: >-
-  OpenAI announced a nonprofit research organization; its founders and other
-  funders committed $1 billion, while it expected to spend only a tiny fraction
-  in the next few years.
+  OpenAI announced a nonprofit research organization; its founders and other funders committed $1
+  billion, while it expected to spend only a tiny fraction in the next few years.
 description: >-
-  OpenAI announced its formation as a nonprofit AI research organization. The
-  announcement described a mission to advance digital intelligence for the
-  benefit of humanity. It said the founders and other funders, including AWS,
-  Infosys and YC Research, had committed $1 billion, while OpenAI expected to
-  spend only a tiny fraction in the next few years. This records the public
+  OpenAI announced its formation as a nonprofit AI research organization. The announcement described
+  a mission to advance digital intelligence for the benefit of humanity. It said the founders and
+  other funders, including AWS, Infosys and YC Research, had committed $1 billion, while OpenAI
+  expected to spend only a tiny fraction in the next few years. This records the public
   announcement; it does not assert the legal incorporation date.
 category: company and funding
-organizations: [OpenAI]
-tags: [AI research, nonprofit]
+organizations: [ OpenAI ]
+tags: [ AI research, nonprofit ]
 sources:
   - url: https://openai.com/index/introducing-openai/
     title: Introducing OpenAI
@@ -25,4 +23,60 @@ artifacts:
     url: https://openai.com/index/introducing-openai/
     title: Introducing OpenAI
 importance:
-  rubric: {capability: 1, adoption: 2, impact: 4, culture: 3}
+  rubric: { capability: 1, adoption: 2, impact: 4, culture: 3 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. Ratings are editorial judgments from the cited evidence, not measured counts or
+        claims of exclusive causation.
+      dimensions:
+        influence:
+          rating: 4
+          confidence: medium
+          rationale: Institution building enabled later research; those outputs also receive their own event
+            assessments.
+          evidence:
+            - https://openai.com/index/introducing-openai/
+        adoption:
+          rating: 3
+          confidence: medium
+          rationale: Assess participation and institutional uptake, not every later product user as a founding
+            user.
+          evidence:
+            - https://openai.com/index/introducing-openai/
+        capability:
+          rating: 2
+          confidence: high
+          rationale: Creating a research organization is an enabling step rather than a new model capability.
+          evidence:
+            - https://openai.com/index/introducing-openai/
+        society:
+          rating: 3
+          confidence: medium
+          rationale: The stated nonprofit mission introduced an institutional position in the AI ecosystem.
+          evidence:
+            - https://openai.com/index/introducing-openai/
+      comparisons:
+        - id: 1956-06-dartmouth-workshop
+          rationale: "Lower overall significance under v2. This event: Institution building enabled later
+            research; those outputs also receive their own event assessments. Comparison event:
+            Named and organized a research field whose institutional identity persisted."
+        - id: 1950-10-turing-computing-machinery-and-intelligence
+          rationale: "Lower overall significance under v2. This event: Institution building enabled later
+            research; those outputs also receive their own event assessments. Comparison event:
+            Established the imitation game as a durable framing for machine intelligence."
+      questions:
+        - Would independent longitudinal evidence change the adoption or downstream influence
+          judgment?
+      review_after: 2027-11-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.

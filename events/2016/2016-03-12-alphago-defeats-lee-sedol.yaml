@@ -2,16 +2,16 @@ id: 2016-03-12-alphago-defeats-lee-sedol
 title: DeepMind's AlphaGo defeats Go champion Lee Sedol
 date: "2016-03-12"
 summary: >-
-  AlphaGo wins the third game in Seoul to clinch the match against one of the world's
-  best Go players, a feat long thought to be a decade away, and goes on to win 4–1.
+  AlphaGo wins the third game in Seoul to clinch the match against one of the world's best Go
+  players, a feat long thought to be a decade away, and goes on to win 4–1.
 description: |
   The five-game match ran from March 9 to 15, 2016, at the Four Seasons Hotel in
   Seoul. AlphaGo combined deep neural networks with tree search and reinforcement
   learning.
 category: benchmark milestone
-organizations: [DeepMind]
-people: [Lee Sedol]
-tags: [go, game playing, reinforcement learning]
+organizations: [ DeepMind ]
+people: [ Lee Sedol ]
+tags: [ go, game playing, reinforcement learning ]
 sources:
   - url: https://deepmind.google/research/alphago/
     title: AlphaGo
@@ -22,4 +22,63 @@ sources:
     publisher: Wikipedia
     accessed: "2026-11-03"
 importance:
-  rubric: {capability: 5, adoption: 2, impact: 4, culture: 5}
+  rubric: { capability: 5, adoption: 2, impact: 4, culture: 5 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. Ratings are editorial judgments from the cited evidence, not measured counts or
+        claims of exclusive causation.
+      dimensions:
+        influence:
+          rating: 4
+          confidence: medium
+          rationale: A major demonstration of learned search and reinforcement learning, beyond the earlier
+            chess milestone.
+          evidence:
+            - https://deepmind.google/research/alphago/
+        adoption:
+          rating: 2
+          confidence: medium
+          rationale: Direct practical adoption of the match system was narrower than general-purpose tools.
+          evidence:
+            - https://deepmind.google/research/alphago/
+        capability:
+          rating: 5
+          confidence: high
+          rationale: Defeated an elite Go professional in a match, an exceptional benchmark advance.
+          evidence:
+            - https://deepmind.google/research/alphago/
+        society:
+          rating: 5
+          confidence: medium
+          rationale: The match was a widely recognized public AI milestone.
+          evidence:
+            - https://deepmind.google/research/alphago/
+      comparisons:
+        - id: 2020-11-30-alphafold2-casp14
+          rationale: "Lower overall significance under v2. This event: A major demonstration of learned search
+            and reinforcement learning, beyond the earlier chess milestone. Comparison event: The
+            later protein-science recognition in the timeline supports enduring scientific
+            significance."
+        - id: 2011-02-16-watson-jeopardy
+          rationale: "Higher overall significance under v2. This event: A major demonstration of learned
+            search and reinforcement learning, beyond the earlier chess milestone. Comparison event:
+            A prominent question-answering demonstration; later branded products are not
+            automatically credited to this match."
+      questions:
+        - Would independent longitudinal evidence change the adoption or downstream influence
+          judgment?
+      review_after: 2027-11-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.
+      overview_reason: "Overview milestone: A major demonstration of learned search and reinforcement
+        learning, beyond the earlier chess milestone."

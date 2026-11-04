@@ -3,23 +3,79 @@ title: The Dartmouth workshop names the field of artificial intelligence
 date: "1956-06"
 end_date: "1956-08"
 summary: >-
-  A summer research project at Dartmouth College, proposed by McCarthy, Minsky,
-  Rochester and Shannon, gives the field its name and is usually treated as its founding.
+  A summer research project at Dartmouth College, proposed by McCarthy, Minsky, Rochester and
+  Shannon, gives the field its name and is usually treated as its founding.
 description: |
   The proposal, dated 1955, introduced the term "artificial intelligence" and
   conjectured that every aspect of learning or intelligence could in principle be
   described precisely enough for a machine to simulate it. The workshop ran for
   roughly six to eight weeks from about June 18 to August 17, 1956.
 category: research
-organizations: [Dartmouth College]
-people: [John McCarthy, Marvin Minsky, Nathaniel Rochester, Claude Shannon]
-tags: [founding, symbolic AI]
+organizations: [ Dartmouth College ]
+people: [ John McCarthy, Marvin Minsky, Nathaniel Rochester, Claude Shannon ]
+tags: [ founding, symbolic AI ]
 sources:
   - url: https://en.wikipedia.org/wiki/Dartmouth_workshop
     title: Dartmouth workshop
     publisher: Wikipedia
     accessed: "2026-11-03"
 importance:
-  rubric: {capability: 2, adoption: 2, impact: 5, culture: 4}
+  rubric: { capability: 2, adoption: 2, impact: 5, culture: 4 }
   override: 100
   override_reason: Origin event of the timeline; always visible at every zoom level.
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. Ratings are editorial judgments from the cited evidence, not measured counts or
+        claims of exclusive causation.
+      dimensions:
+        influence:
+          rating: 5
+          confidence: medium
+          rationale: Named and organized a research field whose institutional identity persisted.
+          evidence:
+            - https://en.wikipedia.org/wiki/Dartmouth_workshop
+        adoption:
+          rating: 4
+          confidence: medium
+          rationale: Assess adoption as uptake of the field identity, not attendance at one workshop.
+          evidence:
+            - https://en.wikipedia.org/wiki/Dartmouth_workshop
+        capability:
+          rating: 4
+          confidence: high
+          rationale: Established a coherent research agenda rather than a new working algorithm.
+          evidence:
+            - https://en.wikipedia.org/wiki/Dartmouth_workshop
+        society:
+          rating: 4
+          confidence: medium
+          rationale: The founding narrative shaped research institutions and the language of AI.
+          evidence:
+            - https://en.wikipedia.org/wiki/Dartmouth_workshop
+      comparisons:
+        - id: 1958-07-rosenblatt-perceptron
+          rationale: "Higher overall significance under v2. This event: Named and organized a research field
+            whose institutional identity persisted. Comparison event: A foundational learning
+            architecture, with later influence distinct from immediate deployment."
+        - id: 1950-10-turing-computing-machinery-and-intelligence
+          rationale: "Lower overall significance under v2. This event: Named and organized a research field
+            whose institutional identity persisted. Comparison event: Established the imitation game
+            as a durable framing for machine intelligence."
+      questions:
+        - Would independent longitudinal evidence change the adoption or downstream influence
+          judgment?
+      review_after: 2027-11-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.
+      overview_reason: "Overview milestone: Named and organized a research field whose institutional
+        identity persisted."

@@ -2,9 +2,9 @@ id: 2018-10-11-bert-pretraining
 title: Google researchers introduce BERT
 date: "2018-10-11"
 summary: >-
-  Google researchers present BERT, a Transformer encoder pretrained with masked
-  language modeling to learn bidirectional text representations, then fine-tuned
-  for downstream tasks; the paper reports new results on eleven NLP benchmarks.
+  Google researchers present BERT, a Transformer encoder pretrained with masked language modeling to
+  learn bidirectional text representations, then fine-tuned for downstream tasks; the paper reports
+  new results on eleven NLP benchmarks.
 description: |
   BERT (Bidirectional Encoder Representations from Transformers) uses masked
   language modeling and a next sentence prediction task during pretraining. The
@@ -13,9 +13,9 @@ description: |
   SQuAD and MultiNLI. The paper identifies its architecture as a multi-layer
   bidirectional Transformer encoder.
 category: research
-organizations: [Google AI Language]
-people: [Jacob Devlin, Ming-Wei Chang, Kenton Lee, Kristina Toutanova]
-tags: [language models, NLP, pretraining, transformer]
+organizations: [ Google AI Language ]
+people: [ Jacob Devlin, Ming-Wei Chang, Kenton Lee, Kristina Toutanova ]
+tags: [ language models, NLP, pretraining, transformer ]
 sources:
   - url: https://arxiv.org/abs/1810.04805
     title: "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding"
@@ -30,4 +30,62 @@ related:
     relation: builds_on
     source: https://arxiv.org/abs/1810.04805
 importance:
-  rubric: {capability: 4, adoption: 5, impact: 5, culture: 2}
+  rubric: { capability: 4, adoption: 5, impact: 5, culture: 2 }
+  legacy:
+    rubric_version: v1
+    migrated_at: 2026-11-04
+  current: 2026-11-04-v2
+  assessments:
+    - id: 2026-11-04-v2
+      assessed_at: 2026-11-04
+      rubric_version: v2
+      status: accepted
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: Initial v2 assessment of this event, distinguishing its contribution from later related
+        events. Ratings are editorial judgments from the cited evidence, not measured counts or
+        claims of exclusive causation.
+      dimensions:
+        influence:
+          rating: 5
+          confidence: medium
+          rationale: Established bidirectional pretraining as a reusable approach across
+            language-understanding tasks.
+          evidence:
+            - https://arxiv.org/abs/1810.04805
+        adoption:
+          rating: 5
+          confidence: medium
+          rationale: The paper demonstrates reuse across eleven tasks rather than a single task-specific
+            architecture.
+          evidence:
+            - https://arxiv.org/abs/1810.04805
+        capability:
+          rating: 4
+          confidence: high
+          rationale: Substantially improved transfer to language-understanding benchmarks.
+          evidence:
+            - https://arxiv.org/abs/1810.04805
+        society:
+          rating: 2
+          confidence: medium
+          rationale: The direct contribution is research and applied language processing rather than a
+            consumer launch.
+          evidence:
+            - https://arxiv.org/abs/1810.04805
+      comparisons:
+        - id: 2017-06-12-attention-is-all-you-need
+          rationale: "Lower overall significance under v2. This event: Established bidirectional pretraining
+            as a reusable approach across language-understanding tasks. Comparison event: BERT,
+            GPT-3 and other later events provide concrete examples of the architecture being built
+            upon."
+        - id: 2020-05-28-gpt3-few-shot-learners
+          rationale: "Higher overall significance under v2. This event: Established bidirectional pretraining
+            as a reusable approach across language-understanding tasks. Comparison event: The paper
+            established in-context few-shot behavior as a major direction in language modeling."
+      questions:
+        - Would independent longitudinal evidence change the adoption or downstream influence
+          judgment?
+      review_after: 2027-11-04
+      review_triggers:
+        - New evidence of sustained adoption, direct successors, replication failure, abandonment,
+          or corrected attribution.
