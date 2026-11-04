@@ -93,7 +93,10 @@
   // Placement order depends on scores and date order only, so it is sorted once, not every frame.
   const priority = $derived(priorityOrder(events.map((e, i) => ({ item: e, y: -yearList[i], score: scoreList[i] }))))
 
-  const baseScale = $derived(buildScale(ERAS, yearList, now, zoom, {
+  // Partial dates and today's midday anchor can lie ahead of the current instant.
+  // Count them at the same newest marker that TimeScale.y already clamps them to.
+  const scaleYears = $derived(yearList.map((year) => Math.min(year, now)))
+  const baseScale = $derived(buildScale(ERAS, scaleYears, now, zoom, {
     ...DEFAULT_SCALE,
     headerPx: Math.max(72, LABEL_TOP + Math.max(0, ...labelHeights) + ANCHOR_OFFSET + 12),
     footerPx: (era) => {

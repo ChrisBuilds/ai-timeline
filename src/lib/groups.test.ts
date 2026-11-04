@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { buildGroups, GROUP_HEIGHT } from './groups'
 import { buildScale, DEFAULT_SCALE } from './scale'
 import { layout } from './layout'
-import { toYear } from './time'
+import { toYear, nowYear } from './time'
 
 interface Event { id: string; date: string; score: number }
 const eras = [
@@ -84,6 +84,21 @@ describe('collapsed groups', () => {
     for (const g of out.groups) for (const gap of out.scale.gaps) {
       expect(g.top + g.height <= gap.top || g.top >= gap.top + gap.height).toBe(true)
     }
+  })
+  it('keeps current-day events in the newest era before their midday anchor', () => {
+    const events = [1, 2].map((score) => ({ id: String(score), date: '2026-11-04', score }))
+    const now = nowYear(new Date('2026-11-04T08:00:00Z'))
+    const years = new Map(events.map((e) => [e.id, toYear(e.date)]))
+    expect(years.get('1')!).toBeGreaterThan(now)
+    const base = buildScale(eras, [...years.values()], now, 1, { ...DEFAULT_SCALE, headerPx: 110, footerPx: 300 })
+    const arranged = layout(events.map((item) => ({ item, y: base.y(years.get(item.id)!), score: item.score })), {
+      lanes: 1, cardHeight: 100, gap: 10, anchorOffset: 18, clusterPx: 28,
+    })
+    const out = buildGroups(base, arranged.placed, arranged.clusters, years, height)
+    expect(out.stats.get('new')).toEqual({ total: 2, shown: 1 })
+    expect(out.groups[0].items).toHaveLength(1)
+    expect(out.scale.y(years.get('1')!)).toBe(out.placed[0].y)
+    expect(out.scale.bands[0].count).toBe(2)
   })
   it('leaves the original scale unchanged when all events already have milestones', () => {
     const out = arrange([{ id: 'only', date: '2024', score: 100 }])

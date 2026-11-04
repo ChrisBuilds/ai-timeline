@@ -40,7 +40,7 @@ export function buildGroups<T extends GroupItem>(base: TimeScale, placed: Placed
     ...placed.map((card) => ({ item: card.item, raw: card.y, card })),
     ...hidden.map(({ item, year }) => ({ item, raw: base.y(year), card: null })),
   ].sort((a, b) => a.raw - b.raw || Number(!a.card) - Number(!b.card))
-  const stats = new Map<string, EraStats>(base.bands.map((b) => [b.era.id, { total: b.count, shown: 0 }]))
+  const stats = new Map<string, EraStats>(base.bands.map((b) => [b.era.id, { total: 0, shown: 0 }]))
   const cuts: Cut[] = []
   const groups: EventGroup<T>[] = []
   const cards: PlacedCard<T>[] = []
@@ -63,8 +63,9 @@ export function buildGroups<T extends GroupItem>(base: TimeScale, placed: Placed
 
   for (const entry of entries) {
     const year = years.get(entry.item.id)!
-    const band = base.bands.findIndex((b, i) => year >= b.start && (i === 0 ? year <= b.end : year < b.end))
+    const band = base.bands.findIndex((b, i) => year >= b.start && (i === 0 || year < b.end))
     if (band < 0) throw new Error(`Event outside timeline bands: ${entry.item.id}`)
+    stats.get(base.bands[band].era.id)!.total++
     const segment = base.bands[band].segments.findIndex((s) => !s.gap && entry.raw >= s.top - 1e-6 && entry.raw <= s.top + s.height + 1e-6)
     if (entry.card) {
       flush()
@@ -103,7 +104,7 @@ export function buildGroups<T extends GroupItem>(base: TimeScale, placed: Placed
     return !last ? y : y <= last.at + last.before + last.extra ? last.at : y - last.before - last.extra
   }
   const bands = base.bands.map((b) => ({
-    ...b, top: project(b.top), height: project(b.top + b.height) - project(b.top),
+    ...b, count: stats.get(b.era.id)!.total, top: project(b.top), height: project(b.top + b.height) - project(b.top),
     segments: b.segments.map((s) => ({ ...s,
       top: project(s.top, true), height: project(s.top + s.height) - project(s.top, true),
     })),

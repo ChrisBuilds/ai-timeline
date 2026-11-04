@@ -113,6 +113,20 @@ try {
     assert.notEqual(await page.locator('.zoom-level').innerText(), '100%', 'optional group zoom did not work')
     await page.close()
   }
+  // A valid event dated today must render even before its midday date anchor.
+  {
+    const page = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' })
+    page.on('pageerror', (e) => errors.push(String(e)))
+    await page.clock.setFixedTime(new Date('2026-11-04T08:00:00Z'))
+    const today = generate(2, 7)
+    for (const event of today.events) { event.date = '2026-11-04'; delete event.end_date }
+    await page.route('**/data/index.json', (route) => route.fulfill({ json: today }))
+    await page.goto(`http://127.0.0.1:${port}/ai-timeline/`)
+    await page.locator('.event-group').waitFor()
+    assert.equal(await page.locator('.era-count').first().innerText(), '2 events · 1 shown')
+    assert((await page.locator('.event-group').innerText()).includes('1 more event'))
+    await page.close()
+  }
   assert.deepEqual(errors, [])
   console.log('Collapsed group browser checks passed: persistent counts, era totals, collision-free rows, search/pagination, event selection, keyboard focus, filters and zoom in both themes at desktop/phone/320px widths.')
 } finally {

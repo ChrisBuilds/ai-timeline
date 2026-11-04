@@ -32,6 +32,12 @@ describe('density ribbon', () => {
     }
   })
 
+  it('counts hidden current-day anchors clamped to the newest marker', () => {
+    const now = 2026.84
+    const scale = buildScale(eras, [now, now], now, 1)
+    const ribbon = buildRibbon(scale, [{ year: now + 0.001, item: 'today-a' }, { year: now + 0.001, item: 'today-b' }])
+    expect(ribbon.flatMap((s) => s.bins.flatMap((b) => b.items)).sort()).toEqual(['today-a', 'today-b'])
+  })
   it('uses an absolute bounded width independent of other periods', () => {
     expect(ribbonWidth(0)).toBe(2)
     expect(ribbonWidth(20)).toBeGreaterThan(ribbonWidth(2))

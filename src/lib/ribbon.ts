@@ -28,7 +28,8 @@ const STEPS = [1 / 12, 1 / 4, 1 / 2, 1, 2, 5, 10, 20, 50, 100]
  * Headers and compressed gaps separate paths, so smoothing cannot bridge them.
  */
 export function buildRibbon<T>(scale: TimeScale, hidden: { year: number; item: T }[], maxWidth = 16, project: (y: number, after?: boolean) => number = (y) => y): RibbonSpan<T>[] {
-  const sorted = [...hidden].sort((a, b) => b.year - a.year)
+  const newest = scale.bands[0].end
+  const sorted = hidden.map((entry) => entry.year > newest ? { ...entry, year: newest } : entry).sort((a, b) => b.year - a.year)
   const spans: RibbonSpan<T>[] = []
   let cursor = 0
   for (const band of scale.bands) {
