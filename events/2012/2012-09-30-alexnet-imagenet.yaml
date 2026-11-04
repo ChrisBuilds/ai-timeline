@@ -13,6 +13,10 @@ organizations: [University of Toronto]
 people: [Alex Krizhevsky, Ilya Sutskever, Geoffrey Hinton]
 tags: [deep learning, computer vision, convolutional neural networks, GPU]
 sources:
+  - url: https://proceedings.neurips.cc/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf
+    title: "ImageNet Classification with Deep Convolutional Neural Networks"
+    publisher: NeurIPS
+    accessed: "2026-11-03"
   - url: https://www.image-net.org/challenges/LSVRC/2012/results.html
     title: ImageNet Large Scale Visual Recognition Competition 2012 (ILSVRC2012) results
     publisher: ImageNet
@@ -21,5 +25,9 @@ sources:
     title: AlexNet
     publisher: Wikipedia
     accessed: "2026-11-03"
+related:
+  - id: 2009-06-imagenet-cvpr
+    relation: builds_on
+    source: https://proceedings.neurips.cc/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf
 importance:
   rubric: {capability: 5, adoption: 5, impact: 5, culture: 3}
