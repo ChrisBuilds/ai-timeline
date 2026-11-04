@@ -1,0 +1,28 @@
+id: 2011-02-16-watson-jeopardy
+title: IBM Watson wins Jeopardy!
+date: "2011-02-16"
+summary: >-
+  IBM's Watson question-answering system defeated former Jeopardy! champions
+  Ken Jennings and Brad Rutter in the final televised match of a three-day
+  competition.
+description: |
+  The two-game match aired February 14–16, 2011. On the final episode, Watson
+  finished with $77,147, ahead of Jennings at $24,000 and Rutter at $21,600.
+  The result demonstrated a question-answering system competing with top human
+  players on a fast-paced television quiz show and brought AI to a broad
+  audience.
+category: benchmark milestone
+organizations: [IBM]
+people: [Ken Jennings, Brad Rutter]
+tags: [question answering, natural language processing, Jeopardy!, television]
+sources:
+  - url: https://www.ibm.com/history/watson-jeopardy
+    title: Watson on Jeopardy!
+    publisher: IBM
+    accessed: "2026-11-04"
+  - url: https://www.cmu.edu/news/stories/archives/2011/february/feb14_jeopardyparty.html
+    title: Jeopardy! fever grips Carnegie Mellon
+    publisher: Carnegie Mellon University
+    accessed: "2026-11-04"
+importance:
+  rubric: {capability: 3, adoption: 2, impact: 3, culture: 4}
