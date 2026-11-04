@@ -1,0 +1,33 @@
+id: 2020-11-30-alphafold2-casp14
+title: AlphaFold 2 results set a new CASP14 accuracy benchmark
+date: "2020-11-30"
+summary: >-
+  DeepMind reported that AlphaFold 2 achieved a median GDT score of 92.4 across
+  CASP14 targets, with accuracy competitive with experimental structures in
+  most cases.
+description: >-
+  CASP14 evaluated structure predictions submitted during May–July 2020. In its
+  results announcement, DeepMind reported a median GDT score of 92.4 across all
+  targets. The later peer-reviewed description says AlphaFold 2 reached
+  accuracy competitive with experimental structures in a majority of cases.
+  This marks a major benchmark result in protein structure prediction; it does
+  not mean that experimental biology or laboratory work became unnecessary.
+category: benchmark milestone
+organizations: [DeepMind]
+people: [John Jumper, Demis Hassabis]
+tags: [protein structure, CASP, biology]
+sources:
+  - url: https://deepmind.google/blog/alphafold-a-solution-to-a-50-year-old-grand-challenge-in-biology/
+    title: "AlphaFold: a solution to a 50-year-old grand challenge in biology"
+    publisher: DeepMind
+    accessed: "2026-11-04"
+  - url: https://www.nature.com/articles/s41586-021-03819-2
+    title: Highly accurate protein structure prediction with AlphaFold
+    publisher: Nature
+    accessed: "2026-11-04"
+artifacts:
+  - type: paper
+    url: https://www.nature.com/articles/s41586-021-03819-2
+    title: Highly accurate protein structure prediction with AlphaFold
+importance:
+  rubric: {capability: 4, adoption: 4, impact: 5, culture: 3}
