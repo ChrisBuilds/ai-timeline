@@ -1,0 +1,25 @@
+id: 2024-10-09-nobel-chemistry-protein-ai
+title: Nobel Prize in Chemistry recognizes protein design and prediction
+date: "2024-10-09"
+summary: >-
+  The 2024 Chemistry Nobel gave half the prize to David Baker for computational
+  protein design and the other half jointly to Demis Hassabis and John Jumper
+  for protein structure prediction.
+description: >-
+  The Royal Swedish Academy of Sciences awarded half of the 2024 Nobel Prize in
+  Chemistry to David Baker for computational protein design, and the other half
+  jointly to Demis Hassabis and John Jumper for protein structure prediction.
+  This records the Chemistry announcement on 9 October. It is distinct from the
+  Physics Nobel announced the previous day for foundational work enabling
+  machine learning with artificial neural networks.
+category: culture and society
+organizations: [Royal Swedish Academy of Sciences]
+people: [David Baker, Demis Hassabis, John Jumper]
+tags: [Nobel Prize, protein structure, protein design, machine learning]
+sources:
+  - url: https://www.nobelprize.org/prizes/chemistry/2024/press-release/
+    title: "The Nobel Prize in Chemistry 2024"
+    publisher: Nobel Prize
+    accessed: "2026-11-04"
+importance:
+  rubric: {capability: 3, adoption: 3, impact: 5, culture: 5}

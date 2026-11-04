@@ -1,0 +1,26 @@
+id: 2024-10-08-nobel-physics-neural-networks
+title: Nobel Prize in Physics recognizes neural-network foundations
+date: "2024-10-08"
+summary: >-
+  The 2024 Physics Nobel was awarded to John Hopfield and Geoffrey Hinton for
+  foundational discoveries and inventions that enable machine learning with
+  artificial neural networks.
+description: >-
+  The Royal Swedish Academy of Sciences awarded the 2024 Nobel Prize in Physics
+  to John J. Hopfield and Geoffrey E. Hinton for foundational discoveries and
+  inventions enabling machine learning with artificial neural networks.
+  Hopfield was recognized for associative memory, and Hinton for methods that
+  can autonomously discover properties in data. This records the Physics
+  announcement on 8 October; the separate Chemistry Nobel announcement followed
+  on 9 October and recognized different work.
+category: culture and society
+organizations: [Royal Swedish Academy of Sciences]
+people: [John J. Hopfield, Geoffrey E. Hinton]
+tags: [Nobel Prize, neural networks, machine learning]
+sources:
+  - url: https://www.nobelprize.org/prizes/physics/2024/press-release/
+    title: "The Nobel Prize in Physics 2024"
+    publisher: Nobel Prize
+    accessed: "2026-11-04"
+importance:
+  rubric: {capability: 2, adoption: 3, impact: 4, culture: 5}
