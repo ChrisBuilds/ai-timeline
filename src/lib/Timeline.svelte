@@ -92,7 +92,10 @@
   }
 
   // Include the largest entry height above the rendering window.
-  const shownCards = $derived(within(placed, winTop - 320, winBottom + 320))
+  // Include displaced overview cards by their displayed position as well as date.
+  const shownCards = $derived(placed.filter((c) =>
+    (c.top + eventHeight(c.item) >= winTop && c.top <= winBottom) ||
+    (c.y >= winTop - 320 && c.y <= winBottom + 320)))
   const shownGroups = $derived(within(groups, winTop - 64, winBottom + 64))
   const ribbon = $derived(buildRibbon(ribbonScale, hidden, spineX < 50 ? 12 : 16, ribbonProject))
   let activeGroupId = $state<string | null>(null)
@@ -316,11 +319,13 @@
           onclick={() => onselect(ev.id)}
           data-motion-key="connector-{ev.id}"
           class="connector"
+          class:shifted={Math.abs(card.top + 18 - card.y) > 1}
           class:dimmed={dimIds.has(ev.id) && selectedId !== ev.id}
           style:--c={categoryColor(ev.category)}
           style:top="{card.y}px"
           style:left="{Math.min(spineX, left + cardWidth)}px"
           style:width="{card.lane === 0 ? left - spineX : spineX - (left + cardWidth)}px"
+          style:height="{Math.abs(card.top + 18 - card.y) > 1 ? Math.max(1, card.top + 18 - card.y) : 16}px"
           aria-hidden="true"
         ></span>
         <article
@@ -361,6 +366,8 @@
 </div>
 
 <style>
+  .connector.shifted { transform: none; background: transparent; border-left: 1px solid var(--c); border-bottom: 1px solid var(--c); opacity: 0.45; }
+  .connector.shifted::before { display: none; }
   .timeline { position: relative; width: 100%; touch-action: pan-y; }
   .band { position: absolute; left: 0; right: 0; border-top: 1px solid var(--line); pointer-events: none; }
   .era-label { position: absolute; top: var(--label-top); left: var(--label-pad); right: 8px; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; margin: 0; line-height: 1.2; }

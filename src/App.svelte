@@ -64,7 +64,7 @@
   const events = $derived.by(() => {
     if (!data) return []
     const year = new Map(data.events.map((e) => [e, toYear(e.date)]))
-    return [...data.events].sort((a, b) => year.get(b)! - year.get(a)!)
+    return [...data.events].sort((a, b) => year.get(b)! - year.get(a)! || a.id.localeCompare(b.id))
   })
   const byId = $derived(new Map(events.map((e) => [e.id, e])))
   const aliasTo = $derived(new Map(events.flatMap((e) => (e.aliases ?? []).map((a) => [a, e.id] as const))))
@@ -101,7 +101,11 @@
     headerPx: Math.max(72, LABEL_TOP + Math.max(0, ...labelHeights) + ANCHOR_OFFSET + 12),
     footerPx: (era) => {
       const year = selectedId ? years.get(selectedId) : undefined
-      return (year !== undefined && year >= era.start && year < (era.end ?? now + 1) ? selectedHeight : CARD_HEIGHT + 28) - ANCHOR_OFFSET + 12
+      // Worst case: all overview milestones share the band's oldest date.
+      // Reserve enough tail space for their cards without covering the next era.
+      const overviewTail = events.filter((e) => e.overview && years.get(e.id)! >= era.start && years.get(e.id)! < (era.end ?? now + 1))
+        .reduce((sum, e) => sum + eventHeight(e) + 20, 0)
+      return overviewTail + (year !== undefined && year >= era.start && year < (era.end ?? now + 1) ? selectedHeight : CARD_HEIGHT + 28) - ANCHOR_OFFSET + 12
     },
   }))
 
@@ -118,6 +122,7 @@
       items,
       {
         order: priority,
+        mustShow: (e) => Boolean(e.overview && (!filtering || matchIds.has(e.id))),
         lanes: 1,
         cardHeight: CARD_HEIGHT,
         heightFor: eventHeight,
@@ -268,7 +273,8 @@
     if (year === undefined) return
     // A zoom glide re-anchors the scroll every frame, which would cancel this scroll.
     stopZoomAnimation()
-    scrollTo({ top: timelineTop() + scale.y(year) - (innerWidth < 720 ? toolbarHeight + 40 : innerHeight / 3), behavior })
+    const cardY = grouped.placed.find((p) => p.item.id === id)?.top
+    scrollTo({ top: timelineTop() + (cardY === undefined ? scale.y(year) : cardY + ANCHOR_OFFSET) - (innerWidth < 720 ? toolbarHeight + 40 : innerHeight / 3), behavior })
   }
 
   async function select(id: string | null, scroll = true, animate = ready && !reducedMotion) {

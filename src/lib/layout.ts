@@ -18,6 +18,8 @@ export interface Cluster<T> {
 }
 
 export interface LayoutOptions<T = unknown> {
+  /** Overview milestones are placed first and shifted down when necessary. */
+  mustShow?: (item: T) => boolean
   lanes: number
   cardHeight: number
   /** Optional height for each event state. */
@@ -100,8 +102,31 @@ export function layout<T>(items: Positioned<T>[], opts: LayoutOptions<T>) {
   const tops = new Float64Array(n)
   const heights = Float64Array.from(items, (it) => opts.heightFor?.(it.item) ?? opts.cardHeight)
 
+  // Preserve overview milestones even on the same date. Date anchors stay put;
+  // leaders connect any shifted cards. Callers reserve footer space per band.
+  const required = opts.mustShow ? Array.from({ length: n }, (_, i) => i)
+    .filter((i) => opts.mustShow?.(items[i].item))
+    .sort((a, b) => items[a].y - items[b].y || a - b) : []
+  for (const i of required) {
+    let bestLane = 0
+    let bestTop = Infinity
+    for (let lane = 0; lane < lanes.length; lane++) {
+      let top = items[i].y - opts.anchorOffset
+      for (const [start, end] of lanes[lane]) {
+        if (end <= top - opts.gap) continue
+        if (start >= top + heights[i] + opts.gap) break
+        top = end + opts.gap
+      }
+      if (top < bestTop) { bestTop = top; bestLane = lane }
+    }
+    occupy(lanes[bestLane], bestTop - opts.gap, bestTop + heights[i] + opts.gap)
+    laneOf[i] = bestLane
+    tops[i] = bestTop
+  }
+
   for (let k = 0; k < order.length; k++) {
     const i = order[k]
+    if (laneOf[i] !== -1) continue
     const top = items[i].y - opts.anchorOffset
     const bottom = top + heights[i] + opts.gap
     for (let lane = 0; lane < lanes.length; lane++) {
