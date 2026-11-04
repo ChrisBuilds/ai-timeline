@@ -1,0 +1,25 @@
+id: 2014-06-10-generative-adversarial-networks
+title: Ian Goodfellow and colleagues introduce generative adversarial networks
+date: "2014-06-10"
+summary: >-
+  Ian Goodfellow and colleagues publish a framework that trains a generator and
+  discriminator in competition, demonstrating it on several image datasets.
+category: research
+organizations: [Université de Montréal]
+people: [Ian Goodfellow, Jean Pouget-Abadie, Mehdi Mirza, Bing Xu, David Warde-Farley, Sherjil Ozair, Aaron Courville, Yoshua Bengio]
+tags: [generative-models, gan, image-generation]
+sources:
+  - url: https://arxiv.org/abs/1406.2661
+    title: Generative Adversarial Nets
+    publisher: arXiv
+    accessed: "2026-11-04"
+  - url: https://papers.nips.cc/paper_files/paper/2014/hash/5ca3e9b122f61f8f06494c97b1afccf3-Abstract.html
+    title: Generative Adversarial Nets
+    publisher: NeurIPS
+    accessed: "2026-11-04"
+artifacts:
+  - type: paper
+    url: https://arxiv.org/abs/1406.2661
+    title: Generative Adversarial Nets (arXiv)
+importance:
+  rubric: {capability: 4, adoption: 4, impact: 4, culture: 2}
