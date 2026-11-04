@@ -1,0 +1,22 @@
+id: 2023-03-14-anthropic-claude
+title: Anthropic introduces Claude and Claude Instant
+date: "2023-03-14"
+summary: >-
+  Anthropic introduced Claude and Claude Instant, offering the models through
+  partner integrations and an API access program.
+description: >-
+  Anthropic described Claude as a conversational assistant available through
+  partner products and its developer console. Claude Instant was presented as a
+  faster, lighter, lower-cost version. Access was offered by request.
+category: model release
+organizations: [Anthropic]
+tags: [large language model, conversational AI]
+sources:
+  - url: https://www.anthropic.com/news/introducing-claude
+    title: Introducing Claude
+    publisher: Anthropic
+    accessed: "2026-11-04"
+importance:
+  rubric: {capability: 3, adoption: 3, impact: 3, culture: 2}
+issue: 85
+submitted_by: ChrisBuilds
