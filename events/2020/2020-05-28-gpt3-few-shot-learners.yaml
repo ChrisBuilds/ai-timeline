@@ -1,0 +1,33 @@
+id: 2020-05-28-gpt3-few-shot-learners
+title: OpenAI researchers publish GPT-3 few-shot learning results
+date: "2020-05-28"
+summary: >-
+  Brown and colleagues describe GPT-3, a 175-billion-parameter language model
+  that performs a range of tasks from examples or instructions in its prompt,
+  without gradient updates at inference time.
+description: >-
+  The paper "Language Models are Few-Shot Learners" evaluates GPT-3 in zero-shot,
+  one-shot and few-shot settings. Its results show that scaling the model can
+  improve in-context task performance, though performance varies by task and
+  does not remove the need for fine-tuning or task-specific systems in every
+  application. This event records the paper's public posting, not the later
+  GPT-3 API beta.
+category: research
+organizations: [OpenAI]
+people: [Tom B. Brown, Benjamin Mann, Nick Ryder, Melanie Subbiah, Jared Kaplan]
+tags: [language model, few-shot learning, scaling]
+sources:
+  - url: https://arxiv.org/abs/2005.14165
+    title: Language Models are Few-Shot Learners
+    publisher: arXiv
+    accessed: "2026-11-04"
+  - url: https://proceedings.neurips.cc/paper/2020/hash/1457c0d6bfcb4967418bfb8ac142f64a-Abstract.html
+    title: Language Models are Few-Shot Learners
+    publisher: NeurIPS
+    accessed: "2026-11-04"
+artifacts:
+  - type: paper
+    url: https://arxiv.org/abs/2005.14165
+    title: Language Models are Few-Shot Learners
+importance:
+  rubric: {capability: 4, adoption: 4, impact: 5, culture: 3}
