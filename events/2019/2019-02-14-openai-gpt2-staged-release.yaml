@@ -1,0 +1,39 @@
+id: 2019-02-14-openai-gpt2-staged-release
+title: OpenAI announces GPT-2 and stages its release
+date: "2019-02-14"
+summary: >-
+  OpenAI introduced GPT-2, a 1.5-billion-parameter language model, but initially
+  released only a smaller 124-million-parameter version, citing concerns about
+  malicious uses; it later shared larger versions in stages.
+description: >-
+  OpenAI described GPT-2 as a language model trained to predict the next word
+  across a large collection of internet text. Citing concerns about malicious
+  applications, it withheld the full model at announcement and released a
+  smaller 124-million-parameter version with its paper. OpenAI later released
+  the 345-million-parameter version and shared larger versions with research
+  and security partners, before releasing the 1.5-billion-parameter model and
+  weights publicly in November 2019. This event records the February
+  announcement and initial staged-release decision, not a claim that this was
+  the first model ever withheld over safety concerns.
+category: model release
+organizations: [OpenAI]
+tags: [language-models, GPT-2, responsible-publication]
+sources:
+  - url: https://openai.com/index/better-language-models/
+    title: Better language models and their implications
+    publisher: OpenAI
+    accessed: "2026-11-04"
+  - url: https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf
+    title: Language Models are Unsupervised Multitask Learners
+    publisher: OpenAI
+    accessed: "2026-11-04"
+  - url: https://openai.com/index/gpt-2-1-5b-release/
+    title: "GPT-2: 1.5B release"
+    publisher: OpenAI
+    accessed: "2026-11-04"
+artifacts:
+  - type: paper
+    url: https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf
+    title: Language Models are Unsupervised Multitask Learners
+importance:
+  rubric: {capability: 3, adoption: 3, impact: 3, culture: 4}
