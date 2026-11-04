@@ -1,0 +1,23 @@
+id: 2024-03-04-claude-3-opus-sonnet
+title: Anthropic releases Claude 3 Opus and Sonnet
+date: "2024-03-04"
+summary: >-
+  Anthropic released Claude 3 Opus and Sonnet with vision capabilities; the
+  announcement said Haiku would become available later.
+description: >-
+  Anthropic announced the Claude 3 family, describing Opus, Sonnet and Haiku as
+  models with vision capabilities and different balances of intelligence,
+  speed and cost. Opus and Sonnet were available that day through Claude and
+  the API; Haiku was announced for a later release.
+category: model release
+organizations: [Anthropic]
+tags: [large language model, multimodal, vision]
+sources:
+  - url: https://www.anthropic.com/news/claude-3-family
+    title: Introducing the next generation of Claude
+    publisher: Anthropic
+    accessed: "2026-11-04"
+importance:
+  rubric: {capability: 4, adoption: 4, impact: 4, culture: 3}
+issue: 89
+submitted_by: ChrisBuilds
