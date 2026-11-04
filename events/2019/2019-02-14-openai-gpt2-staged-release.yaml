@@ -35,8 +35,5 @@ artifacts:
   - type: paper
     url: https://arxiv.org/abs/1902.06006
     title: Language Models are Unsupervised Multitask Learners
-  - type: model
-    url: https://openai.com/index/better-language-models/
-    title: GPT-2
 importance:
   rubric: {capability: 3, adoption: 3, impact: 3, culture: 4}
