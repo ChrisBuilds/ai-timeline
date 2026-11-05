@@ -1,0 +1,143 @@
+id: 2025-09-29-claude-sonnet-4-5
+title: Anthropic releases Claude Sonnet 4.5
+date: 2025-09-29
+summary: Anthropic released Claude Sonnet 4.5, a model update focused on coding, computer use, and complex agent tasks.
+description: >-
+  Anthropic released Sonnet 4.5 through Claude, its API, and developer products, reporting
+  gains in coding, computer use, reasoning, and math. Its system card documents model
+  evaluations, including coding and AI research tasks. METR independently estimated a
+  122-minute 50% task-completion horizon for Sonnet 4.5 on its software, machine-learning,
+  and cybersecurity task suite; the estimate had a wide 59-to-252-minute interval and is
+  specific to that evaluation setup. GitHub later offered the model in Copilot, including
+  its coding agent, establishing product availability but not the amount of resulting use.
+  The announcement also introduced the Claude Agent SDK and upgrades to Claude Code as
+  separate developer tools alongside the model.
+category: model release
+tags:
+  - language model
+  - coding
+  - reasoning
+  - agents
+  - computer use
+organizations:
+  - Anthropic
+sources:
+  - url: https://www.anthropic.com/news/claude-sonnet-4-5
+    title: Introducing Claude Sonnet 4.5
+    publisher: Anthropic
+    accessed: 2026-11-05
+  - url: https://www-cdn.anthropic.com/963373e433e489a87a10c823c52a0a013e9172dd.pdf
+    title: 'System Card: Claude Sonnet 4.5'
+    publisher: Anthropic
+    accessed: 2026-11-05
+  - url: https://metr.org/time-horizons/
+    title: Task-Completion Time Horizons of Frontier AI Models
+    publisher: METR
+    accessed: 2026-11-05
+  - url: https://metr.org/blog/2026-01-29-time-horizon-1-1/
+    title: Time Horizon 1.1
+    publisher: METR
+    accessed: 2026-11-05
+  - url: https://www.anthropic.com/research/anthropic-economic-index-january-2026-report
+    title: 'Anthropic Economic Index report: Economic primitives'
+    publisher: Anthropic
+    accessed: 2026-11-05
+  - url: https://github.blog/changelog/2025-09-30-anthropic-claude-sonnet-4-5-is-in-public-preview-for-copilot-coding-agent/
+    title: Anthropic Claude Sonnet 4.5 is in public preview for Copilot coding agent
+    publisher: GitHub
+    accessed: 2026-11-05
+related:
+  - id: 2025-05-22-anthropic-claude-4
+    relation: builds_on
+    source: https://www.anthropic.com/news/claude-sonnet-4-5
+importance:
+  current: 2026-11-05-v2
+  assessments:
+    - id: 2026-11-05-v2
+      assessed_at: 2026-11-05
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: >-
+        Sonnet 4.5 offered a substantial coding and agent capability step over Sonnet 4,
+        supported by Anthropic's system card and an independent METR task-horizon estimate.
+        METR's task suite is restricted to software, machine learning, and cybersecurity,
+        and its estimate has wide uncertainty. Current sources establish access through
+        developer products and a major coding platform, but not sustained usage, field
+        influence, or broad societal effects attributable to this model version. Unknown
+        dimensions leave the provisional v2 score range broad; no accepted point score is
+        assigned.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources document the release, its measured task capabilities, and platform
+            availability, but do not establish later field-level changes attributable to
+            Sonnet 4.5 specifically.
+          evidence:
+            - https://www.anthropic.com/news/claude-sonnet-4-5
+            - https://metr.org/blog/2026-01-29-time-horizon-1-1/
+        adoption:
+          rating: null
+          confidence: low
+          rationale: >-
+            Anthropic and GitHub document access through Claude, APIs, and Copilot, but
+            access and model-picker availability do not measure actual or sustained use.
+            The Economic Index data available here aggregates Claude usage and does not
+            isolate Sonnet 4.5 adoption.
+          evidence:
+            - https://www.anthropic.com/news/claude-sonnet-4-5
+            - https://www.anthropic.com/research/anthropic-economic-index-january-2026-report
+            - https://github.blog/changelog/2025-09-30-anthropic-claude-sonnet-4-5-is-in-public-preview-for-copilot-coding-agent/
+        capability:
+          rating: 3
+          confidence: medium
+          rationale: >-
+            The model's system card reports substantial performance on coding and other
+            agentic tasks. METR's independent estimate of a 122-minute 50% task horizon
+            exceeded its estimate for Sonnet 4 (75 minutes), but the interval was wide
+            and the tasks were limited to technical domains with a particular agent setup.
+            This supports a substantial practical capability advance without establishing
+            a foundational new class of work.
+          evidence:
+            - https://www-cdn.anthropic.com/963373e433e489a87a10c823c52a0a013e9172dd.pdf
+            - https://metr.org/blog/2026-01-29-time-horizon-1-1/
+        society:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources describe model capabilities and developer access but do not show
+            broad or lasting societal or institutional effects attributable to Sonnet 4.5.
+          evidence:
+            - https://www.anthropic.com/news/claude-sonnet-4-5
+            - https://github.blog/changelog/2025-09-30-anthropic-claude-sonnet-4-5-is-in-public-preview-for-copilot-coding-agent/
+      comparisons:
+        - id: 2025-05-22-anthropic-claude-4
+          rationale: >-
+            Sonnet 4 introduced the preceding model generation. METR's estimates place
+            Sonnet 4.5's measured technical task horizon above Sonnet 4's, while the
+            available sources still do not establish sustained adoption or influence for
+            this specific update.
+        - id: 2025-08-05-claude-opus-4-1
+          rationale: >-
+            Opus 4.1 was a high-end incremental update with limited attributable evidence.
+            METR's Sonnet 4.5 estimate is somewhat higher than its estimate for Opus 4.1,
+            but overlapping intervals and different model positioning counsel against a
+            strong relative ranking.
+        - id: 2025-01-20-deepseek-r1
+          rationale: >-
+            DeepSeek R1 was a cross-provider reasoning model whose public weights and
+            training report made it a distinct open-weight research and deployment
+            milestone. Sonnet 4.5's evidence centers on a closed, hosted coding and agent
+            model; its access and influence beyond developer workflows remain unclear.
+      questions:
+        - What independent longitudinal evidence measures Sonnet 4.5 usage separately from other Claude models and developer products?
+        - Which downstream coding or agent workflow changes can be attributed to Sonnet 4.5 rather than Claude Code, the Agent SDK, or integrations?
+        - How stable are its capability comparisons across independent task suites and agent scaffolds?
+      review_after: 2026-12-05
+      review_triggers:
+        - Independent model-specific usage or downstream evidence that changes the adoption or influence estimates.
+        - Replicated capability evaluations or updated task-horizon estimates that materially change the comparison with Sonnet 4.
+issue: 96
+submitted_by: ChrisBuilds
