@@ -1,0 +1,96 @@
+id: 2024-03-13-anthropic-claude-3-haiku
+title: Anthropic releases Claude 3 Haiku
+date: 2024-03-13
+summary: Anthropic released Claude 3 Haiku, a fast, lower-cost vision-capable model, through its API, Claude.ai for Pro subscribers, and Amazon Bedrock.
+description: |
+  Claude 3 Haiku became available alongside Sonnet and Opus in the Claude API and on Claude.ai for Pro subscribers. It was also available on Amazon Bedrock; Anthropic said Google Cloud Vertex AI support was coming soon. Anthropic described Haiku as the fastest and most affordable model in its intelligence class and reported strong vision capabilities. Speed, pricing, and benchmark comparisons are the company's claims.
+category: model release
+tags:
+  - language model
+  - computer vision
+organizations:
+  - Anthropic
+sources:
+  - url: https://www.anthropic.com/news/claude-3-haiku
+    title: 'Claude 3 Haiku: our fastest model yet'
+    publisher: Anthropic
+    accessed: 2026-11-05
+  - url: https://www.anthropic.com/news/claude-3-family
+    title: Introducing the next generation of Claude
+    publisher: Anthropic
+    accessed: 2026-11-05
+importance:
+  current: 2026-11-05-v2
+  assessments:
+    - id: 2026-11-05-v2
+      assessed_at: 2026-11-05
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: >-
+        This assessment separates the March 13 Haiku availability milestone from the March 4 Claude 3
+        family announcement. The sources establish access and vendor-described speed, cost, and vision
+        capability, but do not establish later adoption or downstream effects attributable to Haiku.
+        The range is therefore provisional and does not claim an accepted point score.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: >-
+            The announcements establish the model's intended role and release channels, but provide no
+            longitudinal evidence of downstream influence attributable to Haiku.
+          evidence:
+            - https://www.anthropic.com/news/claude-3-haiku
+            - https://www.anthropic.com/news/claude-3-family
+        adoption:
+          rating: null
+          confidence: low
+          rationale: >-
+            API, Claude Pro, and Bedrock availability are access signals, not evidence of actual or sustained
+            adoption; no independent usage evidence specific to Haiku is established here.
+          evidence:
+            - https://www.anthropic.com/news/claude-3-haiku
+        capability:
+          rating: 2
+          confidence: medium
+          rationale: >-
+            Haiku added a faster, lower-cost option with vision within the Claude 3 family, a useful
+            efficiency improvement. Vision and 200K context were family-level features, while the speed
+            and cost comparisons are Anthropic-reported.
+          evidence:
+            - https://www.anthropic.com/news/claude-3-haiku
+            - https://www.anthropic.com/news/claude-3-family
+        society:
+          rating: null
+          confidence: low
+          rationale: >-
+            Anthropic describes enterprise use cases, but the sources do not demonstrate a broad or lasting
+            public or institutional effect attributable specifically to Haiku.
+          evidence:
+            - https://www.anthropic.com/news/claude-3-haiku
+      comparisons:
+        - id: 2024-03-04-claude-3-opus-sonnet
+          rationale: >-
+            The accepted assessment for the March 4 family launch is 78. It covers the release of Opus and
+            Sonnet and the family-wide vision capability; Haiku's March 13 milestone adds a lower-cost,
+            faster tier, with no evidence here of separate adoption or influence.
+        - id: 2023-03-14-openai-gpt-4
+          rationale: >-
+            The accepted assessment for GPT-4 is 80 and includes documented multimodal capability and
+            broader release access. Haiku's lower-bound score is lower on the evidence currently established;
+            its upper bound remains open because adoption and influence are unknown.
+        - id: 2022-11-30-chatgpt-launch
+          rationale: >-
+            The accepted assessment for the ChatGPT launch is 90, supported by later evidence of broad
+            everyday adoption. Haiku's release announcement establishes access, not comparable downstream
+            use or cultural reach.
+      questions:
+        - Is there independent longitudinal evidence of sustained Haiku use across its intended developer and enterprise audiences?
+        - Which later products or workflows can be attributed specifically to Haiku rather than the Claude 3 family?
+        - Do independent comparisons confirm a distinct capability or cost advantage for Haiku?
+      review_after: 2026-12-05
+      review_triggers:
+        - New independent evidence of Haiku-specific adoption or downstream influence.
+        - Evidence that distinguishes Haiku's contribution from the broader Claude 3 family.
+issue: 90
+submitted_by: ChrisBuilds
