@@ -1,0 +1,139 @@
+id: 2026-02-17-claude-sonnet-4-6
+title: Anthropic releases Claude Sonnet 4.6
+date: 2026-02-17
+summary: Anthropic released Claude Sonnet 4.6 with updates to coding, computer use, long-context reasoning, and agent planning.
+description: >-
+  Anthropic released Sonnet 4.6 as an upgrade across coding, computer use,
+  long-context reasoning, and agent planning, with a 1-million-token context
+  window in beta. Anthropic made it the default model for Free and Pro users
+  in Claude.ai and Claude Cowork. Its system card reports improvements over
+  Sonnet 4.5 across a wide range of evaluations, with some results approaching
+  or matching Opus 4.6. Anthropic also reported that users in early Claude Code
+  testing preferred Sonnet 4.6 to Sonnet 4.5 about 70% of the time. The launch
+  page includes customer reports of testing and using the model in coding,
+  document, and business workflows; these selected testimonials do not measure
+  broad or sustained use.
+category: model release
+tags:
+  - language model
+  - coding
+  - reasoning
+  - agents
+  - computer use
+organizations:
+  - Anthropic
+sources:
+  - url: https://www.anthropic.com/news/claude-sonnet-4-6
+    title: Introducing Claude Sonnet 4.6
+    publisher: Anthropic
+    accessed: 2026-11-05
+  - url: https://www-cdn.anthropic.com/78073f739564e986ff3e28522761a7a0b4484f84.pdf
+    title: 'System Card: Claude Sonnet 4.6'
+    publisher: Anthropic
+    accessed: 2026-11-05
+related:
+  - id: 2025-09-29-claude-sonnet-4-5
+    relation: builds_on
+    source: https://www.anthropic.com/news/claude-sonnet-4-6
+importance:
+  current: 2026-11-05-v2
+  assessments:
+    - id: 2026-11-05-v2
+      assessed_at: 2026-11-05
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: >-
+        The system card documents a broad set of capability evaluations, with
+        substantial reported improvements over Sonnet 4.5 and performance
+        approaching or matching Opus 4.6 on some tasks. Adoption evidence
+        includes Anthropic's early Claude Code preference testing and selected
+        customer reports of testing and using the model. These vendor-reported
+        signals support isolated use, but do not establish sustained or
+        widespread adoption. The sources do not establish downstream effects
+        attributable to Sonnet 4.6 or broad societal effects. With adoption 1
+        and capability 3, and influence and society unknown, the provisional
+        v2 score range is 21–66; the index placement key uses its lower bound,
+        with no accepted point score.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: >-
+            The release and system card document availability and measured
+            capabilities, but do not establish later technical or institutional
+            changes caused by Sonnet 4.6 specifically. Product integrations
+            and later Anthropic releases cannot be attributed to this model
+            without evidence isolating its contribution.
+          evidence:
+            - https://www.anthropic.com/news/claude-sonnet-4-6
+            - https://www-cdn.anthropic.com/78073f739564e986ff3e28522761a7a0b4484f84.pdf
+        adoption:
+          rating: 1
+          confidence: low
+          rationale: >-
+            Anthropic reports early Claude Code testing in which users
+            preferred Sonnet 4.6 over Sonnet 4.5 about 70% of the time, and
+            its launch page includes named customers describing model testing
+            and task use. This supports isolated experiments or deployments,
+            the rating-1 anchor. The evidence is vendor-selected and does not
+            quantify continuing use or adoption across the relevant audience;
+            default availability alone is not evidence of use.
+          evidence:
+            - https://www.anthropic.com/news/claude-sonnet-4-6
+            - https://www-cdn.anthropic.com/78073f739564e986ff3e28522761a7a0b4484f84.pdf
+        capability:
+          rating: 3
+          confidence: medium
+          rationale: >-
+            Anthropic's system card reports substantial improvement over
+            Sonnet 4.5 across coding, agentic, reasoning, computer-use, and
+            other evaluations, with Sonnet 4.6 approaching or matching Opus
+            4.6 on some measures. The launch also reports improvements in
+            computer use and long-context work. This supports substantial
+            measured ability in several practical domains, while the evidence
+            is largely produced by the developer and does not establish a
+            foundational new class of work.
+          evidence:
+            - https://www-cdn.anthropic.com/78073f739564e986ff3e28522761a7a0b4484f84.pdf
+            - https://www.anthropic.com/news/claude-sonnet-4-6
+        society:
+          rating: null
+          confidence: low
+          rationale: >-
+            The release made a model available by default to Free and Pro users,
+            but the sources do not measure broad public, professional, or
+            institutional effects attributable to Sonnet 4.6.
+          evidence:
+            - https://www.anthropic.com/news/claude-sonnet-4-6
+            - https://www-cdn.anthropic.com/78073f739564e986ff3e28522761a7a0b4484f84.pdf
+      comparisons:
+        - id: 2025-09-29-claude-sonnet-4-5
+          rationale: >-
+            Sonnet 4.5 is the direct predecessor. Anthropic's system card reports
+            improvements on many evaluations, while Sonnet 4.6's early-use and
+            customer evidence remains vendor-selected and does not establish
+            sustained adoption or later influence.
+        - id: 2026-02-05-claude-opus-4-6
+          rationale: >-
+            Opus 4.6 was the higher-capability Anthropic model released shortly
+            before Sonnet 4.6. The Sonnet system card reports that 4.6 approached
+            or matched Opus 4.6 on some measures, but says Sonnet did not broadly
+            advance the industry frontier beyond Opus 4.6.
+        - id: 2025-01-20-deepseek-r1
+          rationale: >-
+            DeepSeek R1 introduced a distinct open-weight reasoning model and
+            technical report that enabled inspection and reuse. Sonnet 4.6 was
+            a hosted model update with a broad capability profile and a beta
+            long-context option; available evidence does not establish a
+            comparable open-weight or research contribution.
+      questions:
+        - What independent evidence measures sustained Sonnet 4.6 use separately from other Claude versions?
+        - Which downstream changes in coding, computer use, or enterprise workflows can be attributed to Sonnet 4.6 specifically?
+        - How do the reported capability gains compare with independent evaluations using transparent, comparable setups?
+      review_after: 2026-12-05
+      review_triggers:
+        - Independent model-specific usage or attributable downstream evidence that changes the adoption or influence assessment.
+        - Independent replicated capability evaluations that materially change the comparison with Sonnet 4.5 or Opus 4.6.
+issue: 100
+submitted_by: ChrisBuilds
