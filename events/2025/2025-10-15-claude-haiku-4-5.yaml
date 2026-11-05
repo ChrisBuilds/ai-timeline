@@ -58,10 +58,12 @@ importance:
       reviewer: Codex (editorial assessment prepared for maintainer review)
       rationale: >-
         Haiku 4.5 broadened access to useful coding and agent capabilities at lower
-        cost and latency than larger models, and independent evaluations show it
-        has practical capability across constrained coding and business tasks. The
-        evidence supports a useful improvement within an established model class,
-        not a foundational new capability. GitHub product availability establishes
+        cost and latency than larger models, according to Anthropic. External
+        evaluations tested Haiku 4.5 under narrow coding and business-task conditions,
+        but do not establish general capability or adoption. The lower-cost efficiency
+        claim remains vendor-reported. The evidence supports a useful improvement
+        within an established model class, not a foundational new capability. GitHub
+        product availability establishes
         distribution, while no independent longitudinal evidence located here
         isolates model-specific adoption or durable downstream influence. With
         influence and adoption unknown, the v2 score interval is 10–85; no accepted
@@ -83,7 +85,7 @@ importance:
           rationale: >-
             Anthropic, cloud services, and GitHub Copilot made the model available
             to users and developers, but access and model-picker presence do not
-            quantify usage; available usage reporting does not isolate this model.
+            quantify usage. The sources reviewed here do not measure Haiku 4.5 use.
           evidence:
             - https://www.anthropic.com/news/claude-haiku-4-5
             - https://github.blog/changelog/2025-10-20-claude-haiku-4-5-is-generally-available-in-all-supported-ides/
@@ -92,10 +94,12 @@ importance:
           confidence: medium
           rationale: >-
             Anthropic reported coding capability comparable to Sonnet 4 with lower
-            cost and latency. Independent 2026 studies evaluated Haiku 4.5 in
-            constrained coding and business-task suites, supporting useful capability
-            in established workflows; differing harnesses and narrow task coverage
-            do not establish a substantial new class of work.
+            cost and latency. A narrow independent coding study found low answer
+            correctness in its one-run Java service-method setup; an independent
+            business-task benchmark placed it near the middle of its cohort, but
+            included an Anthropic model among its judges. These task-specific results
+            do not verify Anthropic's efficiency comparison or establish broad
+            capability; the rating remains a cautious, vendor-dependent judgment.
           evidence:
             - https://www.anthropic.com/news/claude-haiku-4-5
             - https://arxiv.org/abs/2609.18052
