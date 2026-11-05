@@ -120,6 +120,15 @@ describe('effectiveCount', () => {
 
 describe('compressing actual event-free intervals', () => {
   const era = [{ id: 'current', name: 'Current', start: 2022 }]
+  it('preserves a full event neighbourhood for same-day events at Now', () => {
+    for (const date of [2026.84, 2026.839]) {
+      const scale = buildScale(era, [date, date], 2026.84, 1)
+      const segment = scale.bands[0].segments.find((s) => !s.gap && s.from >= date && s.to <= date)!
+      expect(segment.height).toBeGreaterThanOrEqual(210)
+      expect(scale.gaps.length).toBeGreaterThan(0)
+      expect(scale.year(scale.y(date))).toBeCloseTo(date, 6)
+    }
+  })
   it('caps the leading blank stretch at every zoom, including a partial empty year', () => {
     for (const zoom of [0.5, 1, 4, 40]) {
       const scale = buildScale(era, [2023, 2024.5, 2025.4], 2026.84, zoom)

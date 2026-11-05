@@ -218,14 +218,21 @@ export function buildScale(
       for (let j = 1; j < dates.length; j++) {
         const from = dates[j - 1], to = dates[j]
         if (from <= to) continue
-        if ((from - to) * pxPerYear <= opts.maxEmptyPx) {
+        const fromEvent = j > 1 || years.at(-1) === end
+        const toEvent = j < dates.length - 1 || years[0] === start
+        // Near a band edge, transfer the missing half of an event's display
+        // neighbourhood to its other side. Same-day events at Now still have
+        // the same card budget as events in the middle of a band.
+        const fromPad = fromEvent ? padding + (from === years.at(-1)
+          ? Math.max(0, padding - (end - from) * pxPerYear) : 0) : 0
+        const toPad = toEvent ? padding + (to === years[0]
+          ? Math.max(0, padding - (to - start) * pxPerYear) : 0) : 0
+        if ((from - to) * pxPerYear <= Math.max(opts.maxEmptyPx, fromPad + toPad + opts.gapPx)) {
           push(from, to, false)
           continue
         }
-        const fromEvent = j > 1 || years.at(-1) === end
-        const toEvent = j < dates.length - 1 || years[0] === start
-        const gapFrom = from - (fromEvent ? padding / pxPerYear : 0)
-        const gapTo = to + (toEvent ? padding / pxPerYear : 0)
+        const gapFrom = from - fromPad / pxPerYear
+        const gapTo = to + toPad / pxPerYear
         if (from > gapFrom) push(from, gapFrom, false)
         push(gapFrom, gapTo, true)
         if (gapTo > to) push(gapTo, to, false)
