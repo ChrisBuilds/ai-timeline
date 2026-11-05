@@ -1,0 +1,143 @@
+id: 2025-11-24-claude-opus-4-5
+title: Anthropic releases Claude Opus 4.5
+date: 2025-11-24
+summary: Anthropic released Claude Opus 4.5, a model update for coding, agent tasks, computer use, and general work.
+description: >-
+  Anthropic made Opus 4.5 available through its apps, API, and major cloud
+  platforms. Its system card reports results on coding benchmarks. METR later
+  estimated a 320-minute 50% task-completion horizon (95% interval: 170–729
+  minutes) on its software and research task suite; METR cautions that the
+  estimate is imprecise and the suite is approaching saturation. This supports
+  stronger performance on that task distribution, not a general measure of
+  workplace productivity. Anthropic's later Economic Index reports use of the
+  Opus model class, but does not isolate Opus 4.5's adoption.
+category: model release
+tags:
+  - language model
+  - coding
+  - reasoning
+  - agents
+  - computer use
+organizations:
+  - Anthropic
+sources:
+  - url: https://www.anthropic.com/news/claude-opus-4-5
+    title: Introducing Claude Opus 4.5
+    publisher: Anthropic
+    accessed: 2026-11-05
+  - url: https://www-cdn.anthropic.com/bf10f64990cfda0ba858290be7b8cc6317685f47.pdf
+    title: Claude Opus 4.5 System Card
+    publisher: Anthropic
+    accessed: 2026-11-05
+  - url: https://metr.org/blog/2026-01-29-time-horizon-1-1/
+    title: Time Horizon 1.1
+    publisher: METR
+    accessed: 2026-11-05
+  - url: https://metr.org/notes/2026-01-22-time-horizon-limitations/
+    title: Clarifying limitations of time horizon
+    publisher: METR
+    accessed: 2026-11-05
+  - url: https://www.anthropic.com/research/economic-index-march-2026-report
+    title: "Anthropic Economic Index report: Learning curves"
+    publisher: Anthropic
+    accessed: 2026-11-05
+importance:
+  current: 2026-11-05-v2
+  assessments:
+    - id: 2026-11-05-v2
+      assessed_at: 2026-11-05
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: >-
+        METR's independent task-horizon estimate and Anthropic's system card
+        support a substantial technical capability advance in software and
+        research task settings, while METR reports a wide interval and warns
+        that its suite is nearing saturation. The available evidence does not
+        isolate Opus 4.5's sustained adoption, later influence, or broader
+        societal effects. Those three unknown dimensions leave a provisional
+        score range of 15–90; the index placement key uses the lower bound and
+        no accepted point score is assigned.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources document the release and later benchmark comparisons,
+            but do not identify downstream technical or institutional changes
+            caused by Opus 4.5 specifically. Later Opus releases and products
+            cannot be credited to this model without attributable evidence.
+          evidence:
+            - https://metr.org/blog/2026-01-29-time-horizon-1-1/
+            - https://www.anthropic.com/news/claude-opus-4-5
+        adoption:
+          rating: null
+          confidence: low
+          rationale: >-
+            Anthropic made the model available across its apps, API, and cloud
+            platforms. Its subsequent Economic Index reports use of the Opus
+            class but do not isolate Opus 4.5, so availability and class-level
+            usage do not establish adoption of this model version.
+          evidence:
+            - https://www.anthropic.com/news/claude-opus-4-5
+            - https://www.anthropic.com/research/economic-index-march-2026-report
+        capability:
+          rating: 3
+          confidence: medium
+          rationale: >-
+            METR's independent evaluation estimated a 320-minute 50% task
+            horizon for Opus 4.5, compared with 114 minutes for Opus 4.1, 122
+            for Sonnet 4.5, and 214 for GPT-5 under its updated suite. The
+            estimate's 170–729-minute interval is wide, and METR says the task
+            horizon measures replacement of human labor on its task
+            distribution, not independent work duration; its suite is nearing
+            saturation and mostly covers software and research tasks. The
+            evidence supports substantial gains in this technical domain, not
+            a foundational new class of work.
+          evidence:
+            - https://metr.org/blog/2026-01-29-time-horizon-1-1/
+            - https://metr.org/notes/2026-01-22-time-horizon-limitations/
+            - https://www-cdn.anthropic.com/bf10f64990cfda0ba858290be7b8cc6317685f47.pdf
+        society:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources establish product release and task-specific capability
+            results but do not measure broad public effects, institutional
+            uptake, or other societal changes attributable to Opus 4.5.
+          evidence:
+            - https://www.anthropic.com/news/claude-opus-4-5
+            - https://www.anthropic.com/research/economic-index-march-2026-report
+      comparisons:
+        - id: 2025-08-05-claude-opus-4-1
+          rationale: >-
+            METR's updated estimate for Opus 4.5 is higher than its Opus 4.1
+            estimate (320 versus 114 minutes), but the confidence intervals
+            overlap and the evaluation is limited to its task distribution.
+            This supports a meaningful technical advance while leaving its
+            wider downstream effect unknown.
+        - id: 2025-09-29-claude-sonnet-4-5
+          rationale: >-
+            METR estimated 320 minutes for Opus 4.5 and 122 for Sonnet 4.5 on
+            its updated suite. The broad intervals and domain limits prevent
+            treating the point-estimate gap as a reliable measure of general
+            model superiority; both are hosted model releases without
+            model-specific adoption evidence here.
+        - id: 2025-01-20-deepseek-r1
+          rationale: >-
+            DeepSeek R1 was a cross-organization reasoning-model release
+            distributed with open weights and technical details, which enabled
+            a different kind of research and reuse than Opus 4.5's hosted
+            release. This assessment finds stronger measured technical-task
+            performance for Opus 4.5 on METR's limited suite, but does not
+            establish broader effects comparable to R1's open distribution.
+      questions:
+        - What independent evidence measures sustained Opus 4.5 use separately from other Opus versions?
+        - Which downstream changes in software or other work can be attributed to Opus 4.5 rather than later models and product integrations?
+        - How do independent task-horizon estimates change as METR updates its suite beyond the current saturation range?
+      review_after: 2026-12-05
+      review_triggers:
+        - Independent longitudinal usage evidence that distinguishes Opus 4.5 from other models and materially changes the adoption estimate.
+        - Updated independent evaluations or attributable downstream effects that materially change the capability or influence assessment.
+issue: 98
+submitted_by: ChrisBuilds
