@@ -57,7 +57,7 @@ importance:
         agent, and long-context work. METR's time-horizon estimate is unusually
         sensitive to task selection and model fitting, so it is evidence about
         a selected software and research task distribution, not a general
-        measure of productivity. Version-specific adoption, attributable
+        measure of productivity. Sustained version-specific adoption, attributable
         downstream influence, and broad societal effects remain unknown. The
         resulting provisional score range is 21–66; the index placement key
         uses its lower bound, with no accepted point score.
@@ -127,7 +127,7 @@ importance:
           rationale: >-
             Opus 4.1 is an earlier point in Anthropic's sequence of hosted
             model releases. The sources available for this assessment do not
-            establish version-specific adoption or attributable downstream
+            establish sustained or widespread adoption or attributable downstream
             effects that distinguish the significance of Opus 4.6 from that
             earlier release.
         - id: 2025-01-20-deepseek-r1
