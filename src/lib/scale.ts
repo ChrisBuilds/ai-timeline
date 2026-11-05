@@ -105,6 +105,17 @@ const STEPS = [1, 2, 5, 10, 20, 50]
 // Splitting years into eras doesn't depend on zoom, so it is done once per list
 // of years and reused for every zoom frame.
 const yearsCache = new WeakMap<number[], { eras: Era[]; now: number; perBand: Float64Array[] }>()
+const countsCache = new WeakMap<Float64Array, Map<number, number>>()
+
+function dateCounts(years: Float64Array): Map<number, number> {
+  let counts = countsCache.get(years)
+  if (!counts) {
+    counts = new Map()
+    for (const year of years) counts.set(year, (counts.get(year) ?? 0) + 1)
+    countsCache.set(years, counts)
+  }
+  return counts
+}
 
 /** Each era's event years, ascending, so a time unit is checked with a binary search. */
 function bandYears(eventYears: number[], eras: Era[], now: number): Float64Array[] {
@@ -215,6 +226,15 @@ export function buildScale(
       // can still have many screens of empty time on either side of it.
       const dates = [...new Set([end, ...Array.from(years).reverse(), start])]
       const padding = Math.max(0, (opts.maxEmptyPx - opts.gapPx) / 2)
+      const counts = zoom > 1 ? dateCounts(years) : null
+      // Shared dates need room to open up as zoom increases. Bound that room
+      // by the local event count so single events never acquire long empty tails.
+      const paddingAt = (year: number) => {
+        if (!counts) return padding
+        const count = counts.get(year) ?? 1
+        return count === 1 ? padding : Math.max(padding,
+          Math.min(padding * Math.max(1, zoom), opts.perEventPx * count))
+      }
       for (let j = 1; j < dates.length; j++) {
         const from = dates[j - 1], to = dates[j]
         if (from <= to) continue
@@ -223,10 +243,11 @@ export function buildScale(
         // Near a band edge, transfer the missing half of an event's display
         // neighbourhood to its other side. Same-day events at Now still have
         // the same card budget as events in the middle of a band.
-        const fromPad = fromEvent ? padding + (from === years.at(-1)
-          ? Math.max(0, padding - (end - from) * pxPerYear) : 0) : 0
-        const toPad = toEvent ? padding + (to === years[0]
-          ? Math.max(0, padding - (to - start) * pxPerYear) : 0) : 0
+        const fromPadding = paddingAt(from), toPadding = paddingAt(to)
+        const fromPad = fromEvent ? fromPadding + (from === years.at(-1)
+          ? Math.max(0, fromPadding - (end - from) * pxPerYear) : 0) : 0
+        const toPad = toEvent ? toPadding + (to === years[0]
+          ? Math.max(0, toPadding - (to - start) * pxPerYear) : 0) : 0
         if ((from - to) * pxPerYear <= Math.max(opts.maxEmptyPx, fromPad + toPad + opts.gapPx)) {
           push(from, to, false)
           continue

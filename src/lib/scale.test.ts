@@ -120,6 +120,18 @@ describe('effectiveCount', () => {
 
 describe('compressing actual event-free intervals', () => {
   const era = [{ id: 'current', name: 'Current', start: 2022 }]
+  it('expands shared-date neighbourhoods with zoom while keeping the empty gap short', () => {
+    const dates = [2025.15, 2025.15, 2024]
+    const compact = buildScale(era, dates, 2026.84, 1)
+    const expanded = buildScale(era, dates, 2026.84, 40)
+    const room = (scale: ReturnType<typeof buildScale>) => {
+      const segment = scale.bands[0].segments.find((s) => !s.gap && s.from >= 2025.15 && s.to <= 2025.15)!
+      return segment.top + segment.height - scale.y(2025.15)
+    }
+    expect(room(expanded)).toBeGreaterThanOrEqual(200)
+    expect(room(expanded)).toBeGreaterThan(room(compact))
+    expect(expanded.gaps.every((g) => g.height === DEFAULT_SCALE.gapPx)).toBe(true)
+  })
   it('preserves a full event neighbourhood for same-day events at Now', () => {
     for (const date of [2026.84, 2026.839]) {
       const scale = buildScale(era, [date, date], 2026.84, 1)

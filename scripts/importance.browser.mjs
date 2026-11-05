@@ -28,7 +28,7 @@ try {
     const page = await browser.newPage({ viewport, reducedMotion: 'reduce', colorScheme: 'light' })
     page.on('pageerror', (e) => errors.push(String(e)))
     const counts = []
-    for (const zoom of [0.5, 1, 2, 4]) {
+    for (const zoom of [0.5, 1, 2, 4, 40]) {
       // No event parameter: nothing is pinned to make this assertion pass.
       await page.goto(base + `#z=${zoom}`)
       await page.locator('.card').first().waitFor()
@@ -61,12 +61,13 @@ try {
       if (zoom === 1) for (const id of ['2024-06-20-claude-3-5-sonnet', '2024-03-13-anthropic-claude-3-haiku']) {
         assert(result.ids.includes(id), `${id} was grouped despite space at the default zoom`)
       }
+      if (zoom === 40) assert(result.ids.includes('2025-02-24-claude-3-7-sonnet'), 'zoom could not reveal an event sharing a milestone date')
       for (const id of milestones) assert(result.ids.includes(id), `overview milestone ${id} missing at ${zoom}× / ${viewport.width}px`)
       for (const id of required) assert(result.ids.includes(id), `required launch ${id} missing`)
       counts.push(result.ids.length)
     }
     assert(counts[3] > counts[1], 'zoom did not reveal additional supporting events')
-    console.log(`${viewport.width}px: ${counts.join(', ')} individual cards at 0.5×, 1×, 2×, 4×; ${milestones.length} overview milestones preserved`)
+    console.log(`${viewport.width}px: ${counts.join(', ')} individual cards at 0.5×, 1×, 2×, 4×, 40×; ${milestones.length} overview milestones preserved`)
 
     await page.goto(base + '#e=2022-11-30-chatgpt-launch&z=1')
     await page.locator('.importance').waitFor()
