@@ -7,10 +7,10 @@ description: >-
   platforms. Its system card reports results on coding benchmarks. METR later
   estimated a 320-minute 50% task-completion horizon (95% interval: 170–729
   minutes) on its software and research task suite; METR cautions that the
-  estimate is imprecise and the suite is approaching saturation. This supports
-  stronger performance on that task distribution, not a general measure of
-  workplace productivity. Anthropic's later Economic Index reports use of the
-  Opus model class, but does not isolate Opus 4.5's adoption.
+  estimate is imprecise and the suite is approaching saturation. This measures
+  performance on that selected task distribution, not general workplace
+  productivity. Anthropic's later Economic Index reports use of the Opus model
+  class, but does not isolate Opus 4.5's adoption.
 category: model release
 tags:
   - language model
@@ -51,9 +51,11 @@ importance:
       reviewer: Codex (editorial assessment prepared for maintainer review)
       rationale: >-
         METR's independent task-horizon estimate and Anthropic's system card
-        support a substantial technical capability advance in software and
-        research task settings, while METR reports a wide interval and warns
-        that its suite is nearing saturation. The available evidence does not
+        support a capability rating of 3 for Opus 4.5's measured performance in
+        software and research task settings. METR reports a wide interval and
+        warns that its suite is nearing saturation; the estimates do not
+        establish statistically clear superiority over comparison models. The
+        available evidence does not
         isolate Opus 4.5's sustained adoption, later influence, or broader
         societal effects. Those three unknown dimensions leave a provisional
         score range of 15–90; the index placement key uses the lower bound and
@@ -85,15 +87,19 @@ importance:
           rating: 3
           confidence: medium
           rationale: >-
-            METR's independent evaluation estimated a 320-minute 50% task
-            horizon for Opus 4.5, compared with 114 minutes for Opus 4.1, 122
-            for Sonnet 4.5, and 214 for GPT-5 under its updated suite. The
-            estimate's 170–729-minute interval is wide, and METR says the task
-            horizon measures replacement of human labor on its task
-            distribution, not independent work duration; its suite is nearing
-            saturation and mostly covers software and research tasks. The
-            evidence supports substantial gains in this technical domain, not
-            a foundational new class of work.
+            METR's TH1.1 suite estimates a 320-minute 50% task horizon for
+            Opus 4.5 (95% interval: 170–729); its TH1.1 estimate for GPT-5 is
+            214 minutes (117–480). These intervals overlap and do not establish
+            a clear ordering. In the older TH1 suite, Opus 4.5's point estimate
+            was 289 minutes (110–1,268), Opus 4.1's was 114 (56–215), and
+            Sonnet 4.5's was 122 (59–252); these intervals also overlap. METR
+            changed tasks and infrastructure between TH1 and TH1.1, so the
+            estimates are compared only within each version. The measure
+            concerns replacement of human labor on a selected task distribution,
+            not independent work duration; the suite is nearing saturation and
+            mostly covers software and research tasks. This is evidence of
+            substantial measured performance in that technical domain, not a
+            foundational new class of work or a statistically clear ranking.
           evidence:
             - https://metr.org/blog/2026-01-29-time-horizon-1-1/
             - https://metr.org/notes/2026-01-22-time-horizon-limitations/
@@ -111,26 +117,29 @@ importance:
       comparisons:
         - id: 2025-08-05-claude-opus-4-1
           rationale: >-
-            METR's updated estimate for Opus 4.5 is higher than its Opus 4.1
-            estimate (320 versus 114 minutes), but the confidence intervals
-            overlap and the evaluation is limited to its task distribution.
-            This supports a meaningful technical advance while leaving its
-            wider downstream effect unknown.
+            In METR's older TH1 suite, Opus 4.5's point estimate was 289
+            minutes (interval 110–1,268), while Opus 4.1's was 114 (56–215).
+            The intervals overlap substantially, so this comparison does not
+            establish a statistically clear capability ordering. Opus 4.1 was
+            not measured on the updated TH1.1 suite, and downstream effects
+            attributable to Opus 4.5 remain unknown.
         - id: 2025-09-29-claude-sonnet-4-5
           rationale: >-
-            METR estimated 320 minutes for Opus 4.5 and 122 for Sonnet 4.5 on
-            its updated suite. The broad intervals and domain limits prevent
-            treating the point-estimate gap as a reliable measure of general
-            model superiority; both are hosted model releases without
-            model-specific adoption evidence here.
+            In METR's older TH1 suite, Opus 4.5's point estimate was 289
+            minutes (interval 110–1,268), while Sonnet 4.5's was 122 (59–252).
+            The intervals overlap substantially, so the comparison does not
+            establish a statistically clear capability ordering. Sonnet 4.5
+            was not measured under TH1.1; model-specific adoption is also
+            unknown.
         - id: 2025-01-20-deepseek-r1
           rationale: >-
             DeepSeek R1 was a cross-organization reasoning-model release
             distributed with open weights and technical details, which enabled
             a different kind of research and reuse than Opus 4.5's hosted
-            release. This assessment finds stronger measured technical-task
-            performance for Opus 4.5 on METR's limited suite, but does not
-            establish broader effects comparable to R1's open distribution.
+            release. METR did not evaluate DeepSeek R1 in the task-horizon
+            report cited here, so no direct score comparison is made. The
+            evidence for these events concerns different contributions and
+            does not establish broader downstream effects for Opus 4.5.
       questions:
         - What independent evidence measures sustained Opus 4.5 use separately from other Opus versions?
         - Which downstream changes in software or other work can be attributed to Opus 4.5 rather than later models and product integrations?
