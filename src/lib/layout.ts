@@ -114,11 +114,6 @@ function occupy(spans: Span[], top: number, bottom: number) {
   spans.splice(i, j - i, [top, bottom])
 }
 
-function pinnedFirst<T>(order: ArrayLike<number>, items: Positioned<T>[], pin: T | undefined): number[] {
-  const pinned = pin === undefined ? -1 : items.findIndex((it) => it.item === pin)
-  return pinned < 0 ? Array.from(order) : [pinned, ...Array.from(order).filter((i) => i !== pinned)]
-}
-
 export function layout<T>(items: Positioned<T>[], opts: LayoutOptions<T>) {
   const n = items.length
   const order = opts.order ?? priorityOrder(items)
@@ -131,6 +126,7 @@ export function layout<T>(items: Positioned<T>[], opts: LayoutOptions<T>) {
   const laneOf = new Int8Array(n).fill(-1)
   const tops = new Float64Array(n)
   const heights = Float64Array.from(items, (it) => opts.heightFor?.(it.item) ?? opts.cardHeight)
+  const pinned = opts.pin === undefined ? -1 : items.findIndex((it) => it.item === opts.pin)
 
   // Preserve overview milestones even on the same date. Date anchors stay put;
   // leaders connect any shifted cards. Callers reserve footer space per band.
@@ -157,11 +153,14 @@ export function layout<T>(items: Positioned<T>[], opts: LayoutOptions<T>) {
 
   if (opts.fillSpace && opts.lanes === 1 && opts.boundsFor) {
     const anchors = Array.from(required).sort((a, b) => items[a].y - items[b].y || a - b)
-    const regions = new Map<string, { top: number; bottom: number; used: number; indexes: number[] }>()
+    type Region = { top: number; bottom: number; used: number; indexes: number[] }
+    const regions = new Map<number, Map<number, Region>>()
+    const intervals: Region[] = []
     // Each interval has a fixed display budget. Choose by importance, then
     // reflow the chosen cards together so an early placement cannot strand space.
-    const candidates = pinnedFirst(order, items, opts.pin)
-    for (const i of candidates) {
+    for (let k = -1; k < order.length; k++) {
+      const i = k === -1 ? pinned : order[k]
+      if (i === -1 || (k >= 0 && i === pinned)) continue
       if (laneOf[i] !== -1) continue
       let lo = 0, hi = anchors.length
       while (lo < hi) {
@@ -178,15 +177,22 @@ export function layout<T>(items: Positioned<T>[], opts: LayoutOptions<T>) {
         if (r.bottom <= items[i].y) top = Math.max(top, r.bottom + opts.gap)
         else if (r.top > items[i].y) bottom = Math.min(bottom, r.top - opts.gap)
       }
-      const key = `${top}:${bottom}`
-      let region = regions.get(key)
-      if (!region) { region = { top, bottom, used: 0, indexes: [] }; regions.set(key, region) }
+      // Numeric keys avoid formatting the same floating-point bounds for every
+      // event on every zoom/selection frame.
+      let byBottom = regions.get(top)
+      if (!byBottom) { byBottom = new Map(); regions.set(top, byBottom) }
+      let region = byBottom.get(bottom)
+      if (!region) {
+        region = { top, bottom, used: 0, indexes: [] }
+        byBottom.set(bottom, region)
+        intervals.push(region)
+      }
       const needed = heights[i] + (region.indexes.length ? opts.gap : 0)
       if (region.used + needed > bottom - top) continue
       region.used += needed
       region.indexes.push(i)
     }
-    for (const region of regions.values()) {
+    for (const region of intervals) {
       region.indexes.sort((a, b) => items[a].y - items[b].y || a - b)
       let edge = region.top
       for (const i of region.indexes) {
@@ -228,7 +234,6 @@ export function layout<T>(items: Positioned<T>[], opts: LayoutOptions<T>) {
     }
   }
 
-  const pinned = opts.pin === undefined ? -1 : items.findIndex((it) => it.item === opts.pin)
   if (pinned !== -1 && laneOf[pinned] === -1) {
     const top = items[pinned].y - opts.anchorOffset
     const bottom = top + heights[pinned] + opts.gap

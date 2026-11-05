@@ -88,6 +88,9 @@
   // Per-event arrays in the same order as `events`, so a zoom frame only does
   // array lookups. Everything here changes with the data or filters, not zoom.
   const yearList = $derived(events.map((e) => years.get(e.id)!))
+  const eraIndexes = $derived(new Map(events.map((event, i) => [event,
+    ERAS.findIndex((era, index) => yearList[i] >= era.start && (index === 0 || yearList[i] < era.end!)),
+  ])))
   // Matching events win cards over faded ones.
   const scoreList = $derived(events.map((e) => e.score + (filtering && matchIds.has(e.id) ? 1000 : 0)))
   // Placement order depends on scores and date order only, so it is sorted once, not every frame.
@@ -128,6 +131,8 @@
     const s = baseScale
     const items = layoutItems
     const ys = yearList
+    const yearById = years
+    const eraByEvent = eraIndexes
     for (let i = 0; i < items.length; i++) items[i].y = s.y(ys[i])
     return layout(
       items,
@@ -142,8 +147,8 @@
         // Fill the actual display budget between milestones in date order.
         fillSpace: true,
         boundsFor: (event) => {
-          const year = Math.min(years.get(event.id)!, now)
-          const band = s.bands.find((b, i) => year >= b.start && (i === 0 || year < b.end))!
+          const year = Math.min(yearById.get(event.id)!, now)
+          const band = s.bands[eraByEvent.get(event)!]
           const segment = band.segments.find((part) => !part.gap &&
             year <= part.from && year >= part.to)
           return {
