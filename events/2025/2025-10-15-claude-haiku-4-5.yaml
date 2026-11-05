@@ -1,0 +1,140 @@
+id: 2025-10-15-claude-haiku-4-5
+title: Anthropic releases Claude Haiku 4.5
+date: 2025-10-15
+summary: Anthropic released Claude Haiku 4.5, a lower-cost model for chat and coding that it described as approaching the coding performance of Sonnet 4.
+description: >-
+  Anthropic made Claude Haiku 4.5 available through Claude, its API, Amazon Bedrock,
+  Google Cloud Vertex AI, and Claude Code. The company described the model as
+  offering coding performance similar to Sonnet 4 at lower cost and latency; these
+  comparisons are Anthropic's reported evaluations. GitHub began a public preview
+  in Copilot on the same date and made the model generally available across supported
+  Copilot plans and IDEs five days later. A 2026 independent study evaluated Haiku 4.5
+  on generated Java service methods, but its single-run, constrained setup does not
+  establish broad adoption or downstream effects.
+category: model release
+tags:
+  - language model
+  - coding
+  - agents
+  - computer use
+organizations:
+  - Anthropic
+sources:
+  - url: https://www.anthropic.com/news/claude-haiku-4-5
+    title: Introducing Claude Haiku 4.5
+    publisher: Anthropic
+    accessed: 2026-11-05
+  - url: https://assets.anthropic.com/m/99128ddd009bdcb/Claude-Haiku-4-5-System-Card.pdf
+    title: Claude Haiku 4.5 System Card
+    publisher: Anthropic
+    accessed: 2026-11-05
+  - url: https://github.blog/changelog/2025-10-15-anthropics-claude-haiku-4-5-is-in-public-preview-for-github-copilot/
+    title: Anthropic's Claude Haiku 4.5 is in public preview for GitHub Copilot
+    publisher: GitHub
+    accessed: 2026-11-05
+  - url: https://github.blog/changelog/2025-10-20-claude-haiku-4-5-is-generally-available-in-all-supported-ides/
+    title: Claude Haiku 4.5 is generally available in all supported IDEs
+    publisher: GitHub
+    accessed: 2026-11-05
+  - url: https://arxiv.org/abs/2609.18052
+    title: An Empirical Evaluation of Cost-Efficient Large Language Models on Algorithmic Programming Tasks
+    publisher: arXiv
+    accessed: 2026-11-05
+  - url: https://www.orcflo.com/orcflo-index/benchmarks/claude-haiku-4-5-2026-05-10
+    title: Claude Haiku 4.5 Benchmark — May 10, 2026
+    publisher: ORCFLO Index
+    accessed: 2026-11-05
+  - url: https://www.orcflo.com/orcflo-index/methodology
+    title: How the ORCFLO Index works
+    publisher: ORCFLO Index
+    accessed: 2026-11-05
+importance:
+  current: 2026-11-05-v2
+  assessments:
+    - id: 2026-11-05-v2
+      assessed_at: 2026-11-05
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: >-
+        Haiku 4.5 broadened access to useful coding and agent capabilities at lower
+        cost and latency than larger models, and independent evaluations show it
+        has practical capability across constrained coding and business tasks. The
+        evidence supports a useful improvement within an established model class,
+        not a foundational new capability. GitHub product availability establishes
+        distribution, while no independent longitudinal evidence located here
+        isolates model-specific adoption or durable downstream influence. With
+        influence and adoption unknown, the v2 score interval is 10–85; no accepted
+        point score is assigned.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: >-
+            The available follow-on evaluation and platform integrations establish
+            availability and continued testing, but do not measure later field-level
+            changes caused by Haiku 4.5 specifically.
+          evidence:
+            - https://arxiv.org/abs/2609.18052
+            - https://github.blog/changelog/2025-10-20-claude-haiku-4-5-is-generally-available-in-all-supported-ides/
+        adoption:
+          rating: null
+          confidence: low
+          rationale: >-
+            Anthropic, cloud services, and GitHub Copilot made the model available
+            to users and developers, but access and model-picker presence do not
+            quantify usage; available usage reporting does not isolate this model.
+          evidence:
+            - https://www.anthropic.com/news/claude-haiku-4-5
+            - https://github.blog/changelog/2025-10-20-claude-haiku-4-5-is-generally-available-in-all-supported-ides/
+        capability:
+          rating: 2
+          confidence: medium
+          rationale: >-
+            Anthropic reported coding capability comparable to Sonnet 4 with lower
+            cost and latency. Independent 2026 studies evaluated Haiku 4.5 in
+            constrained coding and business-task suites, supporting useful capability
+            in established workflows; differing harnesses and narrow task coverage
+            do not establish a substantial new class of work.
+          evidence:
+            - https://www.anthropic.com/news/claude-haiku-4-5
+            - https://arxiv.org/abs/2609.18052
+            - https://www.orcflo.com/orcflo-index/benchmarks/claude-haiku-4-5-2026-05-10
+        society:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources establish product availability across Claude and Copilot,
+            but do not document measured organizational uptake, public attention,
+            or broader social and institutional effects attributable to this model.
+          evidence:
+            - https://www.anthropic.com/news/claude-haiku-4-5
+            - https://github.blog/changelog/2025-10-20-claude-haiku-4-5-is-generally-available-in-all-supported-ides/
+      comparisons:
+        - id: 2025-09-29-claude-sonnet-4-5
+          rationale: >-
+            Sonnet 4.5 was positioned as Anthropic's leading model for coding and
+            agent tasks, while Haiku 4.5 traded some capability for lower cost and
+            latency. The evidence here supports Haiku as a practical option, not an
+            equivalent field-leading advance.
+        - id: 2025-05-22-anthropic-claude-4
+          rationale: >-
+            Claude 4 introduced a model generation with a distinct hybrid reasoning
+            approach. Haiku 4.5's documented contribution is a more efficient member
+            of an established family, so its capability rating is lower.
+        - id: 2025-01-20-deepseek-r1
+          rationale: >-
+            DeepSeek R1 introduced an open-weight reasoning model and drew broad
+            market and research attention, supported by its technical report and
+            public release. Haiku 4.5's evidence instead supports a cost-efficient
+            hosted model update; no comparable cross-field effects are established.
+      questions:
+        - What independent model-specific usage data can distinguish Haiku 4.5 adoption from other Claude models?
+        - Do repeated evaluations across realistic coding and agent tasks confirm its cost and latency advantages at comparable quality?
+        - Which later developer workflow changes can be attributed to Haiku 4.5 rather than Copilot or Claude Code integrations?
+      review_after: 2026-12-05
+      review_triggers:
+        - Independent, longitudinal usage evidence that isolates Haiku 4.5 and materially changes the adoption estimate.
+        - Replicated capability evaluations that establish broader downstream effects or change its comparison with Sonnet 4.5.
+issue: 97
+submitted_by: ChrisBuilds
