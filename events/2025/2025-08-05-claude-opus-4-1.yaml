@@ -1,0 +1,116 @@
+id: 2025-08-05-claude-opus-4-1
+title: Anthropic releases Claude Opus 4.1
+date: 2025-08-05
+summary: Anthropic released Claude Opus 4.1, an incremental update to Opus 4 with improvements in coding, reasoning, and agentic tasks.
+description: >-
+  Anthropic made Claude Opus 4.1 available to paid Claude users, Claude Code, its API,
+  Amazon Bedrock, and Google Cloud Vertex AI. The company described it as an upgrade
+  to Opus 4 for agentic tasks, real-world coding, and reasoning, and reported 74.5%
+  on SWE-bench Verified. In its system-card addendum, Anthropic characterized the
+  improvements as incremental and said the model did not meet its threshold for a
+  notably more capable model relative to Opus 4. Benchmark results and descriptions
+  of performance are Anthropic's reports.
+category: model release
+tags:
+  - language model
+  - coding
+  - reasoning
+  - agents
+organizations:
+  - Anthropic
+sources:
+  - url: https://www.anthropic.com/news/claude-opus-4-1
+    title: Claude Opus 4.1
+    publisher: Anthropic
+    accessed: 2026-11-05
+  - url: https://www-cdn.anthropic.com/9fa30625273bafdf5af82c93719d7ca606485a16.pdf
+    title: 'System Card Addendum: Claude Opus 4.1'
+    publisher: Anthropic
+    accessed: 2026-11-05
+  - url: https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-opus-4-1.html
+    title: Claude Opus 4.1
+    publisher: Amazon Web Services
+    accessed: 2026-11-05
+related:
+  - id: 2025-05-22-anthropic-claude-4
+    relation: builds_on
+    source: https://www.anthropic.com/news/claude-opus-4-1
+importance:
+  current: 2026-11-05-v2
+  assessments:
+    - id: 2026-11-05-v2
+      assessed_at: 2026-11-05
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: >-
+        Opus 4.1 expanded access to a current high-end model and reported incremental
+        improvements, particularly for coding, but Anthropic's system card explicitly
+        characterizes the release as incremental. Current sources do not establish
+        sustained adoption or downstream influence attributable to this version, so
+        the assessment remains provisional with unknown dimensions and a broad range.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: >-
+            The launch and system card describe the update but do not establish later
+            field-level changes attributable to Opus 4.1 specifically.
+          evidence:
+            - https://www.anthropic.com/news/claude-opus-4-1
+            - https://www-cdn.anthropic.com/9fa30625273bafdf5af82c93719d7ca606485a16.pdf
+        adoption:
+          rating: null
+          confidence: low
+          rationale: >-
+            Availability through Claude, developer tools, APIs, and cloud platforms
+            indicates reach but does not measure sustained use by the relevant audiences.
+          evidence:
+            - https://www.anthropic.com/news/claude-opus-4-1
+            - https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-opus-4-1.html
+        capability:
+          rating: 2
+          confidence: medium
+          rationale: >-
+            Anthropic reports improved coding and reasoning, including 74.5% on
+            SWE-bench Verified, but its system card calls the gains incremental and
+            says the model did not cross its notably-more-capable threshold versus Opus 4.
+          evidence:
+            - https://www.anthropic.com/news/claude-opus-4-1
+            - https://www-cdn.anthropic.com/9fa30625273bafdf5af82c93719d7ca606485a16.pdf
+        society:
+          rating: null
+          confidence: low
+          rationale: >-
+            The available launch and system-card sources document model performance
+            and safety assessment but not broad societal or institutional effects
+            attributable to this incremental model release.
+          evidence:
+            - https://www.anthropic.com/news/claude-opus-4-1
+            - https://www-cdn.anthropic.com/9fa30625273bafdf5af82c93719d7ca606485a16.pdf
+      comparisons:
+        - id: 2025-05-22-anthropic-claude-4
+          rationale: >-
+            Claude 4 introduced the Opus 4 and Sonnet 4 generation and hybrid reasoning
+            approach; Opus 4.1 is explicitly an incremental update to Opus 4 and merits
+            a lower capability rating on the evidence assessed here.
+        - id: 2025-02-24-claude-code-research-preview
+          rationale: >-
+            Claude Code represents a distinct developer workflow milestone. Opus 4.1
+            became available in Claude Code, but that channel availability alone does
+            not establish adoption attributable to this model revision.
+        - id: 2022-11-30-chatgpt-launch
+          rationale: >-
+            ChatGPT's launch is supported by broad consumer adoption and societal reach;
+            the Opus 4.1 sources establish a narrower model update without comparable
+            evidence of public uptake or institutional change.
+      questions:
+        - What independent longitudinal evidence measures sustained use of Opus 4.1 specifically?
+        - Which later coding or agent workflow changes can be attributed to this model revision rather than Claude Code or integrations?
+        - How much of the reported coding improvement persists across independent evaluations and task distributions?
+      review_after: 2026-12-05
+      review_triggers:
+        - Independent longitudinal evidence of model-specific adoption or downstream influence.
+        - Replicated evaluations that materially change the estimate of Opus 4.1's capability improvement over Opus 4.
+issue: 95
+submitted_by: ChrisBuilds
