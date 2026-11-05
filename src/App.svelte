@@ -139,6 +139,14 @@
         heightFor: eventHeight,
         gap: 10,
         anchorOffset: ANCHOR_OFFSET,
+        // Use nearby whitespace before burying a card. Limit displacement so
+        // crowded periods still group, and keep each card within its own era.
+        maxShift: CARD_HEIGHT + 20,
+        boundsFor: (event) => {
+          const year = years.get(event.id)!
+          const band = s.bands.find((b, i) => year >= b.start && (i === 0 || year < b.end))!
+          return { top: band.top, bottom: band.top + band.height }
+        },
         clusterPx: 28,
         // The selected event always gets a card, without moving any card that is already shown.
         pin: selectedId ? byId.get(selectedId) : undefined,

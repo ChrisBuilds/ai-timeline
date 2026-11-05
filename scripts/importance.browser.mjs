@@ -70,14 +70,42 @@ try {
     assert((await page.locator('.importance').innerText()).includes('94/100'))
 
     await page.goto(base + '#e=2024-09-12-openai-o1&z=0.5')
-    await page.locator('.card.selected').waitFor()
+    await page.locator('[id="2024-09-12-openai-o1"].card.selected').waitFor()
     assert.equal(await page.locator('.card.selected').getAttribute('id'), '2024-09-12-openai-o1', 'hidden event could not be selected')
     await page.getByRole('button', { name: 'Close details', exact: true }).click()
     await page.goto(base + '#z=1&o=Anthropic')
     await page.locator('.card.match').first().waitFor()
-    assert.equal(await page.locator('.card.match').first().getAttribute('id'), '2025-02-24-claude-code-research-preview')
+    const matchedIds = await page.locator('.card.match').evaluateAll((cards) => cards.map((card) => card.id))
+    assert(matchedIds.length > 0)
+    assert(matchedIds.every((id) => index.events.find((e) => e.id === id)?.organizations?.includes('Anthropic')))
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false)
     await page.close()
+  }
+  // Low importance must not hide an event when a nearby card position is free.
+  // With more events on that date than fit nearby, higher scores win the space.
+  for (const width of [1280, 390]) {
+    for (const count of [2, 8]) {
+      const page = await browser.newPage({ viewport: { width, height: 900 }, reducedMotion: 'reduce' })
+      page.on('pageerror', (e) => errors.push(String(e)))
+      const data = structuredClone(index)
+      data.events = Array.from({ length: count }, (_, i) => ({
+        ...index.events[0], id: `space-${i}`, date: '2025-02-01',
+        title: `Space test ${i}`, score: i === 0 ? 100 : count === 2 ? 0 : 80 - i,
+        overview: false, related: [],
+      }))
+      await page.route('**/data/index.json', (route) => route.fulfill({ json: data }))
+      await page.goto(base + '#z=1')
+      await page.locator('#space-0.card').waitFor()
+      await page.locator('#space-0.card').scrollIntoViewIfNeeded()
+      if (count === 2) {
+        await page.locator('#space-1.card').waitFor()
+        assert.equal(await page.locator('.event-group').count(), 0, 'a zero-score event was buried despite nearby space')
+      } else {
+        await page.locator('.event-group').first().waitFor()
+        assert.equal(await page.locator('#space-7.card').count(), 0, 'lowest score should yield when space is full')
+      }
+      await page.close()
+    }
   }
   // A new provisional event has no original score to fall back to. The numeric
   // placement key must never be presented as an accepted point assessment.

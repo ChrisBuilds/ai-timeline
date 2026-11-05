@@ -10,11 +10,15 @@ const eras = [
   { id: 'old', name: 'Old', start: 2010, end: 2022 },
 ]
 const height = (e: Event) => e.id === 'selected' ? 260 : 100
-function arrange(events: Event[], zoom = 1, pin?: Event) {
+function arrange(events: Event[], zoom = 1, pin?: Event, maxShift = 0) {
   const years = new Map(events.map((e) => [e.id, toYear(e.date)]))
   const base = buildScale(eras, [...years.values()], 2026.84, zoom, { ...DEFAULT_SCALE, headerPx: 110, footerPx: 300 })
   const arranged = layout(events.map((item) => ({ item, y: base.y(years.get(item.id)!), score: item.score })), {
-    lanes: 1, cardHeight: 100, heightFor: height, gap: 10, anchorOffset: 18, clusterPx: 28, pin,
+    lanes: 1, cardHeight: 100, heightFor: height, gap: 10, anchorOffset: 18, clusterPx: 28, pin, maxShift,
+    boundsFor: (e) => {
+      const band = base.bands.find((b, i) => years.get(e.id)! >= b.start && (i === 0 || years.get(e.id)! < b.end))!
+      return { top: band.top, bottom: band.top + band.height }
+    },
     reserved: base.bands.map((b) => ({ lane: 0, top: b.top, bottom: b.top + 80 })),
   })
   return { ...buildGroups(base, arranged.placed, arranged.clusters, years, height), years, base }
@@ -37,9 +41,9 @@ describe('collapsed groups', () => {
       }
     }
   })
-  it('reserves collision-free rows even around an expanded pinned event', () => {
+  it.each([0, 120])('reserves collision-free rows around an expanded selection with %i pixels of displacement', (maxShift) => {
     const events = [...dense, { id: 'selected', date: '2024-05-12', score: 0 }]
-    const out = arrange(events, 1, events.at(-1))
+    const out = arrange(events, 1, events.at(-1), maxShift)
     const rows = [...out.placed.map((c) => ({ top: c.top, height: height(c.item) })), ...out.groups].sort((a, b) => a.top - b.top)
     for (let i = 1; i < rows.length; i++) expect(rows[i].top).toBeGreaterThanOrEqual(rows[i - 1].top + rows[i - 1].height)
     for (const row of rows) for (const band of out.scale.bands) {

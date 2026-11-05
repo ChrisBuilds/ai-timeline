@@ -122,9 +122,9 @@ try {
     for (const event of today.events) { event.date = '2026-11-04'; delete event.end_date }
     await page.route('**/data/index.json', (route) => route.fulfill({ json: today }))
     await page.goto(`http://127.0.0.1:${port}/ai-timeline/`)
-    await page.locator('.event-group').waitFor()
-    assert.equal(await page.locator('.era-count').first().innerText(), '2 events · 1 shown')
-    assert((await page.locator('.event-group').innerText()).includes('1 more event'))
+    await page.locator('.card').nth(1).waitFor()
+    assert.equal(await page.locator('.era-count').first().innerText(), '2 events · 2 shown')
+    assert.equal(await page.locator('.event-group').count(), 0, 'nearby space should show both current-day events')
     await page.close()
   }
   assert.deepEqual(errors, [])

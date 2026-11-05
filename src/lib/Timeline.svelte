@@ -320,12 +320,13 @@
           data-motion-key="connector-{ev.id}"
           class="connector"
           class:shifted={Math.abs(card.top + 18 - card.y) > 1}
+          class:shifted-up={card.top + 18 < card.y - 1}
           class:dimmed={dimIds.has(ev.id) && selectedId !== ev.id}
           style:--c={categoryColor(ev.category)}
-          style:top="{card.y}px"
+          style:top="{Math.min(card.y, card.top + 18)}px"
           style:left="{Math.min(spineX, left + cardWidth)}px"
           style:width="{card.lane === 0 ? left - spineX : spineX - (left + cardWidth)}px"
-          style:height="{Math.abs(card.top + 18 - card.y) > 1 ? Math.max(1, card.top + 18 - card.y) : 16}px"
+          style:height="{Math.abs(card.top + 18 - card.y) > 1 ? Math.abs(card.top + 18 - card.y) : 16}px"
           aria-hidden="true"
         ></span>
         <article
@@ -367,6 +368,7 @@
 
 <style>
   .connector.shifted { transform: none; background: transparent; border-left: 1px solid var(--c); border-bottom: 1px solid var(--c); opacity: 0.45; }
+  .connector.shifted-up { border-bottom: 0; border-top: 1px solid var(--c); }
   .connector.shifted::before { display: none; }
   .timeline { position: relative; width: 100%; touch-action: pan-y; }
   .band { position: absolute; left: 0; right: 0; border-top: 1px solid var(--line); pointer-events: none; }
