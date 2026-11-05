@@ -29,6 +29,10 @@ export interface LayoutOptions<T = unknown> {
   gap: number
   /** How far above its date marker a card starts. */
   anchorOffset: number
+  /** How far a non-mandatory card may move from its date to use nearby space. */
+  maxShift?: number
+  /** Display bounds, such as the event's era, including the full card height. */
+  boundsFor?: (item: T) => { top: number; bottom: number }
   /** Hidden events closer than this merge into one "+N" marker. */
   clusterPx: number
   /**
@@ -77,6 +81,23 @@ function firstEndingAfter(spans: Span[], top: number): number {
 function isFree(spans: Span[], top: number, bottom: number): boolean {
   const next = spans[firstEndingAfter(spans, top)]
   return !next || next[0] >= bottom
+}
+
+/** Nearest free position within a bounded distance of the date anchor. */
+function nearestFreeTop(spans: Span[], desired: number, height: number, min: number, max: number): number | null {
+  let best: number | null = null
+  let start = min
+  for (let i = firstEndingAfter(spans, min); ; i++) {
+    const span = spans[i]
+    const end = Math.min(max, span ? span[0] - height : max)
+    if (start <= end) {
+      const top = Math.max(start, Math.min(desired, end))
+      if (best === null || Math.abs(top - desired) < Math.abs(best - desired)) best = top
+    }
+    if (!span || span[1] > max) break
+    start = Math.max(min, span[1])
+  }
+  return best
 }
 
 /** Adds a span, merging it with any it overlaps so the list stays sorted and disjoint. */
@@ -132,13 +153,25 @@ export function layout<T>(items: Positioned<T>[], opts: LayoutOptions<T>) {
     if (laneOf[i] !== -1) continue
     const top = items[i].y - opts.anchorOffset
     const bottom = top + heights[i] + opts.gap
+    const bounds = opts.boundsFor?.(items[i].item)
+    const min = Math.max(top - (opts.maxShift ?? 0), bounds?.top ?? -Infinity)
+    const max = Math.min(top + (opts.maxShift ?? 0), (bounds?.bottom ?? Infinity) - heights[i])
+    let bestLane = -1
+    let bestTop: number | null = null
     for (let lane = 0; lane < lanes.length; lane++) {
-      if (isFree(lanes[lane], top, bottom)) {
-        occupy(lanes[lane], top - opts.gap, bottom)
-        laneOf[i] = lane
-        tops[i] = top
-        break
+      const candidate = top >= min && top <= max && isFree(lanes[lane], top, bottom)
+        ? top : nearestFreeTop(lanes[lane], top, heights[i] + opts.gap, min, max)
+      if (candidate === null) continue
+      if (bestTop === null || Math.abs(candidate - top) < Math.abs(bestTop - top)) {
+        bestLane = lane
+        bestTop = candidate
       }
+      if (candidate === top) break
+    }
+    if (bestTop !== null) {
+      occupy(lanes[bestLane], bestTop - opts.gap, bestTop + heights[i] + opts.gap)
+      laneOf[i] = bestLane
+      tops[i] = bestTop
     }
   }
 

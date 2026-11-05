@@ -4,6 +4,39 @@ import { layout, priorityOrder, type LayoutOptions } from './layout'
 const opts: LayoutOptions<string> = { lanes: 1, cardHeight: 80, gap: 10, anchorOffset: 10, clusterPx: 30 }
 
 describe('layout', () => {
+  it('uses nearby whitespace for a lower-scored event while preserving its date', () => {
+    const items = [{ item: 'major', y: 200, score: 90 }, { item: 'minor', y: 240, score: 0 }]
+    const result = layout(items, { ...opts, maxShift: 100 })
+    expect(result.clusters).toEqual([])
+    expect(result.placed).toEqual([
+      { item: 'major', y: 200, lane: 0, top: 190 },
+      { item: 'minor', y: 240, lane: 0, top: 280 },
+    ])
+  })
+
+  it('can fill whitespace above an event as well as below it', () => {
+    const result = layout([
+      { item: 'minor', y: 160, score: 0 }, { item: 'major', y: 200, score: 90 },
+    ], { ...opts, maxShift: 100 })
+    expect(result.clusters).toEqual([])
+    expect(result.placed[0]).toEqual({ item: 'minor', y: 160, lane: 0, top: 90 })
+  })
+
+  it('uses importance when nearby space is full and respects era bounds', () => {
+    const result = layout([
+      { item: 'minor', y: 200, score: 0 }, { item: 'major', y: 200, score: 90 },
+    ], { ...opts, maxShift: 100, boundsFor: () => ({ top: 180, bottom: 280 }) })
+    expect(result.placed.map((c) => c.item)).toEqual(['major'])
+    expect(result.clusters.flatMap((c) => c.items)).toEqual(['minor'])
+  })
+
+  it('prefers a free lane at the date over moving a card in another lane', () => {
+    const result = layout([
+      { item: 'major', y: 200, score: 90 }, { item: 'minor', y: 240, score: 0 },
+    ], { ...opts, lanes: 2, maxShift: 100 })
+    expect(result.placed[1]).toEqual({ item: 'minor', y: 240, lane: 1, top: 230 })
+  })
+
   it('keeps the most important of two colliding events', () => {
     const { placed, clusters } = layout(
       [
@@ -115,8 +148,8 @@ describe('at scale', () => {
   const items = Array.from({ length: 3000 }, (_, i) => ({ item: `e${i}`, y: rand() * 40000, score: Math.floor(rand() * 100) }))
   const two = { ...opts, lanes: 2, reserved: [{ lane: 1, top: 5000, bottom: 5060 }] }
 
-  it('never overlaps two cards in a lane, or a card and a reserved span', () => {
-    const { placed, clusters } = layout(items, two)
+  it.each([0, 100])('never overlaps cards or reserved spans with up to %i pixels of displacement', (maxShift) => {
+    const { placed, clusters } = layout(items, { ...two, maxShift })
     for (const lane of [0, 1]) {
       const cards = placed.filter((c) => c.lane === lane).sort((a, b) => a.top - b.top)
       for (let i = 1; i < cards.length; i++) expect(cards[i].top).toBeGreaterThanOrEqual(cards[i - 1].top + opts.cardHeight + opts.gap)
