@@ -59,7 +59,7 @@ importance:
         a selected software and research task distribution, not a general
         measure of productivity. Version-specific adoption, attributable
         downstream influence, and broad societal effects remain unknown. The
-        resulting provisional score range is 15–90; the index placement key
+        resulting provisional score range is 21–66; the index placement key
         uses its lower bound, with no accepted point score.
       dimensions:
         influence:
@@ -74,13 +74,17 @@ importance:
             - https://metr.org/notes/2026-03-20-impact-of-modelling-assumptions-on-time-horizon-results/
             - https://www.anthropic.com/news/claude-opus-4-6
         adoption:
-          rating: null
+          rating: 1
           confidence: low
           rationale: >-
-            Availability through Claude, the API, and cloud platforms does not
-            establish use. Anthropic's later Economic Index reports behavior
-            by model class, not Opus 4.6 separately, and do not establish
-            version-specific uptake or sustained use.
+            Anthropic's launch page attributes limited early-access testing
+            and task use to named partner organizations: NBIM reports 40
+            cybersecurity investigations, and Rakuten reports issue
+            assignments and closures in one day. These vendor-selected
+            examples support isolated trials and deployment, the rating-1
+            anchor, but do not measure sustained or widespread adoption.
+            Anthropic's later Economic Index reports behavior by model class,
+            not Opus 4.6 separately.
           evidence:
             - https://www.anthropic.com/news/claude-opus-4-6
             - https://www.anthropic.com/research/economic-index-march-2026-report
