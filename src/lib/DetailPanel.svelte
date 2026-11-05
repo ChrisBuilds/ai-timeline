@@ -174,7 +174,10 @@
   $effect(() => {
     // Move focus to the panel when a new event opens, for keyboard and screen reader users.
     void event.id
-    heading?.focus({ preventScroll: true })
+    // Let selection finish its width/heading measurements first; focusing during
+    // that update otherwise forces an extra layout of the entire timeline.
+    const frame = requestAnimationFrame(() => heading?.focus({ preventScroll: true }))
+    return () => cancelAnimationFrame(frame)
   })
 </script>
 

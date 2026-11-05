@@ -42,36 +42,45 @@ export function animateSelection(root: HTMLElement, before: SelectionSnapshot): 
   }
   // Read every final rectangle before starting any animations: parent transforms
   // must not contaminate the child measurements.
-  const updates = [...root.querySelectorAll<HTMLElement>('[data-motion-key]')].map((node) => ({
-    node,
-    rect: node.getBoundingClientRect(),
-    transform: getComputedStyle(node).transform,
-    previous: before.items.get(node.dataset.motionKey!),
-  }))
-  for (const { node, rect, transform, previous } of updates) {
+  const updates = [...root.querySelectorAll<HTMLElement>('[data-motion-key]')].map((node) => {
+    const style = getComputedStyle(node)
+    return {
+      node,
+      rect: node.getBoundingClientRect(),
+      transform: style.transform,
+      background: style.backgroundColor,
+      color: style.color,
+      card: node.matches('.card, .event-group'),
+      previous: before.items.get(node.dataset.motionKey!),
+    }
+  })
+  for (const { node, rect, transform, background, color, card, previous } of updates) {
     if (!previous) {
       play(node, [{ opacity: 0 }, { opacity: 1 }], 80, 180)
       continue
     }
     const x = previous.rect.left - rect.left - dx
     const y = previous.rect.top - rect.top - dy
+    if (Math.abs(x) < 0.01 && Math.abs(y) < 0.01 && (!card || (
+      previous.rect.width === rect.width && previous.rect.height === rect.height &&
+      previous.background === background && previous.color === color
+    ))) continue
     const baseTransform = transform === 'none' ? '' : transform
     const start: Keyframe = { transform: `translate(${x}px, ${y}px) ${baseTransform}` }
     const end: Keyframe = { transform }
-    if (node.matches('.card, .event-group')) {
+    if (card) {
       start.width = `${previous.rect.width}px`
       start.height = `${previous.rect.height}px`
       start.backgroundColor = previous.background
       start.color = previous.color
       end.width = `${rect.width}px`
       end.height = `${rect.height}px`
-      const style = getComputedStyle(node)
-      end.backgroundColor = style.backgroundColor
-      end.color = style.color
+      end.backgroundColor = background
+      end.color = color
     }
     play(node, [start, end])
   }
-  play(root, [{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'none' }])
+  if (Math.abs(dx) >= 0.01 || Math.abs(dy) >= 0.01) play(root, [{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'none' }])
   return () => animations.forEach((animation) => animation.cancel())
 }
 
