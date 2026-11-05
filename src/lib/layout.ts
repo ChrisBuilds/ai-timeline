@@ -33,6 +33,8 @@ export interface LayoutOptions<T = unknown> {
   maxShift?: number
   /** Display bounds, such as the event's era, including the full card height. */
   boundsFor?: (item: T) => { top: number; bottom: number }
+  /** In one lane, pack cards in date order into the space between required cards. */
+  fillSpace?: boolean
   /** Hidden events closer than this merge into one "+N" marker. */
   clusterPx: number
   /**
@@ -124,6 +126,7 @@ export function layout<T>(items: Positioned<T>[], opts: LayoutOptions<T>) {
   const laneOf = new Int8Array(n).fill(-1)
   const tops = new Float64Array(n)
   const heights = Float64Array.from(items, (it) => opts.heightFor?.(it.item) ?? opts.cardHeight)
+  const pinned = opts.pin === undefined ? -1 : items.findIndex((it) => it.item === opts.pin)
 
   // Preserve overview milestones even on the same date. Date anchors stay put;
   // leaders connect any shifted cards. Callers reserve footer space per band.
@@ -148,7 +151,63 @@ export function layout<T>(items: Positioned<T>[], opts: LayoutOptions<T>) {
     tops[i] = bestTop
   }
 
-  for (let k = 0; k < order.length; k++) {
+  if (opts.fillSpace && opts.lanes === 1 && opts.boundsFor) {
+    const anchors = Array.from(required).sort((a, b) => items[a].y - items[b].y || a - b)
+    type Region = { top: number; bottom: number; used: number; indexes: number[] }
+    const regions = new Map<number, Map<number, Region>>()
+    const intervals: Region[] = []
+    // Each interval has a fixed display budget. Choose by importance, then
+    // reflow the chosen cards together so an early placement cannot strand space.
+    for (let k = -1; k < order.length; k++) {
+      const i = k === -1 ? pinned : order[k]
+      if (i === -1 || (k >= 0 && i === pinned)) continue
+      if (laneOf[i] !== -1) continue
+      let lo = 0, hi = anchors.length
+      while (lo < hi) {
+        const mid = (lo + hi) >> 1
+        if (items[anchors[mid]].y <= items[i].y) lo = mid + 1
+        else hi = mid
+      }
+      let { top, bottom } = opts.boundsFor(items[i].item)
+      const previous = anchors[lo - 1], next = anchors[lo]
+      if (previous !== undefined) top = Math.max(top, tops[previous] + heights[previous] + opts.gap)
+      if (next !== undefined) bottom = Math.min(bottom, tops[next] - opts.gap)
+      for (const r of opts.reserved ?? []) {
+        if (r.lane !== 0) continue
+        if (r.bottom <= items[i].y) top = Math.max(top, r.bottom + opts.gap)
+        else if (r.top > items[i].y) bottom = Math.min(bottom, r.top - opts.gap)
+      }
+      // Numeric keys avoid formatting the same floating-point bounds for every
+      // event on every zoom/selection frame.
+      let byBottom = regions.get(top)
+      if (!byBottom) { byBottom = new Map(); regions.set(top, byBottom) }
+      let region = byBottom.get(bottom)
+      if (!region) {
+        region = { top, bottom, used: 0, indexes: [] }
+        byBottom.set(bottom, region)
+        intervals.push(region)
+      }
+      const needed = heights[i] + (region.indexes.length ? opts.gap : 0)
+      if (region.used + needed > bottom - top) continue
+      region.used += needed
+      region.indexes.push(i)
+    }
+    for (const region of intervals) {
+      region.indexes.sort((a, b) => items[a].y - items[b].y || a - b)
+      let edge = region.top
+      for (const i of region.indexes) {
+        tops[i] = Math.max(edge, items[i].y - opts.anchorOffset)
+        edge = tops[i] + heights[i] + opts.gap
+        laneOf[i] = 0
+      }
+      edge = region.bottom
+      for (let k = region.indexes.length - 1; k >= 0; k--) {
+        const i = region.indexes[k]
+        tops[i] = Math.min(tops[i], edge - heights[i])
+        edge = tops[i] - opts.gap
+      }
+    }
+  } else for (let k = 0; k < order.length; k++) {
     const i = order[k]
     if (laneOf[i] !== -1) continue
     const top = items[i].y - opts.anchorOffset
@@ -175,7 +234,6 @@ export function layout<T>(items: Positioned<T>[], opts: LayoutOptions<T>) {
     }
   }
 
-  const pinned = opts.pin === undefined ? -1 : items.findIndex((it) => it.item === opts.pin)
   if (pinned !== -1 && laneOf[pinned] === -1) {
     const top = items[pinned].y - opts.anchorOffset
     const bottom = top + heights[pinned] + opts.gap

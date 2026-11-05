@@ -3,11 +3,10 @@ import type { Era } from './eras'
 /**
  * Density-adaptive time scale. Each era band gets height in proportion to the
  * number of events it holds (plus a floor so quiet eras stay visible), and
- * time is linear inside a band. Zoom multiplies every height. Newest is at the top.
+ * time is linear between compressed gaps. Zoom expands occupied time. Newest is at the top.
  *
- * At each zoom a band is split into time units, the spacing of its year marks.
- * A run of empty units is squeezed into a short gap, so long stretches with no
- * events don't fill the screen.
+ * Long intervals between actual event dates are squeezed into short gaps,
+ * including partial years and the empty stretch between now and the newest event.
  */
 
 /** Date projection before any footer display space is added. */
@@ -43,12 +42,15 @@ export interface ScaleOptions {
   gapPx?: number
   /** How many empty units in a row get compressed. */
   minGapUnits?: number
+  /** Compress event-free intervals longer than this, even within a single year. */
+  maxEmptyPx?: number
 }
 
 export const DEFAULT_SCALE: ScaleOptions = {
   basePx: 140,
   perEventPx: 120,
-  linearUpTo: 12,
+  // Small eras get a full card budget before large collections are densified.
+  linearUpTo: 24,
   densityExponent: 0.4,
   topPad: 24,
   bottomPad: 96,
@@ -56,6 +58,7 @@ export const DEFAULT_SCALE: ScaleOptions = {
   unitPx: 56,
   gapPx: 44,
   minGapUnits: 2,
+  maxEmptyPx: 280,
 }
 
 /** A stretch of a band, from its newer year `from` down to its older year `to`. */
@@ -102,6 +105,17 @@ const STEPS = [1, 2, 5, 10, 20, 50]
 // Splitting years into eras doesn't depend on zoom, so it is done once per list
 // of years and reused for every zoom frame.
 const yearsCache = new WeakMap<number[], { eras: Era[]; now: number; perBand: Float64Array[] }>()
+const countsCache = new WeakMap<Float64Array, Map<number, number>>()
+
+function dateCounts(years: Float64Array): Map<number, number> {
+  let counts = countsCache.get(years)
+  if (!counts) {
+    counts = new Map()
+    for (const year of years) counts.set(year, (counts.get(year) ?? 0) + 1)
+    countsCache.set(years, counts)
+  }
+  return counts
+}
 
 /** Each era's event years, ascending, so a time unit is checked with a binary search. */
 function bandYears(eventYears: number[], eras: Era[], now: number): Float64Array[] {
@@ -177,7 +191,12 @@ export function buildScale(
     const years = bandYears(eventYears, eras, now)[i]
     const weight = effectiveCount(years.length, opts.linearUpTo, opts.densityExponent)
     const timePx = (opts.basePx + opts.perEventPx * weight) * zoom
-    const pxPerYear = timePx / (end - start)
+    // Spend the era's event budget on the period containing its events. Empty
+    // leading/trailing years get compressed separately rather than consuming
+    // space that cards in the active period need.
+    const activeYears = opts.maxEmptyPx !== undefined && opts.gapPx !== undefined && years.length > 1
+      ? years[years.length - 1] - years[0] : 0
+    const pxPerYear = timePx / (activeYears > 0 ? activeYears : end - start)
     const step = STEPS.find((s) => s * pxPerYear >= unitPx) ?? 100
 
     // Time units, newest first, clipped to the band.
@@ -202,7 +221,44 @@ export function buildScale(
       segments.at(-1)!.height += height
       y += height
     }
-    for (let u = 0; u < units.length; ) {
+    if (opts.maxEmptyPx !== undefined && opts.gapPx !== undefined) {
+      // Use actual dates, not calendar buckets: a year containing one event
+      // can still have many screens of empty time on either side of it.
+      const dates = [...new Set([end, ...Array.from(years).reverse(), start])]
+      const padding = Math.max(0, (opts.maxEmptyPx - opts.gapPx) / 2)
+      const counts = zoom > 1 ? dateCounts(years) : null
+      // Shared dates need room to open up as zoom increases. Bound that room
+      // by the local event count so single events never acquire long empty tails.
+      const paddingAt = (year: number) => {
+        if (!counts) return padding
+        const count = counts.get(year) ?? 1
+        return count === 1 ? padding : Math.max(padding,
+          Math.min(padding * Math.max(1, zoom), opts.perEventPx * count))
+      }
+      for (let j = 1; j < dates.length; j++) {
+        const from = dates[j - 1], to = dates[j]
+        if (from <= to) continue
+        const fromEvent = j > 1 || years.at(-1) === end
+        const toEvent = j < dates.length - 1 || years[0] === start
+        // Near a band edge, transfer the missing half of an event's display
+        // neighbourhood to its other side. Same-day events at Now still have
+        // the same card budget as events in the middle of a band.
+        const fromPadding = paddingAt(from), toPadding = paddingAt(to)
+        const fromPad = fromEvent ? fromPadding + (from === years.at(-1)
+          ? Math.max(0, fromPadding - (end - from) * pxPerYear) : 0) : 0
+        const toPad = toEvent ? toPadding + (to === years[0]
+          ? Math.max(0, toPadding - (to - start) * pxPerYear) : 0) : 0
+        if ((from - to) * pxPerYear <= Math.max(opts.maxEmptyPx, fromPad + toPad + opts.gapPx)) {
+          push(from, to, false)
+          continue
+        }
+        const gapFrom = from - fromPad / pxPerYear
+        const gapTo = to + toPad / pxPerYear
+        if (from > gapFrom) push(from, gapFrom, false)
+        push(gapFrom, gapTo, true)
+        if (gapTo > to) push(gapTo, to, false)
+      }
+    } else for (let u = 0; u < units.length; ) {
       let run = 0
       while (units[u + run]?.empty) run++
       const from = units[u].from

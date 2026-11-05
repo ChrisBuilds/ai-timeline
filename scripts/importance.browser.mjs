@@ -28,7 +28,7 @@ try {
     const page = await browser.newPage({ viewport, reducedMotion: 'reduce', colorScheme: 'light' })
     page.on('pageerror', (e) => errors.push(String(e)))
     const counts = []
-    for (const zoom of [0.5, 1, 2, 4]) {
+    for (const zoom of [0.5, 1, 2, 4, 40]) {
       // No event parameter: nothing is pinned to make this assertion pass.
       await page.goto(base + `#z=${zoom}`)
       await page.locator('.card').first().waitFor()
@@ -36,28 +36,38 @@ try {
       const result = await page.evaluate(async () => {
         const ids = new Set()
         const collisions = []
+        let leadingSpace = Infinity
         const pause = () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
         const step = Math.max(200, innerHeight / 2)
         for (let y = 0; y < document.documentElement.scrollHeight; y += step) {
           scrollTo(0, y)
           await pause()
           const rows = [...document.querySelectorAll('.card, .event-group')].map((el) => ({ id: el.id, box: el.getBoundingClientRect() })).sort((a, b) => a.box.top - b.box.top)
+          if (y === 0) {
+            const first = [...document.querySelectorAll('.card')].map((el) => el.getBoundingClientRect().top)
+            leadingSpace = Math.min(...first) - document.querySelector('.now').getBoundingClientRect().top
+          }
           for (const card of document.querySelectorAll('.card')) ids.add(card.id)
           const headings = [...document.querySelectorAll('.era-label')].map((e) => e.getBoundingClientRect())
           for (let i = 1; i < rows.length; i++) if (rows[i].box.top < rows[i - 1].box.bottom - 0.5) collisions.push([rows[i - 1].id, rows[i].id])
           for (const r of rows) if (headings.some((h) => r.box.top < h.bottom - 0.5 && r.box.bottom > h.top + 0.5)) collisions.push(['heading', r.id])
         }
-        return { ids: [...ids], collisions, overflow: document.documentElement.scrollWidth > innerWidth, selected: document.querySelector('.card.selected') !== null }
+        return { ids: [...ids], collisions, leadingSpace, overflow: document.documentElement.scrollWidth > innerWidth, selected: document.querySelector('.card.selected') !== null }
       })
       assert.equal(result.selected, false, 'baseline must have no selection')
       assert.deepEqual(result.collisions, [], `row collisions at ${viewport.width}px / ${zoom}×`)
       assert.equal(result.overflow, false, 'horizontal overflow')
+      assert(result.leadingSpace <= 320, `empty leading time was not truncated at ${zoom}× / ${viewport.width}px`)
+      if (zoom === 1) for (const id of ['2024-06-20-claude-3-5-sonnet', '2024-03-13-anthropic-claude-3-haiku']) {
+        assert(result.ids.includes(id), `${id} was grouped despite space at the default zoom`)
+      }
+      if (zoom === 40) assert(result.ids.includes('2025-02-24-claude-3-7-sonnet'), 'zoom could not reveal an event sharing a milestone date')
       for (const id of milestones) assert(result.ids.includes(id), `overview milestone ${id} missing at ${zoom}× / ${viewport.width}px`)
       for (const id of required) assert(result.ids.includes(id), `required launch ${id} missing`)
       counts.push(result.ids.length)
     }
     assert(counts[3] > counts[1], 'zoom did not reveal additional supporting events')
-    console.log(`${viewport.width}px: ${counts.join(', ')} individual cards at 0.5×, 1×, 2×, 4×; ${milestones.length} overview milestones preserved`)
+    console.log(`${viewport.width}px: ${counts.join(', ')} individual cards at 0.5×, 1×, 2×, 4×, 40×; ${milestones.length} overview milestones preserved`)
 
     await page.goto(base + '#e=2022-11-30-chatgpt-launch&z=1')
     await page.locator('.importance').waitFor()
