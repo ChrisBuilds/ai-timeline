@@ -1,0 +1,145 @@
+id: 2026-02-05-claude-opus-4-6
+title: Anthropic releases Claude Opus 4.6
+date: 2026-02-05
+summary: Anthropic released Claude Opus 4.6 with updated coding and agent capabilities and a 1M-token context window in beta.
+description: >-
+  Anthropic made Opus 4.6 available through Claude, its API, and major cloud
+  platforms. The release added a 1M-token context window in beta on the Claude
+  Developer Platform. Anthropic reported gains on coding, agentic, and knowledge
+  work evaluations. METR later estimated a 12-hour 50% task horizon on its
+  software and research task suite, but found that the result was sensitive to
+  task selection and modeling assumptions; it fell to 7 hours 11 minutes when
+  public tasks were excluded. These task-specific estimates do not establish
+  general workplace productivity. Anthropic's later Economic Index reports
+  usage by model class, not Opus 4.6 specifically, so they do not establish
+  version-specific adoption.
+category: model release
+tags:
+  - language model
+  - coding
+  - reasoning
+  - agents
+  - computer use
+organizations:
+  - Anthropic
+sources:
+  - url: https://www.anthropic.com/news/claude-opus-4-6
+    title: Introducing Claude Opus 4.6
+    publisher: Anthropic
+    accessed: 2026-11-05
+  - url: https://www-cdn.anthropic.com/6a5fa276ac68b9aeb0c8b6af5fa36326e0e166dd.pdf
+    title: Claude Opus 4.6 System Card
+    publisher: Anthropic
+    accessed: 2026-11-05
+  - url: https://metr.org/notes/2026-03-20-impact-of-modelling-assumptions-on-time-horizon-results/
+    title: Impact of modeling assumptions on time horizon results
+    publisher: METR
+    accessed: 2026-11-05
+  - url: https://www.anthropic.com/research/economic-index-march-2026-report
+    title: 'Anthropic Economic Index report: Learning curves'
+    publisher: Anthropic
+    accessed: 2026-11-05
+related:
+  - id: 2025-11-24-claude-opus-4-5
+    relation: supersedes
+    source: https://www.anthropic.com/news/claude-opus-4-6
+importance:
+  current: 2026-11-05-v2
+  assessments:
+    - id: 2026-11-05-v2
+      assessed_at: 2026-11-05
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: >-
+        Anthropic's system card and METR's independent evaluation support a
+        capability rating of 3 for substantial measured advances in coding,
+        agent, and long-context work. METR's time-horizon estimate is unusually
+        sensitive to task selection and model fitting, so it is evidence about
+        a selected software and research task distribution, not a general
+        measure of productivity. Version-specific adoption, attributable
+        downstream influence, and broad societal effects remain unknown. The
+        resulting provisional score range is 15–90; the index placement key
+        uses its lower bound, with no accepted point score.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: >-
+            The available sources document release and evaluations but do not
+            identify later technical or institutional changes caused by Opus
+            4.6 specifically. Later Anthropic products and model releases
+            cannot be credited to this version without attributable evidence.
+          evidence:
+            - https://metr.org/notes/2026-03-20-impact-of-modelling-assumptions-on-time-horizon-results/
+            - https://www.anthropic.com/news/claude-opus-4-6
+        adoption:
+          rating: null
+          confidence: low
+          rationale: >-
+            Availability through Claude, the API, and cloud platforms does not
+            establish use. Anthropic's later Economic Index reports behavior
+            by model class, not Opus 4.6 separately, and do not establish
+            version-specific uptake or sustained use.
+          evidence:
+            - https://www.anthropic.com/news/claude-opus-4-6
+            - https://www.anthropic.com/research/economic-index-march-2026-report
+        capability:
+          rating: 3
+          confidence: medium
+          rationale: >-
+            Anthropic reports improved coding, agentic, knowledge-work, and
+            long-context performance, while its system card documents the
+            evaluations and their configurations. METR independently estimated
+            a 12-hour 50% task horizon on its TH1.1 software and research
+            suite, but the estimate fell to 7 hours 11 minutes on private tasks
+            and varied with reasonable modeling choices. This supports
+            substantial measured ability in a bounded technical domain, not a
+            general productivity claim or a definitive ranking over other
+            models.
+          evidence:
+            - https://www.anthropic.com/news/claude-opus-4-6
+            - https://www-cdn.anthropic.com/6a5fa276ac68b9aeb0c8b6af5fa36326e0e166dd.pdf
+            - https://metr.org/notes/2026-03-20-impact-of-modelling-assumptions-on-time-horizon-results/
+        society:
+          rating: null
+          confidence: low
+          rationale: >-
+            The evidence documents a commercial model release and evaluations,
+            but does not measure broad public, professional, or institutional
+            effects attributable to Opus 4.6.
+          evidence:
+            - https://www.anthropic.com/news/claude-opus-4-6
+            - https://www.anthropic.com/research/economic-index-march-2026-report
+      comparisons:
+        - id: 2025-11-24-claude-opus-4-5
+          rationale: >-
+            Opus 4.6 follows Opus 4.5 as Anthropic's higher-capability model
+            release. METR's later TH1.1 estimate for Opus 4.6 is higher than
+            its estimate for Opus 4.5, but Opus 4.6's result is sensitive to
+            task selection and fitting; it does not establish a general
+            productivity or downstream-impact advantage.
+        - id: 2025-08-05-claude-opus-4-1
+          rationale: >-
+            Opus 4.1 is an earlier point in Anthropic's sequence of hosted
+            model releases. The sources available for this assessment do not
+            establish version-specific adoption or attributable downstream
+            effects that distinguish the significance of Opus 4.6 from that
+            earlier release.
+        - id: 2025-01-20-deepseek-r1
+          rationale: >-
+            DeepSeek R1 was released with open weights and a technical report,
+            enabling direct inspection and reuse; Opus 4.6 was a hosted
+            commercial model with a beta long-context option. These releases
+            represent different contributions, and this assessment does not
+            claim equivalent downstream effects or adoption.
+      questions:
+        - What independent evidence measures sustained use of Opus 4.6 separately from other Opus versions?
+        - Which downstream changes can be attributed to Opus 4.6 rather than later models and product integrations?
+        - How do independent evaluations change when task selection and model-fitting assumptions vary?
+      review_after: 2026-12-05
+      review_triggers:
+        - Independent version-specific usage evidence that materially changes the adoption assessment.
+        - New evaluations or attributable downstream effects that materially change the capability or influence assessment.
+issue: 99
+submitted_by: ChrisBuilds
