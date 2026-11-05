@@ -1,0 +1,104 @@
+id: 2024-06-20-claude-3-5-sonnet
+title: Anthropic launches Claude 3.5 Sonnet
+date: "2024-06-20"
+summary: >-
+  Anthropic released Claude 3.5 Sonnet, a vision-capable model, and introduced
+  the Artifacts workspace in preview on Claude.ai.
+description: >-
+  Claude 3.5 Sonnet was the first release in Anthropic's Claude 3.5 model family.
+  It became available on Claude.ai and its iOS app, as well as through the
+  Anthropic API, Amazon Bedrock and Google Cloud Vertex AI. Anthropic also
+  introduced Artifacts in preview, showing generated code, documents and
+  designs in a separate workspace alongside the conversation.
+category: model release
+organizations: [Anthropic]
+tags: [large language model, vision, coding, multimodal]
+sources:
+  - url: https://www.anthropic.com/news/claude-3-5-sonnet
+    title: Introducing Claude 3.5 Sonnet
+    publisher: Anthropic
+    accessed: "2026-11-05"
+  - url: https://www-cdn.anthropic.com/c6a80a657af445f40e31afac050f3bf76d3b1404.pdf
+    title: "The Claude 3 Model Family: Opus, Sonnet, Haiku"
+    publisher: Anthropic
+    accessed: "2026-11-05"
+  - url: https://www-cdn.anthropic.com/fed9cc193a14b84131812372d8d5857f8f304c52/Model%2ACard%2AClaude%2A3%2AAddendum.pdf
+    title: Claude 3.5 Sonnet Model Card Addendum
+    publisher: Anthropic
+    accessed: "2026-11-05"
+  - url: https://assets.anthropic.com/m/4e20a4ab6512e217/original/Anthropic-Response-to-OSTP-RFI-March-2025-Final-Submission-v3.pdf
+    title: Anthropic Response to OSTP RFI (March 2025)
+    publisher: Anthropic
+    accessed: "2026-11-05"
+importance:
+  current: 2026-11-05-v2
+  assessments:
+    - id: 2026-11-05-v2
+      assessed_at: "2026-11-05"
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (assessment prepared for maintainer review)
+      rationale: >-
+        Initial v2 assessment for the June 2024 release. Launch evidence supports a capability rating,
+        while adoption, downstream influence and societal reach remain unknown because the available
+        sources do not provide independent longitudinal evidence attributable to this model release.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: >-
+            The launch and model-card sources describe the release but do not establish downstream
+            effects attributable to this model over time.
+          evidence:
+            - https://www.anthropic.com/news/claude-3-5-sonnet
+            - https://www-cdn.anthropic.com/c6a80a657af445f40e31afac050f3bf76d3b1404.pdf
+        adoption:
+          rating: null
+          confidence: low
+          rationale: >-
+            The announcement establishes product and API availability, not measured sustained use of
+            the initial model by its relevant audiences.
+          evidence:
+            - https://www.anthropic.com/news/claude-3-5-sonnet
+        capability:
+          rating: 3
+          confidence: medium
+          rationale: >-
+            Anthropic reported improved coding and vision performance over earlier Claude models; these
+            vendor evaluations indicate a substantial practical improvement but lack independent
+            confirmation in the cited sources.
+          evidence:
+            - https://www.anthropic.com/news/claude-3-5-sonnet
+            - https://www-cdn.anthropic.com/fed9cc193a14b84131812372d8d5857f8f304c52/Model%2ACard%2AClaude%2A3%2AAddendum.pdf
+        society:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources document a consumer app launch and enterprise access, but provide no evidence
+            of broad societal or institutional effects attributable to this release.
+          evidence:
+            - https://www.anthropic.com/news/claude-3-5-sonnet
+      comparisons:
+        - id: 2024-03-04-claude-3-opus-sonnet
+          rationale: >-
+            This is the closest within-family comparison: the June release is a distinct later model
+            launch, but evidence about Claude 3 usage should not be transferred to Claude 3.5 Sonnet.
+        - id: 2023-03-14-openai-gpt-4
+          rationale: >-
+            GPT-4 is a cross-company multimodal model-release comparison; its established historical
+            reach does not establish comparable adoption for this Sonnet launch.
+        - id: 2022-11-30-chatgpt-launch
+          rationale: >-
+            ChatGPT is a cross-company product-launch comparison with a different adoption pathway;
+            consumer availability for Sonnet alone does not show ChatGPT-scale uptake.
+      questions:
+        - What independent usage evidence isolates adoption of the initial June Sonnet release from the Claude product line?
+        - What downstream practices can be attributed to this model rather than later Claude releases?
+        - Does the June 20 event date refer to the launch date despite the announcement page's June 21 publication date?
+      review_after: "2026-12-05"
+      review_triggers:
+        - Independent evidence measures sustained adoption of the original June 2024 model.
+        - Longitudinal evidence identifies downstream effects attributable to the original model rather than later versions.
+        - Primary-source evidence resolves the June 20 event date versus the page's June 21 publication date.
+issue: 91
+submitted_by: ChrisBuilds
