@@ -1,0 +1,97 @@
+id: 2024-10-22-claude-3-5-sonnet-computer-use
+title: Claude 3.5 Sonnet gains computer use in public beta
+date: "2024-10-22"
+summary: >-
+  Anthropic released an upgraded Claude 3.5 Sonnet and made its experimental
+  computer-use API available in public beta.
+description: >-
+  Developers could direct Claude 3.5 Sonnet to inspect screens and interact
+  with computer interfaces through cursor movement, clicks, and typing. The
+  capability was experimental and available in beta through Anthropic's API,
+  Amazon Bedrock, and Google Cloud Vertex AI. The announcement also introduced
+  Claude 3.5 Haiku for later availability; Haiku was not released on this date.
+category: model release
+organizations: [Anthropic]
+tags: [large language model, computer use, agents]
+sources:
+  - url: https://www.anthropic.com/news/3-5-models-and-computer-use
+    title: Introducing computer use, a new Claude 3.5 Sonnet, and Claude 3.5 Haiku
+    publisher: Anthropic
+    accessed: "2026-11-05"
+importance:
+  current: 2026-11-05-v2
+  assessments:
+    - id: 2026-11-05-v2
+      assessed_at: 2026-11-05
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: >-
+        Initial v2 assessment based on the primary announcement. The new public
+        beta exposes a general computer-interaction capability, but evidence
+        available here does not establish sustained adoption or downstream
+        influence. Ratings are editorial judgments, not measured counts.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: >-
+            The announcement positions computer use as a new general interface
+            capability, but does not establish later changes in developer
+            practice attributable to this release.
+          evidence:
+            - https://www.anthropic.com/news/3-5-models-and-computer-use
+        adoption:
+          rating: null
+          confidence: low
+          rationale: >-
+            Anthropic named companies exploring the beta, but this launch source
+            provides no independent or longitudinal measure of sustained use.
+          evidence:
+            - https://www.anthropic.com/news/3-5-models-and-computer-use
+        capability:
+          rating: 4
+          confidence: medium
+          rationale: >-
+            The API enabled a model to perceive screens and act through common
+            graphical controls, enabling work across standard software. The
+            source also describes the feature as experimental and error-prone.
+          evidence:
+            - https://www.anthropic.com/news/3-5-models-and-computer-use
+        society:
+          rating: null
+          confidence: low
+          rationale: >-
+            A public beta expands access for developers, but the announcement
+            alone does not show broad public, professional, or institutional
+            effects.
+          evidence:
+            - https://www.anthropic.com/news/3-5-models-and-computer-use
+      comparisons:
+        - id: 2023-03-14-openai-gpt-4
+          rationale: >-
+            This event adds a specific general computer-interaction capability
+            but leaves its sustained reach unknown; GPT-4 represents a broader
+            frontier-model release with multimodal input and wider documented
+            access. The comparison helps separate a capability milestone from
+            overall release significance.
+        - id: 2024-03-04-claude-3-opus-sonnet
+          rationale: >-
+            Both are Anthropic model releases. The earlier Claude 3 family
+            introduced vision across a model tier; this event adds experimental
+            action through graphical interfaces, while its longer-term influence
+            and adoption remain unknown.
+      questions:
+        - >-
+          What independent longitudinal evidence establishes sustained use of
+          computer-use APIs and influence on developer practice?
+        - >-
+          Did deployments beyond the launch partners produce measurable
+          professional or societal effects?
+      review_after: "2026-12-05"
+      review_triggers:
+        - >-
+          Reassess when independent evidence documents sustained computer-use
+          adoption, direct successors, or effects on established software work.
+issue: 92
+submitted_by: ChrisBuilds
