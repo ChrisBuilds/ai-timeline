@@ -36,22 +36,31 @@ try {
       const result = await page.evaluate(async () => {
         const ids = new Set()
         const collisions = []
+        let leadingSpace = Infinity
         const pause = () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
         const step = Math.max(200, innerHeight / 2)
         for (let y = 0; y < document.documentElement.scrollHeight; y += step) {
           scrollTo(0, y)
           await pause()
           const rows = [...document.querySelectorAll('.card, .event-group')].map((el) => ({ id: el.id, box: el.getBoundingClientRect() })).sort((a, b) => a.box.top - b.box.top)
+          if (y === 0) {
+            const first = [...document.querySelectorAll('.card')].map((el) => el.getBoundingClientRect().top)
+            leadingSpace = Math.min(...first) - document.querySelector('.now').getBoundingClientRect().top
+          }
           for (const card of document.querySelectorAll('.card')) ids.add(card.id)
           const headings = [...document.querySelectorAll('.era-label')].map((e) => e.getBoundingClientRect())
           for (let i = 1; i < rows.length; i++) if (rows[i].box.top < rows[i - 1].box.bottom - 0.5) collisions.push([rows[i - 1].id, rows[i].id])
           for (const r of rows) if (headings.some((h) => r.box.top < h.bottom - 0.5 && r.box.bottom > h.top + 0.5)) collisions.push(['heading', r.id])
         }
-        return { ids: [...ids], collisions, overflow: document.documentElement.scrollWidth > innerWidth, selected: document.querySelector('.card.selected') !== null }
+        return { ids: [...ids], collisions, leadingSpace, overflow: document.documentElement.scrollWidth > innerWidth, selected: document.querySelector('.card.selected') !== null }
       })
       assert.equal(result.selected, false, 'baseline must have no selection')
       assert.deepEqual(result.collisions, [], `row collisions at ${viewport.width}px / ${zoom}×`)
       assert.equal(result.overflow, false, 'horizontal overflow')
+      assert(result.leadingSpace <= 320, `empty leading time was not truncated at ${zoom}× / ${viewport.width}px`)
+      if (zoom === 1) for (const id of ['2024-06-20-claude-3-5-sonnet', '2024-03-13-anthropic-claude-3-haiku']) {
+        assert(result.ids.includes(id), `${id} was grouped despite space at the default zoom`)
+      }
       for (const id of milestones) assert(result.ids.includes(id), `overview milestone ${id} missing at ${zoom}× / ${viewport.width}px`)
       for (const id of required) assert(result.ids.includes(id), `required launch ${id} missing`)
       counts.push(result.ids.length)

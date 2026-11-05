@@ -118,6 +118,33 @@ describe('effectiveCount', () => {
   })
 })
 
+describe('compressing actual event-free intervals', () => {
+  const era = [{ id: 'current', name: 'Current', start: 2022 }]
+  it('caps the leading blank stretch at every zoom, including a partial empty year', () => {
+    for (const zoom of [0.5, 1, 4, 40]) {
+      const scale = buildScale(era, [2023, 2024.5, 2025.4], 2026.84, zoom)
+      expect(scale.y(2025.4) - scale.y(2026.84)).toBeLessThanOrEqual(DEFAULT_SCALE.maxEmptyPx! + 1e-6)
+      if (zoom >= 1) expect(scale.gaps.some((g) => g.from === 2026.84)).toBe(true)
+    }
+  })
+  it('compresses long intra-year gaps and preserves date projection and its inverse', () => {
+    const dates = [2024.1, 2024.9]
+    const scale = buildScale(era, dates, 2025, 4)
+    expect(scale.gaps.some((g) => g.from < 2024.9 && g.to > 2024.1)).toBe(true)
+    expect(scale.y(2024.1) - scale.y(2024.9)).toBeCloseTo(DEFAULT_SCALE.maxEmptyPx!)
+    for (const date of [2022, 2023, 2024.1, 2024.3, 2024.9, 2025]) {
+      expect(scale.year(scale.y(date))).toBeCloseTo(date, 6)
+    }
+    for (const date of dates) expect(scale.gaps.some((g) => date < g.from && date > g.to)).toBe(false)
+  })
+  it('does not spend the event spacing budget on empty years before the newest event', () => {
+    const dates = [2023, 2024, 2025]
+    const a = buildScale(era, dates, 2026, 1)
+    const b = buildScale(era, dates, 2030, 1)
+    expect(a.y(2024) - a.y(2025)).toBeCloseTo(b.y(2024) - b.y(2025))
+  })
+})
+
 describe('era footer space', () => {
   it('protects the next heading without stretching time or changing the inverse scale', () => {
     const a = buildScale(eras, [2020, 1950], 2026, 1, opts)

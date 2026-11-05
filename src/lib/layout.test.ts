@@ -3,6 +3,43 @@ import { layout, priorityOrder, type LayoutOptions } from './layout'
 
 const opts: LayoutOptions<string> = { lanes: 1, cardHeight: 80, gap: 10, anchorOffset: 10, clusterPx: 30 }
 
+describe('filling available display space', () => {
+  const flexible = { ...opts, fillSpace: true, boundsFor: () => ({ top: 100, bottom: 700 }) }
+  it('reflows cards together to use space beyond a fixed displacement limit in date order', () => {
+    const items = [
+      { item: 'newest', y: 200, score: 1 },
+      { item: 'middle', y: 205, score: 90 },
+      { item: 'oldest', y: 210, score: 2 },
+    ]
+    const out = layout(items, flexible)
+    expect(out.clusters).toEqual([])
+    expect(out.placed.map((c) => c.item)).toEqual(['newest', 'middle', 'oldest'])
+    for (let i = 1; i < out.placed.length; i++) expect(out.placed[i].top).toBeGreaterThanOrEqual(out.placed[i - 1].top + 90)
+    expect(out.placed.map((c) => c.y)).toEqual([200, 205, 210])
+  })
+  it('uses importance only when the bounded interval cannot fit every card', () => {
+    const out = layout([
+      { item: 'minor', y: 200, score: 0 }, { item: 'major', y: 205, score: 100 },
+      { item: 'other', y: 210, score: 50 },
+    ], { ...flexible, boundsFor: () => ({ top: 100, bottom: 270 }) })
+    expect(out.placed.map((c) => c.item)).toEqual(['major', 'other'])
+    expect(out.clusters.flatMap((c) => c.items)).toEqual(['minor'])
+  })
+  it('fits variable heights between required cards without crossing them or a heading', () => {
+    const out = layout([
+      { item: 'required-new', y: 100, score: 1 }, { item: 'minor', y: 110, score: 0 },
+      { item: 'tall', y: 120, score: 10 }, { item: 'required-old', y: 600, score: 1 },
+    ], { ...flexible, mustShow: (id) => id.startsWith('required'),
+      reserved: [{ lane: 0, top: 0, bottom: 80 }], heightFor: (id) => id === 'tall' ? 180 : 80 })
+    expect(out.clusters).toEqual([])
+    for (let i = 1; i < out.placed.length; i++) {
+      const prev = out.placed[i - 1]
+      expect(out.placed[i].top).toBeGreaterThanOrEqual(prev.top + (prev.item === 'tall' ? 180 : 80) + 10)
+    }
+    expect(out.placed[0].top).toBeGreaterThanOrEqual(80)
+  })
+})
+
 describe('layout', () => {
   it('uses nearby whitespace for a lower-scored event while preserving its date', () => {
     const items = [{ item: 'major', y: 200, score: 90 }, { item: 'minor', y: 240, score: 0 }]
@@ -160,6 +197,17 @@ describe('at scale', () => {
 
   it('gives the same result with a precomputed order', () => {
     expect(layout(items, { ...two, order: priorityOrder(items) })).toEqual(layout(items, two))
+  })
+
+  it('packs a large collection between required anchors without overlap or event loss', () => {
+    const required = new Set(items.filter((_, i) => i % 100 === 0).map((it) => it.item))
+    const out = layout(items, { ...opts, fillSpace: true,
+      mustShow: (item) => required.has(item), boundsFor: () => ({ top: 0, bottom: 42000 }) })
+    for (let i = 1; i < out.placed.length; i++) {
+      expect(out.placed[i].top).toBeGreaterThanOrEqual(out.placed[i - 1].top + opts.cardHeight + opts.gap - 1e-8)
+    }
+    expect(out.placed.length + out.clusters.reduce((sum, c) => sum + c.items.length, 0)).toBe(items.length)
+    for (const id of required) expect(out.placed.some((c) => c.item === id)).toBe(true)
   })
 })
 

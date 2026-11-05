@@ -61,14 +61,22 @@ export function buildGroups<T extends GroupItem>(base: TimeScale, placed: Placed
   let previousBottom = -Infinity
   let pending: { raw: number; band: number; segment: number; interval: number; items: T[] } | null = null
 
-  function flush() {
+  function flush(nextCardTop = Infinity) {
     if (!pending) return
     const { raw, band, items } = pending
     const eraId = base.bands[band].era.id
     const top = Math.max(raw + extra, previousBottom + GAP)
-    const added = top + GROUP_HEIGHT + GAP + ANCHOR - (raw + extra)
-    cuts.push({ at: raw, extra: added, before: extra })
-    extra += added
+    const era = base.bands[band]
+    const segment = era.segments[pending.segment]
+    const limit = segment && segment !== era.segments.at(-1)
+      ? segment.top + segment.height : era.top + era.height
+    // A group uses existing whitespace first. Insert only the shortfall before
+    // the next card or boundary, rather than always adding a whole row of time.
+    const added = Math.max(0, top + GROUP_HEIGHT + GAP - (Math.min(nextCardTop, limit) + extra))
+    if (added) {
+      cuts.push({ at: raw, extra: added, before: extra })
+      extra += added
+    }
     groups.push({ id: `${eraId}:${items[0].id}:${items.at(-1)!.id}`, eraId, top, y: top + GROUP_HEIGHT / 2, height: GROUP_HEIGHT, label: period(items), items })
     previousBottom = top + GROUP_HEIGHT
     pending = null
@@ -81,7 +89,7 @@ export function buildGroups<T extends GroupItem>(base: TimeScale, placed: Placed
     stats.get(base.bands[band].era.id)!.total++
     const segment = base.bands[band].segments.findIndex((s) => !s.gap && entry.raw >= s.top - 1e-6 && entry.raw <= s.top + s.height + 1e-6)
     if (entry.card) {
-      flush()
+      flush(entry.card.top)
       const card = { ...entry.card, y: entry.card.y + extra, top: entry.card.top + extra }
       cards.push(card)
       previousBottom = card.top + heightFor(card.item)

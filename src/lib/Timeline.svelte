@@ -3,7 +3,7 @@
   import type { TimelineEvent } from './types'
   import type { TimeScale } from './scale'
   import type { Cluster, PlacedCard } from './layout'
-  import { formatRange } from './dates'
+  import { formatDate, formatRange } from './dates'
   import { categoryColor } from './categories'
   import { buildRibbon } from './ribbon'
   import { formatCount, type EventGroup, type EraStats } from './groups'
@@ -197,6 +197,15 @@
   function cardLeft(lane: number): number {
     return lane === 0 ? spineX + 24 : spineX - 24 - cardWidth
   }
+
+  function gapLabel(gap: { from: number; to: number }): string {
+    const month = (value: number) => {
+      const year = Math.floor(value)
+      const start = Date.UTC(year, 0, 1)
+      return formatDate(new Date(start + (value - year) * (Date.UTC(year + 1, 0, 1) - start)).toISOString().slice(0, 7))
+    }
+    return `${month(gap.to)} – ${month(gap.from)}`
+  }
 </script>
 
 <svelte:window onpointerdown={closeOutside} onkeydown={(e) => { if (e.key === 'Escape') dismissGroup() }} />
@@ -239,11 +248,11 @@
       style:top="{gap.top}px"
       style:height="{gap.height}px"
       role="note"
-      aria-label="No events from {Math.floor(gap.to)} to {Math.floor(gap.from)}; this stretch is compressed"
+      aria-label="No events during {gapLabel(gap)}; this stretch is compressed"
     >
       <span class="gap-line" aria-hidden="true"></span>
       {#if side}
-        <span class="gap-label {side}" aria-hidden="true">{Math.floor(gap.to)}–{Math.floor(gap.from)} · no recorded events</span>
+        <span class="gap-label {side}" aria-hidden="true">{gapLabel(gap)} · no recorded events</span>
       {/if}
     </div>
   {/each}

@@ -29,6 +29,19 @@ const dense = Array.from({ length: 240 }, (_, i) => ({
 }))
 
 describe('collapsed groups', () => {
+  it('uses an existing gap for a group without adding more timeline height', () => {
+    const events = [{ id: 'hidden', date: '2024-06-01', score: 0 }, { id: 'visible', date: '2023-01-01', score: 100 }]
+    const years = new Map(events.map((e) => [e.id, toYear(e.date)]))
+    const base = buildScale([{ id: 'all', name: 'All', start: 2022 }], [...years.values()], 2026.84, 1,
+      { basePx: 1000, perEventPx: 0, topPad: 0, bottomPad: 0, headerPx: 110, footerPx: 100 })
+    const y = base.y(years.get('visible')!)
+    const out = buildGroups(base, [{ item: events[1], y, top: y - 18, lane: 0 }],
+      [{ y: base.y(years.get('hidden')!), items: [events[0]] }], years, () => 100)
+    expect(out.groups).toHaveLength(1)
+    expect(out.scale.height).toBe(base.height)
+    expect(out.placed[0].top).toBe(y - 18)
+    expect(out.groups[0].top + GROUP_HEIGHT).toBeLessThan(out.placed[0].top)
+  })
   it('conserves every event and keeps registered/shown era totals consistent at each zoom', () => {
     for (const zoom of [0.5, 1, 4, 40]) {
       const out = arrange(dense, zoom)
@@ -137,7 +150,7 @@ it('splits hidden runs at the true date of a displaced milestone', () => {
     { id: 'before', date: '2024-01-04' }, { id: 'after', date: '2024-01-02' },
   ]
   const years = new Map(events.map((e) => [e.id, toYear(e.date)]))
-  const base = buildScale(eras, [...years.values()], 2026.84, 1, { ...DEFAULT_SCALE, headerPx: 110, footerPx: 500 })
+  const base = buildScale(eras, [...years.values()], 2026.84, 1, { ...DEFAULT_SCALE, maxEmptyPx: undefined, headerPx: 110, footerPx: 500 })
   const arranged = layout(events.map((item) => ({ item, y: base.y(years.get(item.id)!), score: 50 })), {
     lanes: 1, cardHeight: 100, gap: 10, anchorOffset: 18, clusterPx: 28, mustShow: (e) => e.id === 'a' || e.id === 'b',
   })

@@ -33,6 +33,8 @@ export interface LayoutOptions<T = unknown> {
   maxShift?: number
   /** Display bounds, such as the event's era, including the full card height. */
   boundsFor?: (item: T) => { top: number; bottom: number }
+  /** In one lane, pack cards in date order into the space between required cards. */
+  fillSpace?: boolean
   /** Hidden events closer than this merge into one "+N" marker. */
   clusterPx: number
   /**
@@ -112,6 +114,11 @@ function occupy(spans: Span[], top: number, bottom: number) {
   spans.splice(i, j - i, [top, bottom])
 }
 
+function pinnedFirst<T>(order: ArrayLike<number>, items: Positioned<T>[], pin: T | undefined): number[] {
+  const pinned = pin === undefined ? -1 : items.findIndex((it) => it.item === pin)
+  return pinned < 0 ? Array.from(order) : [pinned, ...Array.from(order).filter((i) => i !== pinned)]
+}
+
 export function layout<T>(items: Positioned<T>[], opts: LayoutOptions<T>) {
   const n = items.length
   const order = opts.order ?? priorityOrder(items)
@@ -148,7 +155,53 @@ export function layout<T>(items: Positioned<T>[], opts: LayoutOptions<T>) {
     tops[i] = bestTop
   }
 
-  for (let k = 0; k < order.length; k++) {
+  if (opts.fillSpace && opts.lanes === 1 && opts.boundsFor) {
+    const anchors = Array.from(required).sort((a, b) => items[a].y - items[b].y || a - b)
+    const regions = new Map<string, { top: number; bottom: number; used: number; indexes: number[] }>()
+    // Each interval has a fixed display budget. Choose by importance, then
+    // reflow the chosen cards together so an early placement cannot strand space.
+    const candidates = pinnedFirst(order, items, opts.pin)
+    for (const i of candidates) {
+      if (laneOf[i] !== -1) continue
+      let lo = 0, hi = anchors.length
+      while (lo < hi) {
+        const mid = (lo + hi) >> 1
+        if (items[anchors[mid]].y <= items[i].y) lo = mid + 1
+        else hi = mid
+      }
+      let { top, bottom } = opts.boundsFor(items[i].item)
+      const previous = anchors[lo - 1], next = anchors[lo]
+      if (previous !== undefined) top = Math.max(top, tops[previous] + heights[previous] + opts.gap)
+      if (next !== undefined) bottom = Math.min(bottom, tops[next] - opts.gap)
+      for (const r of opts.reserved ?? []) {
+        if (r.lane !== 0) continue
+        if (r.bottom <= items[i].y) top = Math.max(top, r.bottom + opts.gap)
+        else if (r.top > items[i].y) bottom = Math.min(bottom, r.top - opts.gap)
+      }
+      const key = `${top}:${bottom}`
+      let region = regions.get(key)
+      if (!region) { region = { top, bottom, used: 0, indexes: [] }; regions.set(key, region) }
+      const needed = heights[i] + (region.indexes.length ? opts.gap : 0)
+      if (region.used + needed > bottom - top) continue
+      region.used += needed
+      region.indexes.push(i)
+    }
+    for (const region of regions.values()) {
+      region.indexes.sort((a, b) => items[a].y - items[b].y || a - b)
+      let edge = region.top
+      for (const i of region.indexes) {
+        tops[i] = Math.max(edge, items[i].y - opts.anchorOffset)
+        edge = tops[i] + heights[i] + opts.gap
+        laneOf[i] = 0
+      }
+      edge = region.bottom
+      for (let k = region.indexes.length - 1; k >= 0; k--) {
+        const i = region.indexes[k]
+        tops[i] = Math.min(tops[i], edge - heights[i])
+        edge = tops[i] - opts.gap
+      }
+    }
+  } else for (let k = 0; k < order.length; k++) {
     const i = order[k]
     if (laneOf[i] !== -1) continue
     const top = items[i].y - opts.anchorOffset
