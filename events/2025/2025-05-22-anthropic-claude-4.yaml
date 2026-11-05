@@ -1,0 +1,93 @@
+id: 2025-05-22-anthropic-claude-4
+title: Anthropic releases Claude Opus 4 and Sonnet 4
+date: 2025-05-22
+summary: Anthropic released Claude Opus 4 and Sonnet 4 with hybrid fast and extended-thinking modes, tool use, and improvements for coding and long-running agent tasks.
+description: |
+  Anthropic introduced Opus 4 and Sonnet 4 as hybrid reasoning models that can provide near-instant responses or use extended thinking. Both models could use tools during extended thinking and in parallel. Anthropic reported improvements for coding and sustained agent tasks, and described Opus 4 as able to work continuously for several hours. The reported benchmark comparisons and performance claims are Anthropic's; its launch announcement also quotes selected partners.
+category: model release
+tags:
+  - language model
+  - reasoning
+  - coding agents
+organizations:
+  - Anthropic
+sources:
+  - url: https://www.anthropic.com/news/claude-4
+    title: Introducing Claude 4
+    publisher: Anthropic
+    accessed: 2026-11-05
+importance:
+  current: 2026-11-05-v2
+  assessments:
+    - id: 2026-11-05-v2
+      assessed_at: 2026-11-05
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: >-
+        The launch establishes a substantial model capability contribution, including hybrid reasoning,
+        tool use during thinking, and sustained coding-agent work. Partner statements provide limited
+        launch-time use evidence, but the announcement does not establish broad sustained adoption or
+        downstream field influence attributable to these models. The resulting range is provisional and
+        is not an accepted point score.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: >-
+            The launch describes potential uses and partner reactions but does not establish later changes
+            in practice or field-level effects attributable to Opus 4 or Sonnet 4.
+          evidence:
+            - https://www.anthropic.com/news/claude-4
+        adoption:
+          rating: 1
+          confidence: low
+          rationale: >-
+            Anthropic's launch includes selected partner reports of early testing and product plans, which
+            indicate isolated use rather than measured or sustained adoption. Access through plans, APIs,
+            and cloud platforms is not itself evidence of use.
+          evidence:
+            - https://www.anthropic.com/news/claude-4
+        capability:
+          rating: 4
+          confidence: medium
+          rationale: >-
+            Hybrid fast and extended-thinking modes, tool use during reasoning, parallel tools, and sustained
+            multi-hour agent work enable substantially different coding and reasoning workflows. Benchmark
+            and comparative performance claims are reported by Anthropic.
+          evidence:
+            - https://www.anthropic.com/news/claude-4
+        society:
+          rating: null
+          confidence: low
+          rationale: >-
+            The source emphasizes developer and enterprise work but does not establish broad or lasting
+            societal or institutional effects attributable to this release.
+          evidence:
+            - https://www.anthropic.com/news/claude-4
+      comparisons:
+        - id: 2023-03-14-openai-gpt-4
+          rationale: >-
+            GPT-4's accepted v2 score is 80, reflecting a broader multimodal model release. Claude 4's
+            launch supports a high capability rating for agentic coding, while adoption and influence remain
+            less established in the evidence assessed here.
+        - id: 2022-11-30-chatgpt-launch
+          rationale: >-
+            ChatGPT's accepted v2 score is 90, supported by later evidence of broad everyday use and
+            societal reach. The Claude 4 announcement documents a major model capability release but not
+            comparable downstream reach.
+        - id: 2025-02-24-claude-code-research-preview
+          rationale: >-
+            Claude Code's accepted v2 score is 78 for a distinct developer product and workflow. This
+            assessment concerns the underlying model release; it does not attribute later Claude Code
+            adoption to Opus 4 or Sonnet 4 without release-specific evidence.
+      questions:
+        - Do independent longitudinal sources establish sustained adoption of Opus 4 or Sonnet 4 among developer and enterprise users?
+        - Which later coding-agent changes are attributable to these model releases rather than to separate product integrations?
+        - How do independent evaluations compare the models' long-running task and tool-use capabilities with contemporaneous systems?
+      review_after: 2026-12-05
+      review_triggers:
+        - Independent evidence of sustained model-specific adoption or downstream influence.
+        - Evidence separating model effects from Claude Code and other product integrations.
+issue: 94
+submitted_by: ChrisBuilds
