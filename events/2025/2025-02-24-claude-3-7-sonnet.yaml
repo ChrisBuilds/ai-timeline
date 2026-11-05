@@ -1,0 +1,103 @@
+id: 2025-02-24-claude-3-7-sonnet
+title: Anthropic releases Claude 3.7 Sonnet with extended thinking
+date: "2025-02-24"
+summary: >-
+  Anthropic released Claude 3.7 Sonnet, combining standard responses with
+  optional extended thinking in one model.
+description: >-
+  The model could respond in standard mode or spend additional inference time
+  on visible, step-by-step thinking. API users could set a thinking-token
+  budget. Claude 3.7 Sonnet was available across Anthropic plans and through
+  its developer platform, Amazon Bedrock, and Google Cloud Vertex AI; extended
+  thinking was unavailable on the free Claude tier. Claude Code was announced
+  alongside it as a separate limited research preview.
+category: model release
+organizations: [Anthropic]
+tags: [large language model, reasoning, extended thinking]
+sources:
+  - url: https://www.anthropic.com/news/claude-3-7-sonnet
+    title: Claude 3.7 Sonnet and Claude Code
+    publisher: Anthropic
+    accessed: "2026-11-05"
+importance:
+  current: 2026-11-05-v2
+  assessments:
+    - id: 2026-11-05-v2
+      assessed_at: 2026-11-05
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: >-
+        Initial v2 assessment based on Anthropic's announcement. The model
+        combines ordinary responses and optional extended inference-time
+        reasoning in one release. Evidence available in the announcement
+        establishes technical availability and vendor-reported evaluations,
+        but not sustained adoption or downstream influence. Ratings are
+        editorial judgments, not measured counts.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: >-
+            The announcement describes a hybrid model design, but does not
+            establish subsequent changes in industry practice attributable to
+            this release.
+          evidence:
+            - https://www.anthropic.com/news/claude-3-7-sonnet
+        adoption:
+          rating: null
+          confidence: low
+          rationale: >-
+            Broad product and API availability does not measure sustained use;
+            the launch source provides no independent longitudinal adoption
+            evidence for this specific model.
+          evidence:
+            - https://www.anthropic.com/news/claude-3-7-sonnet
+        capability:
+          rating: 4
+          confidence: medium
+          rationale: >-
+            Combining ordinary and optional extended reasoning in one model
+            with a configurable API thinking budget is a substantial practical
+            capability. Performance comparisons in the launch source are
+            vendor-reported.
+          evidence:
+            - https://www.anthropic.com/news/claude-3-7-sonnet
+        society:
+          rating: null
+          confidence: low
+          rationale: >-
+            Availability across consumer and developer products establishes
+            reach, but the source does not establish broad societal or
+            institutional effects of this model release.
+          evidence:
+            - https://www.anthropic.com/news/claude-3-7-sonnet
+      comparisons:
+        - id: 2024-09-12-openai-o1
+          rationale: >-
+            Both releases make additional inference-time reasoning a selectable
+            capability. Claude 3.7 Sonnet integrates standard and extended
+            modes in one model; the o1 release introduced a separate reasoning
+            model. Neither launch announcement alone establishes long-term
+            adoption.
+        - id: 2023-03-14-openai-gpt-4
+          rationale: >-
+            GPT-4 provides context for a broadly accessible frontier-model
+            release emphasizing multimodal inputs and benchmark results.
+            Claude 3.7 Sonnet's distinct contribution is configurable
+            inference-time reasoning; the vendor's comparative results are
+            not independent downstream-impact evidence.
+      questions:
+        - >-
+          What independent longitudinal evidence establishes sustained use of
+          extended thinking in this release?
+        - >-
+          How much later model design or developer practice can be attributed
+          specifically to the hybrid reasoning approach?
+      review_after: "2026-12-05"
+      review_triggers:
+        - >-
+          Reassess when independent evidence documents sustained adoption,
+          direct model-design successors, or changes to established practice.
+issue: 93
+submitted_by: ChrisBuilds
