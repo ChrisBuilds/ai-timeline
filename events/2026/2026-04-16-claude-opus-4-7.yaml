@@ -1,0 +1,184 @@
+id: 2026-04-16-claude-opus-4-7
+title: Anthropic releases Claude Opus 4.7
+date: 2026-04-16
+summary: Anthropic released Claude Opus 4.7 with updates to coding, agentic work, and image understanding, plus safeguards for high-risk cybersecurity requests.
+description: >-
+  Anthropic made Opus 4.7 generally available across Claude, its API, and major
+  cloud platforms. The release emphasized software engineering, long-running
+  agent tasks, and higher-resolution image input. Anthropic said the model was
+  below its limited-access Mythos Preview on relevant evaluations and did not
+  advance its capability frontier. The release included safeguards intended
+  to detect and block prohibited or high-risk cybersecurity requests. In July,
+  Anthropic reported that Opus 4.7 accessed a real company's public system
+  during a cybersecurity evaluation after a test-environment misconfiguration
+  exposed the internet. Anthropic said standard production classifiers and
+  monitoring were not active in that evaluation, though Opus 4.7 retained its
+  model-specific safety training; this was not a reported product deployment.
+category: model release
+tags:
+  - language model
+  - coding
+  - reasoning
+  - agents
+  - computer use
+  - cybersecurity
+organizations:
+  - Anthropic
+sources:
+  - url: https://www.anthropic.com/news/claude-opus-4-7
+    title: Introducing Claude Opus 4.7
+    publisher: Anthropic
+    accessed: 2026-11-05
+  - url: https://www-cdn.anthropic.com/037f06850df7fbe871e206dad004c3db5fd50340/Claude%20Opus%204.7%20System%20Card.pdf
+    title: Claude Opus 4.7 System Card
+    publisher: Anthropic
+    accessed: 2026-11-05
+  - url: https://epoch.ai/models/claude-opus-4-7
+    title: Claude Opus 4.7
+    publisher: Epoch AI
+    accessed: 2026-11-05
+  - url: https://epoch.ai/benchmarks/swe-bench-verified
+    title: SWE-bench Verified
+    publisher: Epoch AI
+    accessed: 2026-11-05
+  - url: https://github.blog/changelog/2026-04-16-claude-opus-4-7-is-generally-available/
+    title: Claude Opus 4.7 is generally available
+    publisher: GitHub
+    accessed: 2026-11-05
+  - url: https://www.anthropic.com/news/investigating-incidents-cybersecurity-evals
+    title: Investigating three incidents in our cybersecurity evaluations
+    publisher: Anthropic
+    accessed: 2026-11-05
+  - url: https://www.anthropic.com/research/alignment-assessment-cybersecurity-incidents
+    title: An alignment assessment of recent cybersecurity incidents
+    publisher: Anthropic
+    accessed: 2026-11-05
+  - url: https://www.reuters.com/legal/litigation/anthropic-reports-fourth-cybersecurity-incident-with-early-version-claude-2026-09-09/
+    title: Anthropic discloses fourth AI hacking incident missed in earlier review
+    publisher: Reuters
+    accessed: 2026-11-05
+related:
+  - id: 2026-02-05-claude-opus-4-6
+    relation: supersedes
+    source: https://www.anthropic.com/news/claude-opus-4-7
+importance:
+  current: 2026-11-05-v2
+  assessments:
+    - id: 2026-11-05-v2
+      assessed_at: 2026-11-05
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: >-
+        The release provides a useful but incremental improvement to a hosted
+        frontier model, with independent benchmark evidence of stronger
+        performance on some software tasks and access through products and
+        cloud platforms. Named launch partners describe early testing, which
+        supports isolated use but does not measure sustained reach. A later
+        cyber-evaluation incident had a concrete effect on one organization's
+        data, but resulted from a test-environment misconfiguration and does
+        not establish broad public impact. Attributable downstream influence
+        remains unknown. With influence unknown and the other dimensions
+        rated 1, 2, and 1, the provisional score interval is 18–53; the index
+        placement key uses the lower bound, with no accepted point score.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources establish the release, evaluations, and one later
+            cyber-evaluation incident, but do not identify durable technical
+            or institutional changes caused by Opus 4.7. Later Anthropic
+            releases and general agent adoption cannot be attributed to this
+            model version without version-specific evidence.
+          evidence:
+            - https://www.anthropic.com/news/claude-opus-4-7
+            - https://www.anthropic.com/news/investigating-incidents-cybersecurity-evals
+        adoption:
+          rating: 1
+          confidence: low
+          rationale: >-
+            Anthropic's launch page includes named organizations describing
+            concrete early tests and use cases, and GitHub announced a rollout
+            in Copilot. These attributed examples support isolated experiments
+            or deployments, the rating-1 anchor, but are vendor-selected and
+            do not measure sustained or widespread use. Availability alone is
+            not treated as adoption.
+          evidence:
+            - https://www.anthropic.com/news/claude-opus-4-7
+            - https://github.blog/changelog/2026-04-16-claude-opus-4-7-is-generally-available/
+        capability:
+          rating: 2
+          confidence: medium
+          rationale: >-
+            Epoch AI's independent SWE-bench Verified evaluation reports a
+            higher result for Opus 4.7 than Opus 4.6, and its model comparison
+            covers other capability benchmarks. The comparison is evidence of
+            useful improvement in an established coding approach, not a new
+            capability class: the reported Opus 4.7 run used max effort, while
+            the Opus 4.6 profile has no effort suffix, so the effort settings
+            are not demonstrably matched. Epoch upgraded its scaffold in
+            February 2026. Anthropic's system card also says Opus
+            4.7 did not advance its capability frontier because Mythos Preview
+            scored higher on relevant evaluations. This supports rating 2,
+            below the substantial-advance anchor.
+          evidence:
+            - https://epoch.ai/models/claude-opus-4-7
+            - https://epoch.ai/benchmarks/swe-bench-verified
+            - https://www-cdn.anthropic.com/037f06850df7fbe871e206dad004c3db5fd50340/Claude%20Opus%204.7%20System%20Card.pdf
+        society:
+          rating: 1
+          confidence: low
+          rationale: >-
+            Anthropic reported that Opus 4.7 obtained credentials and access to
+            production data on a real company's public system during a
+            cybersecurity evaluation after a test-environment misconfiguration
+            exposed the internet. Standard production classifiers and
+            monitoring were not active, though the model-specific safety
+            training remained. Reuters also identified Opus 4.7 among the
+            models involved. This is evidence of a specific organizational
+            effect, the rating-1 anchor; it does not show broad public harm or
+            effects from ordinary product use.
+          evidence:
+            - https://www.anthropic.com/news/investigating-incidents-cybersecurity-evals
+            - https://www.anthropic.com/research/alignment-assessment-cybersecurity-incidents
+            - https://www.reuters.com/legal/litigation/anthropic-reports-fourth-cybersecurity-incident-with-early-version-claude-2026-09-09/
+      comparisons:
+        - id: 2026-02-05-claude-opus-4-6
+          rationale: >-
+            Opus 4.6 is the direct predecessor. Epoch AI reports a higher
+            Opus 4.7 result on SWE-bench Verified, but the Opus 4.7 run used
+            max effort while the Opus 4.6 profile has no effort suffix; the
+            effort settings are therefore not demonstrably matched. Epoch also
+            upgraded its scaffold in February 2026. This supports a measured
+            improvement with setup limits, while the prior v2 assessment rated
+            Opus 4.6's capability 3 based on different evidence, including
+            METR task-horizon results. Adoption and downstream effects remain
+            unknown for both versions beyond isolated reported use.
+        - id: 2025-11-24-claude-opus-4-5
+          rationale: >-
+            Opus 4.5 is an earlier release in the same hosted model line.
+            Opus 4.7 adds higher-resolution vision and model updates for
+            coding and long-running agents, but the evidence here supports
+            incremental refinement rather than a foundational new class of
+            practical work. Version-specific adoption evidence remains sparse
+            for both releases.
+        - id: 2025-01-20-deepseek-r1
+          rationale: >-
+            DeepSeek R1 was released with open weights and a technical report,
+            enabling direct reuse and inspection. Opus 4.7 was a closed-weight
+            hosted release with broad commercial availability and cyber
+            safeguards. They represent different contributions, and available
+            evidence does not establish equivalent downstream influence or
+            adoption.
+      questions:
+        - What independent, version-specific evidence measures sustained use of Opus 4.7 across products and APIs?
+        - What changes to Anthropic's evaluation and deployment safeguards followed the cyber-evaluation incident?
+        - Do later independent evaluations show that Opus 4.7 enabled substantial work that Opus 4.6 could not perform?
+      review_after: 2026-12-05
+      review_triggers:
+        - Independent usage evidence that distinguishes Opus 4.7 and materially changes the adoption assessment.
+        - Independent replication or new attributable work that materially changes the capability assessment.
+        - New evidence about organizational effects or safeguards following the cyber-evaluation incident.
+issue: 101
+submitted_by: ChrisBuilds
