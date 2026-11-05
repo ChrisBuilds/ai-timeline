@@ -1,0 +1,102 @@
+id: 2023-08-22-meta-seamlessm4t
+title: Meta releases SeamlessM4T for multilingual speech and text translation
+date: "2023-08-22"
+summary: >-
+  Meta released SeamlessM4T, a single model for multilingual speech recognition and translation among
+  speech and text.
+description: >-
+  SeamlessM4T supports speech recognition and several speech and text translation tasks across many
+  languages, with language coverage varying by task. Meta released the model for research use and
+  published the SeamlessAlign dataset metadata. The model's performance comparisons are reported by
+  its authors.
+category: model release
+organizations:
+  - Meta AI
+tags:
+  - speech translation
+  - machine translation
+  - multilingual models
+sources:
+  - url: https://ai.meta.com/blog/seamless-m4t/
+    title: Introducing a foundational multimodal model for speech translation
+    publisher: Meta AI
+    accessed: "2026-11-05"
+  - url: https://arxiv.org/abs/2308.11596
+    title: SeamlessM4T—Massively Multilingual & Multimodal Machine Translation
+    publisher: arXiv
+    accessed: "2026-11-05"
+artifacts:
+  - type: paper
+    url: https://arxiv.org/abs/2308.11596
+    title: SeamlessM4T—Massively Multilingual & Multimodal Machine Translation
+  - type: repo
+    url: https://github.com/facebookresearch/seamless_communication
+    title: Seamless Communication
+importance:
+  current: 2026-11-05-provisional
+  assessments:
+    - id: 2026-11-05-provisional
+      assessed_at: "2026-11-05"
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: >-
+        Initial provisional assessment based on the announcement and paper. The technical scope is
+        documented, but adoption, attributed downstream influence, and broader societal reach have
+        not been independently reviewed. Do not treat the provisional lower-bound score as an
+        accepted point score.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: >-
+            The submitted sources establish the model's contribution but do not measure downstream
+            influence attributable to this release.
+          evidence:
+            - https://arxiv.org/abs/2308.11596
+        adoption:
+          rating: null
+          confidence: low
+          rationale: >-
+            Public research access is documented, but sustained use across the relevant research and
+            developer audiences has not been assessed.
+          evidence:
+            - https://ai.meta.com/blog/seamless-m4t/
+        capability:
+          rating: 3
+          confidence: medium
+          rationale: >-
+            The paper describes a unified model for speech recognition and multiple speech and text
+            translation tasks, a substantial practical capability; its comparative performance claims
+            are author-reported.
+          evidence:
+            - https://arxiv.org/abs/2308.11596
+        society:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources describe intended multilingual communication benefits but do not establish
+            broader societal or institutional effects.
+          evidence:
+            - https://ai.meta.com/blog/seamless-m4t/
+      comparisons:
+        - id: 2023-02-24-meta-llama-research-release
+          rationale: >-
+            Both events made research models available, but LLaMA focused on text generation while
+            SeamlessM4T combined speech recognition and speech and text translation. Relative adoption
+            and influence for SeamlessM4T remain unassessed.
+        - id: 2023-03-14-openai-gpt-4
+          rationale: >-
+            GPT-4 was a general-purpose language model release, while SeamlessM4T targeted multilingual
+            speech and text translation. This comparison distinguishes their audiences and capabilities;
+            it does not resolve SeamlessM4T's unknown adoption or influence.
+      questions:
+        - What independent evidence establishes sustained adoption by researchers and developers?
+        - Which later systems or research results are directly attributable to this release?
+        - What evidence supports broader effects on multilingual communication?
+      review_after: "2026-12-05"
+      review_triggers:
+        - Independent evidence of adoption or directly attributable successor systems.
+        - Evidence of broader societal or institutional use, or corrected historical attribution.
+issue: 264
+submitted_by: ChrisBuilds
