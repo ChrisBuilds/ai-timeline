@@ -1,0 +1,150 @@
+id: 2026-06-30-claude-sonnet-5
+title: Anthropic releases Claude Sonnet 5
+date: 2026-06-30
+summary: Anthropic released Claude Sonnet 5, an upgrade to Sonnet 4.6 for coding, tool use, and agentic work, as the default model for Free and Pro users.
+description: >-
+  Anthropic released Sonnet 5, which it called its most agentic Sonnet yet, as
+  an upgrade to Sonnet 4.6. It became the default model for Claude's Free and
+  Pro plans and was available on Max, Team, and Enterprise plans and through the
+  Claude API as `claude-sonnet-5`. At launch Anthropic priced it at $2 per
+  million input tokens and $10 per million output tokens, which it made
+  permanent in August. Anthropic described improvements over Sonnet 4.6 in
+  reasoning, tool use, coding, and knowledge work; its system card reports gains
+  across coding, agentic search, multimodal reasoning, and professional tasks.
+  The company also cited early-access partners describing multi-step software
+  work and agents handling insurance and data-analysis workflows. These are
+  developer-produced evaluations and selected partner reports. The system card
+  says Sonnet 5 trailed Anthropic's Opus and Mythos models in most evaluations
+  and did not cross its automated AI R&D capability threshold. GitHub announced
+  a gradual Copilot rollout the same day.
+  {note: Anthropic's launch page records a June 30 correction to its BrowseComp chart methodology and an August pricing update; the event description distinguishes the launch price from its later permanence.}
+category: model release
+tags:
+  - language model
+  - coding
+  - agents
+  - tool use
+organizations:
+  - Anthropic
+sources:
+  - url: https://www.anthropic.com/news/claude-sonnet-5
+    title: Introducing Claude Sonnet 5
+    publisher: Anthropic
+    accessed: 2026-11-06
+  - url: https://www.anthropic.com/claude-sonnet-5-system-card
+    title: 'System Card: Claude Sonnet 5'
+    publisher: Anthropic
+    accessed: 2026-11-06
+  - url: https://github.com/tecunningham/ai-rnd-benchmarks/blob/main/cards/anthropic/claude-sonnet-5-system-card.txt
+    title: 'Extracted text of Claude Sonnet 5 system card'
+    publisher: 'GitHub, tecunningham/ai-rnd-benchmarks'
+    accessed: 2026-11-06
+  - url: https://github.blog/changelog/2026-06-30-claude-sonnet-5-is-generally-available-for-github-copilot/
+    title: Claude Sonnet 5 is generally available for GitHub Copilot
+    publisher: GitHub
+    accessed: 2026-11-06
+related:
+  - id: 2026-02-17-claude-sonnet-4-6
+    relation: builds_on
+    source: https://www.anthropic.com/news/claude-sonnet-5
+importance:
+  current: 2026-11-06-v2
+  assessments:
+    - id: 2026-11-06-v2
+      assessed_at: 2026-11-06
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: >-
+        Anthropic reports capability gains across coding, agentic search,
+        multimodal reasoning, and professional tasks, and early-access partners
+        describe completed multi-step software work and agents handling
+        insurance and data-analysis tasks. These vendor-produced evaluations
+        and selected partner reports support capability 3 and isolated adoption
+        (1), but do not establish sustained use or downstream change. GitHub's
+        same-day Copilot rollout shows distribution, not measured use. With
+        influence and society unknown, the provisional score range is 21–66;
+        the index placement key uses its lower bound, with no accepted point
+        score.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources describe the release but do not identify later
+            technical or institutional changes attributable to Sonnet 5
+            itself, as distinct from other Claude releases.
+          evidence:
+            - https://www.anthropic.com/news/claude-sonnet-5
+            - https://www.anthropic.com/claude-sonnet-5-system-card
+        adoption:
+          rating: 1
+          confidence: low
+          rationale: >-
+            Anthropic reports that named early-access partners used Sonnet 5
+            for multi-step software tasks and agents for insurance workflows
+            and live data analysis. These selected vendor-reported examples
+            support the isolated experiment or deployment anchor. They do not
+            measure sustained or widespread use; default and Copilot
+            availability alone are not counted as adoption.
+          evidence:
+            - https://www.anthropic.com/news/claude-sonnet-5
+            - https://github.blog/changelog/2026-06-30-claude-sonnet-5-is-generally-available-for-github-copilot/
+        capability:
+          rating: 3
+          confidence: low
+          rationale: >-
+            Anthropic's system card reports gains over Sonnet 4.6 across coding,
+            agentic search, multimodal reasoning, and professional tasks, while
+            its announcement cites partner reports of completing multi-step
+            work that earlier Sonnet models did not finish. This supports the
+            substantial new practical ability anchor. The evaluations and
+            selected partner accounts are vendor-produced, so confidence is
+            low; they do not establish a foundational new class of work.
+          evidence:
+            - https://www.anthropic.com/claude-sonnet-5-system-card
+            - https://github.com/tecunningham/ai-rnd-benchmarks/blob/main/cards/anthropic/claude-sonnet-5-system-card.txt
+            - https://www.anthropic.com/news/claude-sonnet-5
+        society:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources do not measure public, professional, or institutional
+            effects attributable to Sonnet 5.
+          evidence:
+            - https://www.anthropic.com/news/claude-sonnet-5
+      comparisons:
+        - id: 2026-02-17-claude-sonnet-4-6
+          rationale: >-
+            Sonnet 4.6 is the direct predecessor and was assessed at capability
+            3 based on reported substantial improvements across several practical
+            domains. Sonnet 5 reports a similar breadth of improvements, with
+            partner descriptions of tasks earlier Sonnet models did not finish;
+            the evidence is still vendor-produced and selected, so confidence
+            remains low.
+        - id: 2026-04-16-claude-opus-4-7
+          rationale: >-
+            Opus 4.7 was a higher-tier hosted model with independent benchmark
+            evidence; its assessment rated capability 2 because the available
+            comparison showed useful refinement rather than substantial new
+            ability. Sonnet 5 is lower-priced and its system card and selected
+            early-access reports describe broad gains across practical tasks,
+            including work previous Sonnet models did not finish. This supports
+            capability 3, with low confidence because the evidence is vendor-
+            produced and selected.
+        - id: 2025-01-20-deepseek-r1
+          rationale: >-
+            DeepSeek R1 shipped open weights and a technical report that others
+            could inspect and reuse. Sonnet 5 is a closed hosted model, and the
+            evidence does not establish a comparable research or open-ecosystem
+            contribution.
+      questions:
+        - What independent, version-specific evidence measures sustained use of Sonnet 5 across products and APIs?
+        - Do independent evaluations reproduce the reported gains over Sonnet 4.6 and the claimed closeness to Opus 4.8?
+        - Which downstream workflows can be attributed to Sonnet 5 rather than to the Claude 5 family generally?
+      review_after: 2026-12-06
+      review_triggers:
+        - Independent usage evidence that distinguishes Sonnet 5 and changes the adoption assessment.
+        - Independent evaluations that materially change the capability assessment.
+issue: 103
+submitted_by: ChrisBuilds

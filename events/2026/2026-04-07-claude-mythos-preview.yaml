@@ -1,0 +1,135 @@
+id: 2026-04-07-claude-mythos-preview
+title: Anthropic opens restricted access to Claude Mythos Preview
+date: 2026-04-07
+summary: Anthropic opened Claude Mythos Preview to selected organizations through Project Glasswing for defensive security work.
+description: >-
+  Anthropic announced Project Glasswing and opened Claude Mythos Preview to
+  twelve named launch partners, with access extended to more than 40 additional
+  organizations that build or maintain critical software. It described the
+  general-purpose model as available for defensive security work and said it
+  did not plan to make it generally available.
+
+  The UK AI Security Institute later independently evaluated this preview. In
+  its controlled cyber range, a 32-step simulated corporate network attack,
+  Mythos Preview completed an average of 22 steps and finished the whole range
+  in three of ten attempts; Claude Opus 4.6 averaged 16 steps under the same
+  evaluation. AISI said the range used vulnerable systems without active
+  defenders or defensive tools, so the result does not establish performance
+  against well-defended real networks. Its evaluation also found improved
+  performance on capture-the-flag tasks, including a 73% success rate on its
+  expert-level set.
+category: model release
+tags:
+  - language model
+  - cybersecurity
+  - coding
+  - agents
+  - safety
+organizations:
+  - Anthropic
+  - UK AI Security Institute
+sources:
+  - url: https://www.anthropic.com/project/glasswing
+    title: Project Glasswing
+    publisher: Anthropic
+    accessed: 2026-11-06
+  - url: https://www.aisi.gov.uk/blog/our-evaluation-of-claude-mythos-previews-cyber-capabilities
+    title: Our evaluation of Claude Mythos Preview’s cyber capabilities
+    publisher: UK AI Security Institute
+    accessed: 2026-11-06
+  - url: https://www.anthropic.com/research/mythos-preview
+    title: Assessing Claude Mythos Preview's cybersecurity capabilities
+    publisher: Anthropic
+    accessed: 2026-11-06
+  - url: https://www.anthropic.com/claude-mythos-preview-system-card
+    title: 'System Card: Claude Mythos Preview'
+    publisher: Anthropic
+    accessed: 2026-11-06
+related: []
+importance:
+  current: 2026-11-06-v2
+  assessments:
+    - id: 2026-11-06-v2
+      assessed_at: 2026-11-06
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (research assessment prepared for maintainer review)
+      rationale: >-
+        The preview was used in restricted defensive-security trials and an
+        independent UK AISI evaluation documented a substantial advance on
+        specific controlled cyber tasks. AISI's range lacked active defenders,
+        so its results do not establish capability against hardened systems.
+        The evidence supports isolated use, local follow-on evaluation and
+        institutional attention, rather than field-wide effects. With adoption 1, capability 3 and society 1, influence remains unknown;
+        this gives a provisional range of 23–58. As a new event its lower
+        bound is the index placement key, with no accepted point score.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources document an independent evaluation but do not show
+            later technical or institutional changes attributable to this
+            preview. Follow-on evaluation alone does not establish downstream
+            influence.
+          evidence:
+            - https://www.aisi.gov.uk/blog/our-evaluation-of-claude-mythos-previews-cyber-capabilities
+        adoption:
+          rating: 1
+          confidence: medium
+          rationale: >-
+            Anthropic reports use by its selected Glasswing partners, and the
+            UK AISI independently tested this specific model. This documents
+            isolated trials in the relevant security audience, not repeated or
+            broad adoption; partner-use details remain partly vendor-reported.
+          evidence:
+            - https://www.anthropic.com/project/glasswing
+            - https://www.aisi.gov.uk/blog/our-evaluation-of-claude-mythos-previews-cyber-capabilities
+        capability:
+          rating: 3
+          confidence: medium
+          rationale: >-
+            AISI independently found a substantial improvement on its cyber
+            evaluations: Mythos Preview completed a 32-step simulated network
+            attack three times in ten attempts and averaged 22 steps, versus
+            Opus 4.6's 16. The 73% expert CTF success rate adds evidence of
+            substantial new practical ability. These are controlled tasks
+            against vulnerable systems, not hardened real networks.
+          evidence:
+            - https://www.aisi.gov.uk/blog/our-evaluation-of-claude-mythos-previews-cyber-capabilities
+        society:
+          rating: 1
+          confidence: medium
+          rationale: >-
+            The UK AI Security Institute publicly evaluated this model and
+            issued cyber-defense implications. This is a local institutional
+            effect; the evidence does not show broad or sustained changes to
+            public expectations, governance or security practice.
+          evidence:
+            - https://www.aisi.gov.uk/blog/our-evaluation-of-claude-mythos-previews-cyber-capabilities
+      comparisons:
+        - id: 2026-02-05-claude-opus-4-6
+          rationale: >-
+            AISI compared both models on the same 32-step cyber range: Mythos
+            Preview averaged 22 steps and Opus 4.6 averaged 16. The measured
+            gap shows stronger performance on this simulation; both events
+            currently have capability rating 3, and these results do not
+            establish a general model ordering.
+        - id: 2023-03-14-openai-gpt-4
+          rationale: >-
+            GPT-4's release through ChatGPT Plus and an API supports broad
+            practical use, while the evidence here documents selected partner
+            trials and an independent evaluation of Mythos Preview. This
+            compares documented use and audience; restricted access alone is
+            not treated as a lower significance rating.
+      questions:
+        - How much of the reported partner use led to repeated security work or upstream fixes?
+        - How well do AISI's results generalize to systems with active defenders and current defensive tooling?
+        - Did this preview change security evaluation or disclosure practices beyond the documented AISI evaluation?
+      review_after: 2026-12-06
+      review_triggers:
+        - Independent evaluations in defended environments or real-world security operations.
+        - Attributable evidence of repeated use or field-level practice changes.
+        - Evidence clarifying the model-specific share of vulnerabilities that were verified and patched.
+issue: 110
+submitted_by: ChrisBuilds
