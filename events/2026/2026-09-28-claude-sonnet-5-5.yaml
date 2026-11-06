@@ -1,0 +1,140 @@
+id: 2026-09-28-claude-sonnet-5-5
+title: Anthropic releases Claude Sonnet 5.5
+date: 2026-09-28
+summary: Anthropic released Claude Sonnet 5.5, reporting faster performance and lower task costs than Sonnet 5 for coding and knowledge work.
+description: >-
+  Anthropic released Claude Sonnet 5.5 on September 28, 2026, as the second
+  model in its Claude 5.5 family. It positioned the model as a faster,
+  lower-cost complement to Opus 5.5, priced at $2 per million input tokens and
+  $10 per million output tokens. Anthropic said Sonnet 5.5 runs more than 30%
+  faster and costs up to 30% less on most work than Sonnet 5. Its announcement
+  reported a 70.6% score on Terminal-Bench 4.0, compared with 10.3% for Sonnet
+  5, and described customer evaluations of coding and knowledge-work tasks.
+  These performance results and examples are attributed to Anthropic. Vals AI
+  separately evaluated Sonnet 5.5 across its benchmark suite; its Terminal-Bench
+  4.0 result included fallback assistance from Sonnet 5 on refusals.
+category: model release
+tags:
+  - language model
+  - coding
+  - agents
+organizations:
+  - Anthropic
+related:
+  - id: 2026-06-30-claude-sonnet-5
+    relation: builds_on
+    source: https://www.anthropic.com/claude-sonnet-5-5
+sources:
+  - url: https://www.anthropic.com/claude-sonnet-5-5
+    title: Introducing Claude Sonnet 5.5
+    publisher: Anthropic
+    accessed: 2026-11-06
+  - url: https://platform.claude.com/docs/en/models/sonnet-5-5/overview
+    title: Claude Sonnet 5.5 model overview
+    publisher: Anthropic
+    accessed: 2026-11-06
+  - url: https://vals-ai.com/models/anthropic_claude-sonnet-5-5
+    title: Claude Sonnet 5.5 Benchmarks, Cost and Capabilities
+    publisher: Vals AI
+    accessed: 2026-11-06
+  - url: https://www.anthropic.com/claude-sonnet-5-5-system-card
+    title: 'System Card: Claude Sonnet 5.5'
+    publisher: Anthropic
+    accessed: 2026-11-06
+importance:
+  current: 2026-11-06-v2
+  assessments:
+    - id: 2026-11-06-v2
+      assessed_at: 2026-11-06
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: >-
+        Anthropic reports large improvements over Sonnet 5 on a coding benchmark
+        and presents customer evaluations of coding and knowledge-work tasks.
+        Vals AI independently evaluated the model across its benchmark suite,
+        while noting fallback assistance for some refusals. This evidence
+        supports a substantial practical-ability rating and named early trials,
+        but does not establish sustained adoption or downstream effects. With
+        influence and society unknown, adoption 1 and capability 3 yield a
+        provisional score range of 21-66; the index placement key uses the
+        lower bound, with no accepted point score.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources describe release evaluations and early trials but do
+            not identify later technical, product, or institutional changes
+            attributable to Sonnet 5.5 itself.
+          evidence:
+            - https://www.anthropic.com/claude-sonnet-5-5
+        adoption:
+          rating: 1
+          confidence: low
+          rationale: >-
+            Anthropic reports pre-release evaluations by named customers:
+            CodeRabbit tested code reviews across different complexity levels,
+            and Unity tested multi-step Unity Editor and coding tasks. These
+            vendor-selected trials meet the isolated-experiment anchor; they
+            do not show sustained use, and CodeRabbit's planned rollout is not
+            counted as evidence of use.
+          evidence:
+            - https://www.anthropic.com/claude-sonnet-5-5
+        capability:
+          rating: 3
+          confidence: medium
+          rationale: >-
+            Anthropic reports a large gain over Sonnet 5 on Terminal-Bench 4.0
+            and substantial results in customer evaluations of real coding,
+            code-review, and knowledge-work tasks. Vals AI independently
+            evaluated Sonnet 5.5 across its benchmark suite, including
+            Terminal-Bench 4.0; its run used a different harness and included
+            Sonnet 5 fallback assistance on refusals. Together the evidence
+            supports substantial new practical ability in bounded work, though
+            it does not establish broad autonomous capability or independently
+            reproduce Anthropic's matched comparison.
+          evidence:
+            - https://www.anthropic.com/claude-sonnet-5-5
+            - https://vals-ai.com/models/anthropic_claude-sonnet-5-5
+        society:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources do not measure public, professional, or institutional
+            effects attributable to Sonnet 5.5 beyond selected early customer
+            evaluations.
+          evidence:
+            - https://www.anthropic.com/claude-sonnet-5-5
+      comparisons:
+        - id: 2026-06-30-claude-sonnet-5
+          rationale: >-
+            Sonnet 5 is the predecessor explicitly named in the release. Both
+            assessments support capability 3 and adoption 1 from substantial
+            coding-task results and isolated customer examples, while evidence
+            for sustained use and attributable downstream influence remains
+            limited.
+        - id: 2026-09-22-claude-opus-5-5
+          rationale: >-
+            Opus 5.5 is the higher-cost sibling model. Anthropic positions
+            Sonnet 5.5 for faster, less costly well-scoped work and reports
+            performance close to Opus on selected evaluations; this is a
+            comparison of role and benchmark evidence, not a source-stated
+            technical lineage or evidence of equal use.
+        - id: 2025-01-20-deepseek-r1
+          rationale: >-
+            DeepSeek R1 was released with open weights and a technical report
+            others could inspect and reuse. Sonnet 5.5 is a hosted model whose
+            demonstrated contribution is substantial performance on bounded
+            practical tasks, without a comparable open research artifact.
+      questions:
+        - Do independent evaluations reproduce the reported improvements over Sonnet 5 under matched conditions?
+        - Does model-specific evidence show repeated use beyond the launch-period customer trials?
+        - What later products or workflows can be attributed to Sonnet 5.5 itself?
+      review_after: 2026-12-06
+      review_triggers:
+        - Independent matched evaluations that materially change the capability assessment.
+        - Version-specific evidence of sustained use across Sonnet 5.5's relevant audience.
+        - Measured downstream or institutional effects attributable to Sonnet 5.5.
+issue: 108
+submitted_by: ChrisBuilds
