@@ -138,11 +138,23 @@
     return () => clearTimeout(t)
   })
   // A leaving card follows its date marker, so it shrinks into its node even mid-zoom.
+  const rowOf = new WeakMap<PlacedCard<TimelineEvent>, { card: PlacedCard<TimelineEvent>; leaving: boolean }>()
   const rows = $derived.by(() => {
-    const now = clock
-    const shifted = shifts.size
-      ? shownCards.map((card) => { const d = shiftOf(card.item.id, now); return { card: d ? { ...card, top: card.top + d } : card, leaving: false } })
-      : shownCards.map((card) => ({ card, leaving: false }))
+    void clock
+    // Read the time here, so a zoom frame that rebuilds the rows anyway also
+    // advances the shifts, and the shift loop below has nothing left to do.
+    const now = performance.now()
+    if (!ticked) rebuilt = true
+    ticked = false
+    // Rows keep their identity while their card is unchanged, so a frame that
+    // only moves a few shifting cards doesn't update every row.
+    const shifted = shownCards.map((card) => {
+      const d = shifts.size ? shiftOf(card.item.id, now) : 0
+      if (d) return { card: { ...card, top: card.top + d }, leaving: false }
+      let row = rowOf.get(card)
+      if (!row) rowOf.set(card, row = { card, leaving: false })
+      return row
+    })
     if (!motion.leaving.length) return shifted
     const yOf = new Map<TimelineEvent, number>()
     for (const l of motion.leaving) yOf.set(l.item, NaN)
@@ -168,6 +180,8 @@
   let offsetsFor: string | null = null
   let shifts = $state.raw(new Map<string, { from: number; start: number }>())
   let clock = $state(0)
+  let rebuilt = false
+  let ticked = false
   const easeOut = (t: number) => 1 - (1 - t) ** 3
   function shiftOf(id: string, now: number): number {
     const s = shifts.get(id)
@@ -201,7 +215,10 @@
   $effect(() => {
     if (!shifts.size) return
     let frame = requestAnimationFrame(function step(now) {
-      clock = now
+      // When something else, such as a zoom frame, rebuilt the rows since the
+      // last step, the shifts already moved; don't add a second render.
+      if (rebuilt) rebuilt = false
+      else { ticked = true; clock = now }
       const live = [...shifts].filter(([, s]) => now - s.start < SHIFT_MS)
       if (live.length !== shifts.size) shifts = new Map(live)
       else frame = requestAnimationFrame(step)
