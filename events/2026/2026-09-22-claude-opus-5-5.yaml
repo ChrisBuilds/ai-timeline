@@ -1,0 +1,135 @@
+id: 2026-09-22-claude-opus-5-5
+title: Anthropic releases Claude Opus 5.5
+date: 2026-09-22
+summary: Anthropic released Claude Opus 5.5, reporting improved coding and knowledge-work performance and lower typical workload costs than Opus 5.
+description: >-
+  Anthropic introduced Claude Opus 5.5 as the first model in its Claude 5.5
+  family on September 22, 2026. It was available through the Claude API and
+  cloud platforms, at $4 per million input tokens and $20 per million output
+  tokens. Anthropic reported stronger performance than Opus 5 on its selected
+  coding, computer-use, and knowledge-work evaluations and a 40% lower cost on
+  typical workloads. It reported that an early tester completed a 680,000-line
+  code migration in less than a day, and described customer evaluations,
+  including Box's test of token use. These are attributed company claims and
+  selected examples, not independent evidence of broad or sustained adoption. The release's
+  published benchmark results use different effort settings and, when
+  safeguards intervene, some benchmark tasks are completed by fallback models;
+  they should not be read as a single like-for-like measure of the model alone.
+category: model release
+tags:
+  - language model
+  - coding
+  - agents
+  - computer use
+organizations:
+  - Anthropic
+sources:
+  - url: https://www.anthropic.com/claude-opus-5-5
+    title: Introducing Claude Opus 5.5
+    publisher: Anthropic
+    accessed: 2026-11-06
+  - url: https://anthropic.com/claude-opus-5-5-system-card
+    title: 'System Card: Claude Opus 5.5'
+    publisher: Anthropic
+    accessed: 2026-11-06
+related:
+  - id: 2026-07-24-claude-opus-5
+    relation: builds_on
+    source: https://www.anthropic.com/claude-opus-5-5
+importance:
+  current: 2026-11-06-v2
+  assessments:
+    - id: 2026-11-06-v2
+      assessed_at: 2026-11-06
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: >-
+        Anthropic reports capability gains over Opus 5 across selected
+        agentic coding, computer-use, and knowledge-work evaluations, including
+        a 680,000-line migration reportedly completed in less than a day. This
+        supports substantial practical ability (capability 3), while a named
+        customer evaluation supports isolated testing (adoption 1). Confidence
+        is low because the performance and use examples are vendor-selected
+        and reported, and there is no independent, version-specific evidence
+        of sustained use. Later influence and societal effects remain unknown.
+        With influence and society unknown, adoption 1, and capability 3, the
+        provisional score interval is 21–66, with no
+        accepted point score.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: >-
+            No evidence yet identifies later technical, product, or
+            institutional changes attributable to Opus 5.5 itself, separate
+            from the broader Claude model family.
+          evidence:
+            - https://www.anthropic.com/claude-opus-5-5
+        adoption:
+          rating: 1
+          confidence: low
+          rationale: >-
+            Anthropic's launch page includes a named Box evaluation of Opus
+            5.5's token use on Box AI work. This supports an isolated model
+            test, the rating-1 anchor, but the example is selected and
+            published by Anthropic and says nothing about sustained or broad
+            use. Platform availability is not counted as adoption.
+          evidence:
+            - https://www.anthropic.com/claude-opus-5-5
+        capability:
+          rating: 3
+          confidence: low
+          rationale: >-
+            Anthropic reports gains over Opus 5 on selected coding,
+            computer-use, and knowledge-work evaluations, alongside an early
+            tester's account of completing a 680,000-line code migration in
+            less than a day. This is evidence of substantial new practical
+            ability, the rating-3 anchor. The evidence is vendor-produced and
+            selected; benchmark effort settings differ, and safeguard-triggered
+            tasks may be completed by fallback models. Those limits lower
+            confidence but do not change the magnitude rating.
+          evidence:
+            - https://www.anthropic.com/claude-opus-5-5
+        society:
+          rating: null
+          confidence: low
+          rationale: >-
+            The available sources do not measure public, professional, or
+            institutional effects attributable to Opus 5.5.
+          evidence:
+            - https://www.anthropic.com/claude-opus-5-5
+      comparisons:
+        - id: 2026-07-24-claude-opus-5
+          rationale: >-
+            Opus 5 is the direct predecessor, and both releases meet the
+            substantial-practical-ability anchor on reported multi-step coding
+            work. Opus 5.5 has additional vendor-reported gains across selected
+            coding, computer-use, and knowledge-work evaluations, but the tasks
+            and evaluation setups do not support a direct cross-release ranking
+            beyond the shared anchor.
+        - id: 2026-04-16-claude-opus-4-7
+          rationale: >-
+            Opus 4.7 is an earlier hosted model in Anthropic's Opus line. Its
+            assessment recognizes useful improvements and isolated early use.
+            Opus 5.5 is similarly a closed hosted release with vendor-reported
+            task gains and one named customer evaluation; evidence does not
+            establish a distinct field-level effect or sustained adoption.
+        - id: 2025-01-20-deepseek-r1
+          rationale: >-
+            DeepSeek R1 was released with open weights and a technical report
+            that others could inspect and reuse. Opus 5.5 is a hosted model
+            whose contribution is an efficiency and capability update within
+            an established line; this comparison concerns the different forms
+            of contribution rather than a direct performance ranking.
+      questions:
+        - What independent, version-specific evidence measures sustained use of Opus 5.5?
+        - Do independent evaluations reproduce the reported gains over Opus 5 under matched conditions?
+        - Do lower costs change which model teams select for specific workflows?
+      review_after: 2026-12-06
+      review_triggers:
+        - Independent usage evidence that materially changes the adoption assessment.
+        - Independent matched evaluations that materially change the capability assessment.
+        - Measured downstream or institutional effects attributable to Opus 5.5.
+issue: 107
+submitted_by: ChrisBuilds
