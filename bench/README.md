@@ -6,7 +6,7 @@ pull request before it reaches the site.
 
 | Command | What it does |
 | --- | --- |
-| `npm run bench` | Micro-benchmarks (`bench/core.bench.ts`) for the work done on every zoom frame, filter change and keystroke: `buildScale`, `layout`, collapsed groups, projected ribbon geometry, search and filters, at 1,000, 5,000 and 20,000 events. |
+| `npm run bench` | Micro-benchmarks (`bench/core.bench.ts`) for the work done on every zoom frame, filter change and keystroke: `buildScale`, `layout`, ribbon and hidden-node geometry, search and filters, at 1,000, 5,000 and 20,000 events. |
 | `npm run build && npm run bench:browser` | Loads the built site in Chromium with synthetic data, with the CPU slowed 4x to stand in for a low-end phone, on a desktop and a phone viewport. Measures time to the first card, long tasks while loading, DOM size, frame times while zooming and scrolling, and how long filtering and selecting an event take. Options: `--sizes 1000,5000`, `--cpu 6`, `--json out.json`, `--budgets`. |
 | `npm run build && npm run bench:profile -- <load\|filter\|select\|zoom> [events]` | Records one interaction with Chromium's CPU profiler and lists the functions with the most self time. Build with `npx vite build --minify false` to see real function names. |
 
@@ -36,10 +36,11 @@ faster, and only loosen them on purpose, with the reason in the PR.
 - **Layout runs in O(n log n).** Each lane keeps its occupied spans sorted, so
   placing a card is a binary search, and the placement order (by importance)
   is sorted once per data or filter change rather than on every zoom frame.
-- **Only what is near the screen is rendered.** Cards, `+N` markers, year marks
+- **Only what is near the screen is rendered.** Cards, hidden-event nodes, year marks
   and gaps outside a window from half a screen above the view to half a screen
   below it are left out of the DOM. The window moves in 256px steps, so
-  scrolling re-renders only when it crosses a step.
+  scrolling re-renders only when it crosses a step. Hidden-event nodes in that
+  window are one SVG path, however many there are.
 - **Eras grow sublinearly.** Past 12 events, an era's height grows with the
   event count to the power 0.4, so 20,000 events make a timeline a few dozen
   screens tall at zoom 1 instead of thousands, and zooming reveals the rest.
@@ -53,7 +54,7 @@ faster, and only loosen them on purpose, with the reason in the PR.
   deep reactive proxy taxes every read of every event.
 - **Cheap per-frame work.** Per-event years and scores are plain arrays in event
   order, `scale.y()` finds its segment with a binary search, cards use
-  `contain: strict`, and cards fade in with a CSS animation rather than a script
-  transition.
+  `contain: strict`, and cards grow out of and shrink into their nodes with CSS
+  transitions rather than script animation.
 
 Set `CHROMIUM_PATH=/path/to/chromium` to use an existing browser executable for browser benchmarks and profiles.

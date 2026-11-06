@@ -7,10 +7,10 @@ name: Performance
 # Results are in the run summary and in the bench-results artifact.
 on:
   pull_request:
-    paths: ['src/**', 'bench/**', 'scripts/selection-motion.browser.mjs', 'scripts/importance.browser.mjs', 'scripts/groups.browser.mjs', 'index.html', 'vite.config.ts', 'package.json', 'package-lock.json', '.github/workflows/performance.yml']
+    paths: ['src/**', 'bench/**', 'scripts/selection-motion.browser.mjs', 'scripts/importance.browser.mjs', 'scripts/nodes.browser.mjs', 'index.html', 'vite.config.ts', 'package.json', 'package-lock.json', '.github/workflows/performance.yml']
   push:
     branches: [main]
-    paths: ['src/**', 'bench/**', 'scripts/selection-motion.browser.mjs', 'scripts/importance.browser.mjs', 'scripts/groups.browser.mjs', 'index.html', 'vite.config.ts', 'package.json', 'package-lock.json']
+    paths: ['src/**', 'bench/**', 'scripts/selection-motion.browser.mjs', 'scripts/importance.browser.mjs', 'scripts/nodes.browser.mjs', 'index.html', 'vite.config.ts', 'package.json', 'package-lock.json']
   workflow_dispatch:
 
 permissions:
@@ -54,8 +54,8 @@ jobs:
           node bench/browser.mjs --sizes 5000 --budgets --json bench-browser.json | tee bench-browser.md
       - name: Selection motion browser checks
         run: node scripts/selection-motion.browser.mjs
-      - name: Collapsed group browser checks
-        run: node scripts/groups.browser.mjs
+      - name: Node reveal browser checks
+        run: node scripts/nodes.browser.mjs
       - name: Importance and overview browser checks
         run: node scripts/importance.browser.mjs
       - name: Summary

@@ -42,7 +42,7 @@ try {
         for (let y = 0; y < document.documentElement.scrollHeight; y += step) {
           scrollTo(0, y)
           await pause()
-          const rows = [...document.querySelectorAll('.card, .event-group')].map((el) => ({ id: el.id, box: el.getBoundingClientRect() })).sort((a, b) => a.box.top - b.box.top)
+          const rows = [...document.querySelectorAll('.card')].map((el) => ({ id: el.id, box: el.getBoundingClientRect() })).sort((a, b) => a.box.top - b.box.top)
           if (y === 0) {
             const first = [...document.querySelectorAll('.card')].map((el) => el.getBoundingClientRect().top)
             leadingSpace = Math.min(...first) - document.querySelector('.now').getBoundingClientRect().top
@@ -109,9 +109,9 @@ try {
       await page.locator('#space-0.card').scrollIntoViewIfNeeded()
       if (count === 2) {
         await page.locator('#space-1.card').waitFor()
-        assert.equal(await page.locator('.event-group').count(), 0, 'a zero-score event was buried despite nearby space')
+        assert.equal(await page.locator('.nodes path').first().getAttribute('d'), '', 'a zero-score event was buried despite nearby space')
       } else {
-        await page.locator('.event-group').first().waitFor()
+        await page.waitForFunction(() => document.querySelector('.nodes path')?.getAttribute('d'))
         assert.equal(await page.locator('#space-7.card').count(), 0, 'lowest score should yield when space is full')
       }
       await page.close()
@@ -153,7 +153,7 @@ try {
     await page.close()
   }
   assert.deepEqual(errors, [])
-  console.log('Importance browser checks passed: baseline overview, zoom progression, collision-free groups, score history, hidden selection and filters.')
+  console.log('Importance browser checks passed: baseline overview, zoom progression, collision-free cards, hidden nodes, score history, hidden selection and filters.')
 } finally {
   await browser?.close()
   server.kill()

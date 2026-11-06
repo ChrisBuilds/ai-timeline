@@ -17,17 +17,19 @@ Width means events hidden by the current layout, including nonmatching events re
 
 `ribbon.ts` constructs equal-duration calendar bins within each era, selecting month, quarter, half-year, year or multi-year windows according to zoom. Partial end bins are clipped. Counts use an absolute capped logarithmic mapping from 2 to 16 pixels (12 on narrow layouts); extreme counts cannot make the ribbon dominate the interface. Cubic smoothstep joins avoid width overshoot. Paths end at era headers and compressed gaps, so density never bleeds across those spaces.
 
-The ribbon is neutral in both themes. Category, selection and filter colors do not alter its width or fill. Persistent collapsed group rows provide discovery and interaction; the ribbon supplies a secondary density cue.
+The ribbon is neutral in both themes. Category, selection and filter colors do not alter its width or fill. Nodes on the spine provide discovery and interaction; the ribbon supplies a secondary density cue.
 
-## Collapsed event groups
+## Hidden events as nodes
 
-`groups.ts` collects chronological hidden runs between visible milestones, splitting at era boundaries and compressed empty spans. Each neutral row has a stack icon, an exact “N more events” count, actual month/year range and a chevron. Era headings show registered totals and the number shown as individual events at this zoom. Counts cover the entire collection, independent of viewport virtualization; filters reprioritize and dim events without removing their context.
+Events without a card at the current zoom are small neutral nodes on the spine, at their true dates. `nodes.ts` draws every node in the rendered window into one SVG path, skipping a node within 2px of the previous one, so thousands of hidden events cost one DOM element. Era headings show registered totals and the number shown as cards at this zoom. Hidden events add no display space: the timeline's scale is the calendar scale.
 
-Groups reserve their own 64px display rows. A reversible projection adds non-time space around them and maps era headers, milestones, gaps, year ticks and ribbon paths into that space. Date navigation and zoom use the projected scale and its inverse. Group rows never take room away from selected cards or overlap headings. The underlying milestone selection is unchanged by this extra display space.
+Hovering near a node rings it and shows its date and title; clicking it selects the event, which pins a card for it. Keyboard users reach the same events through search and `j`/`k` stepping.
 
-Opening a group does not change zoom or reflow the timeline. Small groups show a simple chronological list. Groups larger than 12 events provide scoped title/date search and 12-item pages, making every event reachable at the current zoom. Pagination resets the list position, and Escape closes the browser and restores its originating button. The browser initially focuses its container so opening a group does not summon a phone keyboard. Selecting an event pins and navigates to it; an explicit optional action zooms into the period. Menu scroll/touch containment shares the detail sheet's guards.
+## Reveal motion
 
-Run `npm run test:groups` for browser coverage in both themes at desktop, phone and 320px widths. Unit tests cover count conservation, chronology, era/gap boundaries, equal dates, selected-card collisions and date/position inversion. Core benchmarks include group construction and the complete projected zoom path.
+As zooming in gives an event room, its card grows out of its node: `transform-origin` is set to the node, so the card scales up from that point while its leader and dot fade in (340ms, ease-out). As zooming out takes the room away, the card shrinks and fades back into its node (300ms, ease-in) behind the cards closing up; it is inert and hidden from assistive tech while it goes. `RevealTracker` in `nodes.ts` compares consecutive layouts to find cards that appeared or went, and the motion is CSS transitions, so a card that returns mid-animation turns around from where it is rather than restarting. A leaving card keeps following its date marker, so it still lands on its node during a zoom glide. When the layout moves a card by 40 to 360px in one frame because its neighbours changed, the jump is eased out with an additive `translate`. Selection changes keep their own motion; reduced motion turns all of this off.
+
+Run `npm run test:nodes` for browser coverage in both themes at desktop, phone and 320px widths: hidden nodes, cards growing in and shrinking out with no full-size pops, settled cards without collisions, node hover and click, and reduced motion.
 
 Zoom generally narrows the ribbon as hidden events become visible. Collision thresholds, bin changes and expanded selections can change hidden counts locally; width is not a claim about historical importance or absolute activity. Compressed empty spans are labeled “no recorded events.”
 
@@ -49,10 +51,10 @@ These animations run only during selection. Normal scroll and zoom never trigger
 
 Desktop selection reserves room for the detail panel. At tablet widths the panel is narrower. Phone details use a bottom sheet capped at 55vh; the selected entry is anchored above it and zoom controls stay in the timeline gutter. Theme and motion preferences, URL state, lazy-loaded details, filtering and date-anchored zoom are retained.
 
-The density model is independent of scrolling. SVG paths, group rows and entries are rendered near the viewport using the existing chunked window. Geometry is rebuilt on layout changes, not on every scroll.
+The density model is independent of scrolling. SVG paths, nodes and entries are rendered near the viewport using the existing chunked window. Geometry is rebuilt on layout changes, not on every scroll.
 
-Run `npm run validate`, `npm run check`, `npm test`, and `npm run build`. The microbenchmarks include ribbon calculation and full zoom work at 1,000, 5,000 and 20,000 events. Run `npm run bench` and `npm run bench:browser -- --budgets`; `CHROMIUM_PATH` optionally selects an installed Chromium executable. Inspect light/dark themes at 320px, phone, tablet and desktop widths; check selected/related states, long titles, same-date events, era boundaries, quiet spans, group browsing, deep links, filter changes, keyboard access and reduced motion.
+Run `npm run validate`, `npm run check`, `npm test`, and `npm run build`. The microbenchmarks include ribbon and node geometry and full zoom work at 1,000, 5,000 and 20,000 events. Run `npm run bench` and `npm run bench:browser -- --budgets`; `CHROMIUM_PATH` optionally selects an installed Chromium executable. Inspect light/dark themes at 320px, phone, tablet and desktop widths; check selected/related states, long titles, same-date events, era boundaries, quiet spans, reveal motion while zooming, node hover and click, deep links, filter changes, keyboard access and reduced motion.
 
 ## Overview milestones
 
-Historical significance and visibility are separate decisions; see [importance.md](importance.md). Explicitly designated overview milestones receive a full card even when their dates collide. Cards may move downward into reserved space while their true date markers stay fixed, joined by leader lines. Groups are inserted around displayed cards and retain every supporting event. Date projection and inverse navigation remain aligned with markers. Matching filters take precedence over faded milestones; selection still pins the chosen event.
+Historical significance and visibility are separate decisions; see [importance.md](importance.md). Explicitly designated overview milestones receive a full card even when their dates collide. Cards may move downward into reserved space while their true date markers stay fixed, joined by leader lines. Supporting events stay on the spine as nodes. Matching filters take precedence over faded milestones; selection still pins the chosen event.
