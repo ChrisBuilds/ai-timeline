@@ -112,8 +112,9 @@ importance:
           rationale: >-
             AISI compared both models on the same 32-step cyber range: Mythos
             Preview averaged 22 steps and Opus 4.6 averaged 16. The measured
-            gap supports a higher capability assessment for this preview,
-            while both results remain bounded to that simulation.
+            gap shows stronger performance on this simulation; both events
+            currently have capability rating 3, and these results do not
+            establish a general model ordering.
         - id: 2023-03-14-openai-gpt-4
           rationale: >-
             GPT-4's release through ChatGPT Plus and an API supports broad
