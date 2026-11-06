@@ -35,6 +35,10 @@ sources:
     title: 'System Card: Claude Sonnet 5'
     publisher: Anthropic
     accessed: 2026-11-06
+  - url: https://github.com/tecunningham/ai-rnd-benchmarks/blob/main/cards/anthropic/claude-sonnet-5-system-card.txt
+    title: 'Extracted text of Claude Sonnet 5 system card'
+    publisher: 'GitHub, tecunningham/ai-rnd-benchmarks'
+    accessed: 2026-11-06
   - url: https://github.blog/changelog/2026-06-30-claude-sonnet-5-is-generally-available-for-github-copilot/
     title: Claude Sonnet 5 is generally available for GitHub Copilot
     publisher: GitHub
@@ -99,6 +103,7 @@ importance:
             low; they do not establish a foundational new class of work.
           evidence:
             - https://www.anthropic.com/claude-sonnet-5-system-card
+            - https://github.com/tecunningham/ai-rnd-benchmarks/blob/main/cards/anthropic/claude-sonnet-5-system-card.txt
             - https://www.anthropic.com/news/claude-sonnet-5
         society:
           rating: null
