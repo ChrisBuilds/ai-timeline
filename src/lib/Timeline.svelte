@@ -472,13 +472,16 @@
    * set to the node), its leader and dot fading in. A card that just lost its
    * room shrinks and fades back into the node, under the cards closing up.
    */
-  .reveal .card, .reveal .dot, .reveal .connector { transition: transform 460ms cubic-bezier(0.33, 1, 0.68, 1), opacity 140ms linear; }
+  .reveal .card, .reveal .dot { transition: transform 460ms cubic-bezier(0.33, 1, 0.68, 1), opacity 140ms linear; }
+  /* A leader only fades: its transform flips with its shape, and must not slide. */
+  .reveal .connector { transition: opacity 140ms linear; }
   @starting-style {
     .reveal .card { transform: scale(0.05); opacity: 0; }
     .reveal .dot { transform: translate(-50%, -50%) scale(0.4); }
     .reveal .connector { opacity: 0; }
   }
-  .leaving .card, .leaving .dot, .leaving .connector { transition: transform 420ms cubic-bezier(0.32, 0, 0.67, 0), opacity 420ms cubic-bezier(0.42, 0, 1, 1); pointer-events: none; }
+  .leaving .card, .leaving .dot { transition: transform 420ms cubic-bezier(0.32, 0, 0.67, 0), opacity 420ms cubic-bezier(0.42, 0, 1, 1); pointer-events: none; }
+  .leaving .connector { transition: opacity 420ms cubic-bezier(0.42, 0, 1, 1); pointer-events: none; }
   .leaving .card { transform: scale(0.05); opacity: 0; z-index: 0; }
   .leaving .dot { transform: translate(-50%, -50%) scale(0.4); opacity: 0; }
   .leaving .connector { opacity: 0; }
