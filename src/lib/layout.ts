@@ -269,6 +269,8 @@ export function layout<T>(items: Positioned<T>[], opts: LayoutOptions<T>) {
     }
   }
   const placed: PlacedCard<T>[] = []
+  /** Events without a card, by y; the timeline draws them as nodes on the spine. */
+  const hidden: Positioned<T>[] = []
   const clusters: Cluster<T>[] = []
   let last: Cluster<T> | undefined
   for (let k = 0; k < n; k++) {
@@ -276,12 +278,15 @@ export function layout<T>(items: Positioned<T>[], opts: LayoutOptions<T>) {
     const it = items[i]
     if (laneOf[i] !== -1) {
       placed.push({ item: it.item, y: it.y, lane: laneOf[i], top: tops[i] })
-    } else if (last && it.y - last.y <= opts.clusterPx) {
+      continue
+    }
+    hidden.push(it)
+    if (last && it.y - last.y <= opts.clusterPx) {
       last.items.push(it.item)
     } else {
       last = { y: it.y, items: [it.item] }
       clusters.push(last)
     }
   }
-  return { placed, clusters }
+  return { placed, hidden, clusters }
 }

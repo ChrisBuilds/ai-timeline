@@ -1,23 +1,26 @@
 <script lang="ts">
-  import { tick } from 'svelte'
   import type { TimelineEvent } from './types'
   import type { TimeScale } from './scale'
-  import type { Cluster, PlacedCard } from './layout'
+  import type { PlacedCard } from './layout'
   import { formatDate, formatRange } from './dates'
   import { categoryColor } from './categories'
   import { buildRibbon } from './ribbon'
-  import { formatCount, type EventGroup, type EraStats } from './groups'
+  import { nearestNode, nodePath, RevealTracker, visibleNodes, type Node } from './nodes'
   import Ribbon from './Ribbon.svelte'
-  import { containScroll } from './scroll-containment'
+
+  const numbers = new Intl.NumberFormat('en')
+  const formatCount = (count: number) => numbers.format(count)
 
   interface Props {
     scale: TimeScale
     placed: PlacedCard<TimelineEvent>[]
-    groups: EventGroup<TimelineEvent>[]
-    eraStats: Map<string, EraStats>
-    hidden: { item: TimelineEvent; year: number }[]
-    ribbonScale: TimeScale
-    ribbonProject: (y: number, after?: boolean) => number
+    /** Events without a card at this zoom, by y. They are drawn as nodes on the spine. */
+    hidden: Node<TimelineEvent>[]
+    /** The same events with their dates, for the density ribbon. */
+    hiddenYears: { item: TimelineEvent; year: number }[]
+    eraStats: Map<string, { total: number; shown: number }>
+    /** Cards grow out of their node when they appear, and shrink back into it when they go. */
+    animate: boolean
     spineX: number
     cardWidth: number
     selectedId: string | null
@@ -29,7 +32,6 @@
     /** Events that match the active filters; empty when no filter is on. */
     matchIds: Set<string>
     onselect: (id: string, scroll?: boolean) => void
-    onexpand: (cluster: Cluster<TimelineEvent>) => void
     /** A card was hovered or focused, so it may be opened next. */
     onpreview?: (id: string) => void
     /** Rendered height of each era's name, so the layout can keep cards off it. */
@@ -44,11 +46,10 @@
   let {
     scale,
     placed,
-    groups,
-    eraStats,
     hidden,
-    ribbonScale,
-    ribbonProject,
+    hiddenYears,
+    eraStats,
+    animate,
     spineX,
     cardWidth,
     selectedId,
@@ -58,7 +59,6 @@
     dimIds,
     matchIds,
     onselect,
-    onexpand,
     onpreview,
     labelHeights = $bindable([]),
     labelTop,
@@ -73,13 +73,6 @@
   const winTop = $derived(Math.floor((viewTop - viewHeight / 2) / CHUNK) * CHUNK)
   const winBottom = $derived(Math.ceil((viewTop + 1.5 * viewHeight) / CHUNK) * CHUNK)
 
-  /** Items whose `y` lies in [from, to); `list` is sorted by y. */
-  function within<T extends { y: number }>(list: T[], from: number, to: number): T[] {
-    const start = lowerBound(list, from)
-    let end = start
-    while (end < list.length && list[end].y < to) end++
-    return list.slice(start, end)
-  }
   function lowerBound(list: { y: number }[], y: number): number {
     let lo = 0
     let hi = list.length
@@ -93,61 +86,98 @@
 
   // Include the largest entry height above the rendering window.
   // Include displaced overview cards by their displayed position as well as date.
-  const shownCards = $derived(placed.filter((c) =>
+  const inWindow = (c: PlacedCard<TimelineEvent>) =>
     (c.top + eventHeight(c.item) >= winTop && c.top <= winBottom) ||
-    (c.y >= winTop - 320 && c.y <= winBottom + 320)))
-  const shownGroups = $derived(within(groups, winTop - 64, winBottom + 64))
-  const ribbon = $derived(buildRibbon(ribbonScale, hidden, spineX < 50 ? 12 : 16, ribbonProject))
-  let activeGroupId = $state<string | null>(null)
-  let query = $state('')
-  let page = $state(0)
-  let menuTop = $state(0)
-  let menuHeight = $state(480)
-  const PAGE_SIZE = 12
-  const activeGroup = $derived(groups.find((g) => g.id === activeGroupId) ?? null)
-  const searchable = $derived(activeGroup?.items.map((item) => ({ item, text: `${item.title} ${item.date}`.toLowerCase() })) ?? [])
-  const filtered = $derived(query.trim() ? searchable.filter((e) => e.text.includes(query.trim().toLowerCase())).map((e) => e.item) : activeGroup?.items ?? [])
-  const pages = $derived(Math.max(1, Math.ceil(filtered.length / PAGE_SIZE)))
-  const menuItems = $derived(filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE))
-  // Scrolling never rebuilds groups. Layout changes invalidate an open browser.
-  $effect(() => { void groups; activeGroupId = null; query = ''; page = 0 })
-  $effect(() => {
-    if (activeGroupId && !shownGroups.some((g) => g.id === activeGroupId)) activeGroupId = null
+    (c.y >= winTop - 320 && c.y <= winBottom + 320)
+  const shownCards = $derived(placed.filter(inWindow))
+  const ribbon = $derived(buildRibbon(scale, hiddenYears, spineX < 50 ? 12 : 16))
+
+  // Hidden events as nodes: one SVG path for the window, so thousands of them
+  // cost one element. Nodes within 2px of each other are drawn once.
+  const NODE_R = 3
+  // The window clipped to the timeline, so nothing drawn for it makes the page taller.
+  const clipTop = $derived(Math.max(0, winTop))
+  const clipBottom = $derived(Math.min(scale.height, winBottom))
+  const nodes = $derived(visibleNodes(hidden, winTop, winBottom, 2))
+  const nodePaths = $derived.by(() => {
+    const dim = nodes.filter((n) => dimIds.has(n.item.id))
+    return { shown: nodePath(dim.length ? nodes.filter((n) => !dimIds.has(n.item.id)) : nodes, NODE_R), dim: nodePath(dim, NODE_R) }
   })
-  async function activate(group: EventGroup<TimelineEvent>) {
-    if (activeGroupId === group.id) { activeGroupId = null; return }
-    const target = document.getElementById(`group-${group.id}`)
-    const timeline = target?.closest('.timeline')
-    if (!target || !timeline) return
-    const at = target.getBoundingClientRect()
-    const toolbarBottom = document.querySelector('.toolbar-wrap')?.getBoundingClientRect().bottom ?? 0
-    const sheetHeight = selectedId && innerWidth < 720 ? document.querySelector<HTMLElement>('aside.panel')?.offsetHeight ?? 0 : 0
-    const bottom = innerHeight - sheetHeight - 12
-    menuHeight = Math.max(120, Math.min(480, 116 + Math.min(group.items.length, PAGE_SIZE) * 64 + (group.items.length > PAGE_SIZE ? 72 : 0), bottom - toolbarBottom - 16))
-    menuTop = Math.max(toolbarBottom + 8, Math.min(at.bottom + 6, bottom - menuHeight)) - timeline.getBoundingClientRect().top
-    activeGroupId = group.id
-    query = ''
-    page = 0
-    await tick()
-    document.getElementById('group-browser')?.focus({ preventScroll: true })
+  let hoverNode = $state.raw<Node<TimelineEvent> | null>(null)
+  let root: HTMLDivElement | undefined = $state()
+  function nodeAt(e: PointerEvent | MouseEvent, reach: number): Node<TimelineEvent> | null {
+    if (!root) return null
+    return nearestNode(nodes, e.clientY - root.getBoundingClientRect().top, reach)
   }
-  function changePage(next: number) {
-    page = next
-    document.getElementById('group-browser')?.scrollTo({ top: 0, behavior: 'instant' })
-  }
-  function dismissGroup(refocus = false) {
-    const id = activeGroupId
-    activeGroupId = null
-    if (refocus && id) document.getElementById(`group-${id}`)?.focus({ preventScroll: true })
-  }
-  function closeMenu(e: KeyboardEvent) {
-    if (e.key !== 'Escape') return
-    e.stopPropagation()
-    dismissGroup(true)
-  }
-  function closeOutside(e: PointerEvent) {
-    if (!(e.target as Element).closest('.event-group, .cluster-menu')) dismissGroup()
-  }
+  // Keep the hover on the event, not on a y position, as zoom moves the nodes.
+  const hovered = $derived(hoverNode && nodes.find((n) => n.item === hoverNode!.item) || null)
+
+  // Cards that just got room grow out of their node; cards that just lost it
+  // shrink back into it while the others close up. Time-based, so a card never
+  // flickers with the zoom frame rate, and CSS transitions, so a card that
+  // returns mid-animation turns around from where it is.
+  const REVEAL_MS = 340
+  const tracker = new RevealTracker<TimelineEvent>(REVEAL_MS)
+  let expired = $state(0)
+  // Only zooming reveals cards. A filter change replaces most cards at once,
+  // and animating all of them would be noise, and slow.
+  let motionFilter: unknown = null
+  const motion = $derived.by(() => {
+    void expired
+    const filterChanged = motionFilter !== matchIds
+    motionFilter = matchIds
+    tracker.update(placed, performance.now(), animate && !filterChanged)
+    return { entering: new Set(tracker.entering.keys()), leaving: [...tracker.leaving.values()] }
+  })
+  $effect(() => {
+    void motion
+    const next = tracker.nextExpiry()
+    if (next === null) return
+    const t = setTimeout(() => { if (tracker.prune(performance.now())) expired++ }, Math.max(0, next - performance.now()) + 20)
+    return () => clearTimeout(t)
+  })
+  // A leaving card follows its date marker, so it shrinks into its node even mid-zoom.
+  const rows = $derived.by(() => {
+    if (!motion.leaving.length) return shownCards.map((card) => ({ card, leaving: false }))
+    const yOf = new Map<TimelineEvent, number>()
+    for (const l of motion.leaving) yOf.set(l.item, NaN)
+    for (const h of hidden) if (yOf.has(h.item)) yOf.set(h.item, h.y)
+    const out = shownCards.map((card) => ({ card, leaving: false }))
+    for (const l of motion.leaving) {
+      const y = yOf.get(l.item)!
+      const card = { item: l.item, y, lane: 0, top: y + l.offset }
+      if (Number.isFinite(y) && inWindow(card)) out.push({ card, leaving: true })
+    }
+    return out.sort((a, b) => a.card.y - b.card.y)
+  })
+
+  // When a card's neighbours change, the layout moves it by a card's height in
+  // one frame. Ease that jump out instead, with an additive `translate`, so it
+  // composes with the reveal's `transform` and with zoom moving the card.
+  const JUMP_PX = 40
+  const JUMP_MAX = 360
+  let offsets = new Map<string, number>()
+  let offsetsFor: string | null = null
+  $effect(() => {
+    const cards = shownCards
+    // Selecting an event has its own layout animation (selection-motion.ts).
+    const enabled = animate && offsetsFor === selectedId
+    offsetsFor = selectedId
+    const next = new Map<string, number>()
+    for (const card of cards) {
+      const offset = card.top - card.y
+      next.set(card.item.id, offset)
+      const before = offsets.get(card.item.id)
+      // A longer jump would ease in from outside the rendered window, so it isn't eased.
+      if (!enabled || before === undefined || Math.abs(offset - before) < JUMP_PX || Math.abs(offset - before) > JUMP_MAX) continue
+      const node = root?.querySelector<HTMLElement>(`[data-motion-key="card-${CSS.escape(card.item.id)}"]`)
+      node?.animate([{ translate: `0 ${before - offset}px` }, { translate: '0 0' }], {
+        duration: 320, easing: 'cubic-bezier(0.2, 0.9, 0.25, 1)', composite: 'add',
+      }).finished.catch(() => {})
+    }
+    offsets = next
+  })
+
   const shownGaps = $derived(scale.gaps.filter((g) => g.top + g.height > winTop && g.top < winBottom))
 
   // Year labels sit beside the spine; skip any that would land near an event dot,
@@ -165,7 +195,7 @@
 
   const ticks = $derived.by(() => {
     // Dots near the window, sorted by y, so each tick checks its neighbours with a binary search.
-    const dots = [...shownCards, ...shownGroups].map((c) => ({ y: c.y })).sort((a, b) => a.y - b.y)
+    const dots = shownCards
     const nearDot = (y: number) => {
       const i = lowerBound(dots, y - 18)
       return i < dots.length && dots[i].y < y + 18
@@ -208,12 +238,11 @@
   }
 </script>
 
-<svelte:window onpointerdown={closeOutside} onkeydown={(e) => { if (e.key === 'Escape') dismissGroup() }} />
-
 <!-- Hovering or focusing a card starts loading its details, so opening it is instant. -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
   class="timeline"
+  bind:this={root}
   onpointerover={previewFrom}
   onfocusin={previewFrom}
   style:height="{scale.height}px" style:--spine="{spineX}px" style:--label-pad="{spineX + 28}px" style:--label-max={'100%'} style:--label-top="{labelTop}px">
@@ -233,7 +262,26 @@
     </section>
   {/each}
 
-  <Ribbon spans={ribbon} {spineX} viewTop={Math.max(0, winTop)} viewBottom={Math.min(scale.height, winBottom)} />
+  <Ribbon spans={ribbon} {spineX} viewTop={clipTop} viewBottom={clipBottom} />
+
+  <svg class="nodes" aria-hidden="true" width="16" height={Math.max(0, clipBottom - clipTop)}
+    style:left="{spineX - 8}px" style:top="{clipTop}px" viewBox="-8 {clipTop} 16 {Math.max(1, clipBottom - clipTop)}">
+    <path d={nodePaths.shown} /><path class="dim" d={nodePaths.dim} />
+  </svg>
+  <!-- Pointer route to a hidden event: the node nearest the pointer. Keyboard users reach the same events through search and the arrow keys. -->
+  <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
+  <div class="node-hits" style:top="{clipTop}px" style:height="{Math.max(0, clipBottom - clipTop)}px"
+    class:active={hovered !== null}
+    onpointermove={(e) => { if (e.pointerType === 'mouse') hoverNode = nodeAt(e, 8) }}
+    onpointerleave={() => (hoverNode = null)}
+    onclick={(e) => { const node = nodeAt(e, 12); if (node) { hoverNode = null; onselect(node.item.id) } }}
+  ></div>
+  {#if hovered}
+    <div class="node-hover" style:top="{hovered.y}px" style:--c={categoryColor(hovered.item.category)} aria-hidden="true">
+      <span class="node-ring"></span>
+      <span class="node-tip"><time>{formatRange(hovered.item.date, hovered.item.end_date)}</time>{hovered.item.title}</span>
+    </div>
+  {/if}
 
   <div data-motion-key="now" class="now" style:top="{scale.y(scale.bands[0].end)}px" aria-hidden="true">
     <span class="now-dot"></span><span class="now-label">Now</span>
@@ -261,54 +309,11 @@
     <span data-motion-key="tick-{tick.year}" class="tick" style:top="{tick.y}px" aria-hidden="true">{tick.year}</span>
   {/each}
 
-  {#each shownGroups as group (group.id)}
-    <button id="group-{group.id}" data-motion-key="group-{group.id}" class="event-group"
-      class:dimmed={group.items.every((e) => dimIds.has(e.id))}
-      style:top="{group.top}px" style:left="{cardLeft(0)}px" style:width="{cardWidth}px" style:height="{group.height}px"
-      aria-expanded={activeGroupId === group.id} aria-haspopup="dialog" aria-controls={activeGroupId === group.id ? 'group-browser' : undefined}
-      onclick={() => activate(group)}>
-      <svg class="stack" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 4h14M2 9h14M2 14h14" /></svg>
-      <span class="group-copy"><strong>{formatCount(group.items.length)} more {group.items.length === 1 ? 'event' : 'events'}</strong><span>{group.label}</span></span>
-      <span class="group-chevron" aria-hidden="true">›</span>
-    </button>
-  {/each}
-
-  {#if activeGroup}
-    <div use:containScroll id="group-browser" class="cluster-menu" onkeydown={closeMenu} tabindex="-1"
-      style:top="{menuTop}px" style:left="{cardLeft(0)}px" style:width="{Math.min(cardWidth, 420)}px" style:max-height="{menuHeight}px"
-      role="dialog" aria-modal="false" aria-label="Events in this group" aria-describedby="group-heading">
-      <div class="menu-tools">
-        <div class="menu-heading"><p id="group-heading">{formatCount(activeGroup.items.length)} {activeGroup.items.length === 1 ? 'event' : 'events'}<span>{activeGroup.label}</span></p>
-          <button class="group-close" aria-label="Close group" onclick={() => dismissGroup(true)}>×</button>
-        </div>
-        {#if activeGroup.items.length > PAGE_SIZE}
-          <input id="group-search" type="search" aria-label="Find an event in this group" placeholder="Find in this group…" bind:value={query} oninput={() => changePage(0)} />
-          <p class="result-count">{query.trim() ? `${formatCount(filtered.length)} matching ${filtered.length === 1 ? 'event' : 'events'}` : 'Browse without changing zoom'}</p>
-        {/if}
-      </div>
-      <ol class="group-events" start={page * PAGE_SIZE + 1}>
-        {#each menuItems as ev (ev.id)}
-          <li><button class:dimmed={dimIds.has(ev.id)} class:match={matchIds.has(ev.id)} onclick={() => { dismissGroup(); onselect(ev.id, true) }}>
-            <time class="menu-date" datetime={ev.date}>{formatRange(ev.date, ev.end_date)}</time>{ev.title}
-          </button></li>
-        {:else}<li class="group-empty">No events match this search.</li>{/each}
-      </ol>
-      <div class="menu-footer">
-        {#if pages > 1}<nav class="group-pagination" aria-label="Group pages">
-          <button aria-label="Previous page" disabled={page === 0} onclick={() => changePage(page - 1)}>←</button>
-          <span>{filtered.length ? `${formatCount(page * PAGE_SIZE + 1)}–${formatCount(Math.min((page + 1) * PAGE_SIZE, filtered.length))} of ${formatCount(filtered.length)}` : '0 events'}</span>
-          <button aria-label="Next page" disabled={page >= pages - 1} onclick={() => changePage(page + 1)}>→</button>
-        </nav>{/if}
-        <button class="menu-zoom" onclick={() => { const group = activeGroup!; dismissGroup(); onexpand(group) }}>Zoom into this period →</button>
-      </div>
-    </div>
-  {/if}
-
   <ol class="cards" aria-label="Events">
-    {#each shownCards as card (card.item.id)}
+    {#each rows as { card, leaving } (card.item.id)}
       {@const ev = card.item}
       {@const left = cardLeft(card.lane)}
-      <li class="appear">
+      <li class:leaving class:reveal={motion.entering.has(ev.id) && selectedId !== ev.id} aria-hidden={leaving || undefined} inert={leaving}>
         <!-- The dot and connector are extra click targets for the card; its button is the keyboard route. -->
         <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
         <span
@@ -338,6 +343,8 @@
           style:height="{Math.abs(card.top + 18 - card.y) > 1 ? Math.abs(card.top + 18 - card.y) : 16}px"
           aria-hidden="true"
         ></span>
+        <!-- A card shown only for its date marker, displaced far from it, is left out until it is near. -->
+        {#if selectedId === ev.id || (card.top + eventHeight(ev) >= winTop - 320 && card.top <= winBottom + 320)}
         <article
           id={ev.id}
           data-motion-key="card-{ev.id}"
@@ -351,7 +358,7 @@
           style:left="{left}px"
           style:width="{cardWidth}px"
           style:height="{eventHeight(ev)}px"
-
+          style:transform-origin="{spineX - left}px {card.y - card.top}px"
         >
           <button class="card-button" title={ev.title} onclick={() => onselect(ev.id)} aria-pressed={selectedId === ev.id}>
             {#if selectedId === ev.id}<span class="state-label">Selected</span>{/if}
@@ -370,6 +377,7 @@
             {/if}
           </button>
         </article>
+        {/if}
       </li>
     {/each}
   </ol>
@@ -393,39 +401,32 @@
   .gap-line { position: absolute; inset: 4px auto 4px calc(var(--spine) - 1px); width: 2px; background: repeating-linear-gradient(to bottom, var(--line-strong) 0 3px, transparent 3px 8px); }
   .gap-line::after { content: '//'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; background: var(--bg); color: var(--muted); }
   .gap-label { position: absolute; left: calc(var(--spine) + 30px); top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 0.72rem; font-style: italic; }
-  .event-group { box-sizing: border-box; position: absolute; display: flex; align-items: center; gap: 12px; padding: 10px 14px; border: 1px solid transparent; border-radius: 6px; background: var(--surface-2); color: var(--text); text-align: left; cursor: pointer; z-index: 2; font: inherit; }
-  .event-group::before { content: ''; position: absolute; left: -24px; width: 24px; height: 1px; top: 50%; background: var(--line-strong); }
-  .event-group::after { content: ''; position: absolute; left: -28px; top: calc(50% - 4px); width: 7px; height: 7px; border: 1px solid var(--muted); border-radius: 1px; background: var(--bg); }
-  .event-group:hover, .event-group[aria-expanded='true'] { border-color: var(--line-strong); }
-  .event-group:focus-visible { outline: 2px solid var(--context-accent); outline-offset: 2px; }
-  .stack { flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; }
-  .group-copy { display: grid; gap: 3px; min-width: 0; }
-  .group-copy strong { font-size: 0.85rem; font-weight: 600; }
-  .group-copy > span { font-size: 0.66rem; color: var(--muted); line-height: 1.25; }
-  .group-chevron { margin-left: auto; font-size: 1.5rem; color: var(--muted); }
-  .event-group.dimmed { opacity: 0.55; }
-  .event-group.dimmed:hover, .event-group.dimmed:focus-visible { opacity: 1; }
-  .cluster-menu { position: absolute; z-index: 12; overflow-y: auto; overscroll-behavior: contain; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 8px; box-shadow: var(--shadow-lg); }
-  .menu-tools { position: sticky; top: 0; padding: 10px 12px 0; background: var(--surface); z-index: 1; }
-  .menu-heading { display: flex; align-items: start; gap: 12px; }
-  .menu-heading p { margin: 0 0 8px; font-size: 0.85rem; font-weight: 600; line-height: 1.4; }
-  .menu-heading p span { display: block; color: var(--muted); font-weight: 400; font-size: 0.7rem; }
-  .cluster-menu button { font: inherit; cursor: pointer; color: var(--text); }
-  .group-close { flex: none; margin-left: auto; width: 30px; height: 30px; padding: 0; border: 0; background: transparent; font-size: 1.25rem !important; border-radius: 4px; }
-  .cluster-menu button:focus-visible { outline: 2px solid var(--context-accent); outline-offset: -2px; }
-  #group-search { width: 100%; min-width: 0; padding: 8px 10px; border: 1px solid var(--line-strong); border-radius: 5px; background: var(--bg); color: var(--text); font: inherit; font-size: 0.8rem; }
-  .result-count { margin: 6px 0 0; padding-bottom: 8px; font-size: 0.65rem; color: var(--muted); border-bottom: 1px solid var(--line); }
-  .group-events { list-style: none; padding: 4px 6px; margin: 0; }
-  .group-events button { display: block; width: 100%; padding: 9px 8px; text-align: left; border: 0; border-radius: 4px; background: transparent; font-size: 0.8rem; line-height: 1.4; }
-  .group-events button:hover, .group-close:hover { background: var(--surface-2); }
-  .menu-date { display: block; font-size: 0.66rem; color: var(--muted); }
-  .group-empty { padding: 16px 8px; font-size: 0.8rem; color: var(--muted); }
-  .menu-footer { position: sticky; bottom: 0; padding: 6px 12px; background: var(--surface); border-top: 1px solid var(--line); }
-  .group-pagination { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 0.65rem; }
-  .group-pagination button { padding: 4px 8px; border: 0; border-radius: 4px; background: var(--surface-2); }
-  .group-pagination button:disabled { opacity: 0.3; cursor: default; }
-  .menu-zoom { display: block; padding: 7px 0 2px; border: 0; background: transparent; color: var(--context-accent) !important; font-size: 0.72rem !important; }
+  /* Hidden events: nodes on the spine, and the nearest one under the pointer. */
+  .nodes { position: absolute; overflow: visible; pointer-events: none; z-index: 2; }
+  .nodes path { fill: var(--muted); }
+  .nodes path.dim { opacity: 0.35; }
+  .node-hits { position: absolute; left: calc(var(--spine) - 12px); width: 24px; z-index: 2; }
+  .node-hits.active { cursor: pointer; }
+  .node-hover { position: absolute; left: var(--spine); z-index: 4; pointer-events: none; }
+  .node-ring { position: absolute; width: 11px; height: 11px; transform: translate(-50%, -50%); border: 2px solid var(--c); background: var(--bg); border-radius: 50%; box-sizing: border-box; }
+  .node-tip { position: absolute; left: 16px; top: 0; transform: translateY(-50%); width: max-content; max-width: min(320px, calc(100vw - var(--spine) - 40px)); padding: 6px 10px; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--surface); box-shadow: var(--shadow-sm); font-size: 0.78rem; font-weight: 600; line-height: 1.3; }
+  .node-tip time { display: block; color: var(--muted); font-size: 0.65rem; font-weight: 400; }
   .cards { list-style: none; margin: 0; padding: 0; }
+  /*
+   * Reveal: a card that just got room grows out of its node (transform-origin is
+   * set to the node), its leader and dot fading in. A card that just lost its
+   * room shrinks and fades back into the node, under the cards closing up.
+   */
+  .reveal .card, .reveal .dot, .reveal .connector { transition: transform 340ms cubic-bezier(0.2, 0.9, 0.25, 1), opacity 240ms ease-out 60ms; }
+  @starting-style {
+    .reveal .card { transform: scale(0.04); opacity: 0; }
+    .reveal .dot { transform: translate(-50%, -50%) scale(0.4); }
+    .reveal .connector { opacity: 0; }
+  }
+  .leaving .card, .leaving .dot, .leaving .connector { transition: transform 300ms cubic-bezier(0.5, 0, 0.75, 0), opacity 180ms ease-in; pointer-events: none; }
+  .leaving .card { transform: scale(0.04); opacity: 0; z-index: 0; }
+  .leaving .dot { transform: translate(-50%, -50%) scale(0.4); opacity: 0; }
+  .leaving .connector { opacity: 0; }
   .dot { position: absolute; left: var(--spine); width: 9px; height: 9px; transform: translate(-50%, -50%); background: var(--bg); border: 2px solid var(--muted); border-radius: 50%; z-index: 3; cursor: pointer; }
   .dot.related { border-color: var(--context-accent); }
   .dot.selected { width: 13px; height: 13px; border: 2px solid var(--bg); background: var(--context-accent); border-radius: 1px; transform: translate(-50%, -50%) rotate(45deg); }
@@ -453,10 +454,9 @@
   .event-summary { font-size: 0.85rem; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   .story-link { font-size: 0.73rem; font-weight: 600; margin-top: auto; }
   .relation-label { color: var(--context-accent); font-size: 0.65rem; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .card.dimmed, .dot.dimmed, .connector.dimmed, .cluster-menu button.dimmed { opacity: 0.32; }
+  .card.dimmed, .dot.dimmed, .connector.dimmed { opacity: 0.32; }
   .card.dimmed:hover, .card.dimmed:focus-within { opacity: 1; }
   .card.match:not(.selected) .title { text-decoration: underline; text-decoration-color: var(--context-accent); text-underline-offset: 4px; }
-  .cluster-menu button.match { font-weight: 600; }
   @media (max-width: 600px) {
     .tick { left: calc(var(--spine) - 10px); font-size: 0.57rem; }
     .now-label { right: 12px; font-size: 0.57rem; }
