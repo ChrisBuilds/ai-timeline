@@ -1,0 +1,176 @@
+id: 2026-09-01-claude-fable-5-1-mythos-5-1
+title: Anthropic releases Claude Fable 5.1 and restricted Mythos 5.1
+date: 2026-09-01
+summary: Anthropic released Fable 5.1 for general use and Mythos 5.1, the same model with less restrictive safeguards for vetted cybersecurity and life-sciences work.
+description: >-
+  Anthropic released Claude Fable 5.1 for general use and Claude Mythos 5.1
+  to vetted individuals and organizations through trusted-access programs.
+  The two configurations use the same underlying model, but Mythos 5.1 has
+  more permissive cybersecurity and life-sciences safeguards. Anthropic
+  reported a 52.6% result for Fable 5.1 on Terminal-Bench-Science 0.1, versus
+  24.7% for Fable 5 on the same benchmark, and 55.8% versus 42.0% on its
+  Terminal-Bench 4.0 evaluation; it said safeguard interventions lowered the
+  Fable score on some tasks. It also said the revised safeguards reduced
+  cybersecurity false positives by 60% and benign biology interventions by
+  85% compared with Fable 5 at launch. A separate Terminal-Bench maintainer
+  run scored Fable 5.1 at 57.9% ±3.8% with Claude Code; this used a different
+  evaluation setup. Early organizational examples reported by Anthropic
+  included an investigation of a rare software crash at Millennium and a
+  multi-day prototype built at MongoDB. {note: Anthropic's models index lists
+  September 15, but its dated release notes and model documentation, GitHub's
+  availability notice, and independent launch coverage identify September 1.}
+category: model release
+tags:
+  - language model
+  - safety
+  - cybersecurity
+  - restricted access
+organizations:
+  - Anthropic
+related:
+  - id: 2026-06-09-claude-fable-5-mythos-5
+    relation: builds_on
+    source: https://platform.claude.com/docs/en/models/fable-5-1/overview
+sources:
+  - url: https://www.anthropic.com/claude-fable-and-mythos-5-1
+    title: Introducing Claude Fable 5.1 and Claude Mythos 5.1
+    publisher: Anthropic
+    accessed: 2026-11-06
+  - url: https://platform.claude.com/docs/en/models/fable-5-1/overview
+    title: Claude Fable 5.1 model overview
+    publisher: Anthropic
+    accessed: 2026-11-06
+  - url: https://support.claude.com/en/articles/12138966-release-notes
+    title: Claude release notes
+    publisher: Anthropic
+    accessed: 2026-11-06
+  - url: https://github.blog/changelog/2026-09-01-claude-fable-5-1-generally-available-in-github-copilot/
+    title: Claude Fable 5.1 is generally available in GitHub Copilot
+    publisher: GitHub
+    accessed: 2026-11-06
+  - url: https://www.theverge.com/ai-artificial-intelligence/987830/anthropic-claude-fable-mythos-5-1
+    title: Anthropic launches Claude Fable 5.1 and says it's up to 45 percent cheaper for agentic work
+    publisher: The Verge
+    accessed: 2026-11-06
+  - url: https://github.com/tecunningham/ai-rnd-benchmarks/blob/main/cards/anthropic/claude-fable-5-1-claude-mythos-5-1-system-card.txt
+    title: Claude Fable 5.1 and Claude Mythos 5.1 System Card (indexed text copy)
+    publisher: Anthropic; tecunningham/ai-rnd-benchmarks
+    accessed: 2026-11-06
+  - url: https://www.tbench.ai/?filters=%7B%22sets%22%3A%7B%22model_display%22%3A%5B%22Fable+5.1%22%2C%22Gemini+3.8+Flash%22%2C%22GPT-6+Astra%22%2C%22Opus+5%22%5D%7D%7D
+    title: Terminal-Bench 4.0 leaderboard
+    publisher: Terminal-Bench
+    accessed: 2026-11-06
+  - url: https://cruxevals.com/research-notes/crux-2-follow-up/
+    title: Can frontier AI agents conduct open-ended AI research? Follow-up experiments with GPT-6 Astra and Claude Fable 5.1
+    publisher: CRUX
+    accessed: 2026-11-06
+  - url: https://techcrunch.com/2026/09/01/anthropics-new-fable-release-is-cheaper-less-restrictive/
+    title: Anthropic's new Fable release is cheaper, less restrictive
+    publisher: TechCrunch
+    accessed: 2026-11-06
+importance:
+  current: 2026-11-06-v2
+  assessments:
+    - id: 2026-11-06-v2
+      assessed_at: 2026-11-06
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: >-
+        The release paired stronger agentic work with revised safeguards and
+        a gated configuration of the same model. Anthropic's benchmark and
+        customer evidence shows gains, but the benchmarks and examples are
+        selected or produced by the vendor. A Terminal-Bench maintainer run
+        supports strong coding performance, while CRUX's independent open-ended
+        research trial found improved experiment design but a rejected paper
+        and persistent research limitations. With influence and societal
+        effects attributable specifically to this release unknown, adoption 1
+        and capability 3 give a provisional score range of 21–66.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: >-
+            No evidence yet identifies later practice or product design
+            attributable to Fable or Mythos 5.1 rather than the model family.
+          evidence:
+            - https://www.anthropic.com/claude-fable-and-mythos-5-1
+            - https://cruxevals.com/research-notes/crux-2-follow-up/
+        adoption:
+          rating: 1
+          confidence: low
+          rationale: >-
+            Anthropic names organizations that tested or used Fable 5.1 for
+            concrete work, including Millennium's crash investigation,
+            MongoDB's prototype, and IMC's broken-build evaluation. These are
+            vendor-selected early examples and do not establish repeated
+            specialist use; Mythos 5.1 access and program availability alone
+            do not establish adoption.
+          evidence:
+            - https://www.anthropic.com/claude-fable-and-mythos-5-1
+            - https://www.theverge.com/ai-artificial-intelligence/987830/anthropic-claude-fable-mythos-5-1
+        capability:
+          rating: 3
+          confidence: medium
+          rationale: >-
+            Anthropic reports large gains over Fable 5 on Terminal-Bench
+            Science 0.1 (52.6% vs 24.7%) and Terminal-Bench 4.0 (55.8% vs
+            42.0%) under its own setup, plus more permissive safeguards that
+            allow general-use vulnerability discovery. The Terminal-Bench
+            maintainer's separate Claude Code run scored Fable 5.1 at 57.9%
+            with a 95% interval of ±3.8 points; that result supports strong
+            task performance but is not directly comparable with Anthropic's
+            score because the evaluation setup differs. CRUX found better
+            experimental design in an open-ended research task, but experts
+            rejected the resulting paper for weak contribution and
+            presentation. This mixed evidence supports substantial practical
+            gains in bounded agentic work, not reliable autonomous research.
+          evidence:
+            - https://www.anthropic.com/claude-fable-and-mythos-5-1
+            - https://github.com/tecunningham/ai-rnd-benchmarks/blob/main/cards/anthropic/claude-fable-5-1-claude-mythos-5-1-system-card.txt
+            - https://www.tbench.ai/?filters=%7B%22sets%22%3A%7B%22model_display%22%3A%5B%22Fable+5.1%22%2C%22Gemini+3.8+Flash%22%2C%22GPT-6+Astra%22%2C%22Opus+5%22%5D%7D%7D
+            - https://cruxevals.com/research-notes/crux-2-follow-up/
+        society:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources describe safeguards and restricted access, but provide
+            no measured societal effect or implemented institutional outcome
+            attributable specifically to this release.
+          evidence:
+            - https://www.anthropic.com/claude-fable-and-mythos-5-1
+            - https://support.claude.com/en/articles/12138966-release-notes
+      comparisons:
+        - id: 2026-06-09-claude-fable-5-mythos-5
+          rationale: >-
+            This is the direct predecessor release. Anthropic reports
+            substantially higher scores on matched Terminal-Bench and science
+            evaluations for 5.1, while both releases paired a generally
+            available safeguarded model with a more permissive restricted
+            configuration. Fable 5's later use evidence is not transferred to
+            5.1.
+        - id: 2026-07-24-claude-opus-5
+          rationale: >-
+            Opus 5 was a generally available Anthropic model released between
+            the two Fable generations. On Anthropic's Terminal-Bench Science
+            evaluation, Fable 5.1 scored 52.6% and Opus 5 29.0%; those are
+            vendor-reported results, not a direct comparison of institutional
+            uptake or downstream influence.
+        - id: 2023-03-14-openai-gpt-4
+          rationale: >-
+            GPT-4 was a cross-company frontier release with a widely circulated
+            technical report and broad external evaluation. Fable 5.1's
+            capabilities are more specialized toward long-running agentic
+            work, and the evidence for its reach remains narrower and more
+            vendor-mediated.
+      questions:
+        - Does model-specific usage evidence show repeated specialist adoption beyond launch-partner trials?
+        - Do independent matched evaluations reproduce the reported gains and safeguard improvements?
+        - Does the restricted Mythos configuration produce measurable institutional or security outcomes?
+      review_after: 2026-12-06
+      review_triggers:
+        - Independent matched benchmark or safeguard evaluations that materially change the capability rating.
+        - Model-specific usage data showing repeated use across a relevant audience.
+        - Measured institutional or downstream effects attributable to Fable or Mythos 5.1.
+issue: 106
+submitted_by: ChrisBuilds
