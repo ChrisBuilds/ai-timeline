@@ -1,0 +1,135 @@
+id: 2026-04-07-claude-mythos-preview
+title: Anthropic opens restricted access to Claude Mythos Preview
+date: 2026-04-07
+summary: Anthropic made Claude Mythos Preview available as a gated research preview through Project Glasswing, limited to partner organizations for defensive security work.
+description: >-
+  Anthropic announced Project Glasswing, an initiative that gave selected
+  organizations early access to Claude Mythos Preview, which it described as
+  its most capable model for coding and agentic tasks, to find and fix
+  vulnerabilities in critical software. Twelve launch partners were named,
+  including Amazon Web Services, Apple, Cisco, CrowdStrike, Google,
+  JPMorganChase, the Linux Foundation, Microsoft, NVIDIA and Palo Alto
+  Networks, with access extended to more than 40 other organizations that
+  maintain critical software. Anthropic committed up to $100 million in usage
+  credits and $4 million in donations to open-source security organizations,
+  and priced participant use at $25 per million input tokens and $125 per
+  million output tokens. Anthropic said it did not plan to make the model
+  generally available, mainly because of its cyber capabilities. Its system card
+  describes a step-change in finding and exploiting zero-day vulnerabilities,
+  says the decision did not stem from Responsible Scaling Policy requirements,
+  and concludes that the model does not cross its automated AI R&D threshold.
+  Anthropic reported that the model had found thousands of high- and
+  critical-severity vulnerabilities, but said over 99% were still unpatched at
+  the time, so most claims could not be independently verified. These
+  capability figures are the developer's own.
+category: model release
+tags:
+  - language model
+  - cybersecurity
+  - coding
+  - agents
+  - safety
+organizations:
+  - Anthropic
+sources:
+  - url: https://www.anthropic.com/project/glasswing
+    title: Project Glasswing
+    publisher: Anthropic
+    accessed: 2026-11-06
+  - url: https://www.anthropic.com/claude-mythos-preview-system-card
+    title: 'System Card: Claude Mythos Preview'
+    publisher: Anthropic
+    accessed: 2026-11-06
+  - url: https://www.anthropic.com/research/mythos-preview
+    title: Assessing Claude Mythos Preview's cybersecurity capabilities
+    publisher: Anthropic
+    accessed: 2026-11-06
+related: []
+importance:
+  current: 2026-11-06-v2
+  assessments:
+    - id: 2026-11-06-v2
+      assessed_at: 2026-11-06
+      rubric_version: v2
+      status: provisional
+      reviewer: Claude (editorial assessment prepared for maintainer review)
+      rationale: >-
+        Anthropic's system card and research post report a step-change in
+        autonomous vulnerability discovery and exploitation, and the model was
+        released only to selected partners rather than publicly. The evidence
+        is the developer's own, and most findings were undisclosed and
+        unpatched at publication, so none of it is independently verified.
+        Partner organizations and credits show a limited deployment, not
+        sustained use. Influence and society are unknown, adoption is 1 and
+        capability is 3, so the provisional score range is 21–66; the index
+        placement key uses the lower bound, with no accepted point score.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources describe the launch but do not identify later technical
+            or institutional changes attributable to it, such as new access
+            policies or patches traced to this preview.
+          evidence:
+            - https://www.anthropic.com/project/glasswing
+        adoption:
+          rating: 1
+          confidence: low
+          rationale: >-
+            Access was limited to twelve named launch partners and more than 40
+            further organizations, for defensive security use. This is a gated
+            deployment, the isolated-deployment anchor, and no source measures
+            how the partners used it.
+          evidence:
+            - https://www.anthropic.com/project/glasswing
+        capability:
+          rating: 3
+          confidence: low
+          rationale: >-
+            Anthropic reports a step-change in finding and exploiting zero-day
+            vulnerabilities, with a 100% pass rate on a 35-challenge Cybench
+            subset and 181 working Firefox exploits against two for Opus 4.6.
+            If accurate, this is a substantial new practical ability. The
+            results are vendor-produced, and the research post says most
+            findings were undisclosed and unpatched.
+          evidence:
+            - https://www.anthropic.com/claude-mythos-preview-system-card
+            - https://www.anthropic.com/research/mythos-preview
+        society:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources do not measure public, professional or institutional
+            effects. The decision to withhold a model on cybersecurity grounds
+            may warrant a rating once independent coverage is reviewed.
+          evidence:
+            - https://www.anthropic.com/project/glasswing
+      comparisons:
+        - id: 2026-04-16-claude-opus-4-7
+          rationale: >-
+            Opus 4.7 was released nine days later as a generally available
+            model that Anthropic said was below Mythos Preview on relevant
+            evaluations. Mythos Preview is rated higher on capability on the
+            developer's account, but lower on adoption because access was gated.
+        - id: 2023-03-14-openai-gpt-4
+          rationale: >-
+            GPT-4 shipped with a broad public release and a large capability
+            jump. Mythos Preview was a restricted release, so it is rated lower
+            for reach even where its claimed capability advance is large.
+        - id: 2025-01-20-deepseek-r1
+          rationale: >-
+            DeepSeek R1 released open weights that others could inspect and
+            reuse. Mythos Preview is closed and restricted, and the evidence
+            does not establish a comparable downstream effect.
+      questions:
+        - Do independent evaluations reproduce the reported vulnerability-finding results?
+        - Which of the reported vulnerabilities were later patched or publicly disclosed?
+        - Did the gated-release approach change how other developers handle cyber-capable models?
+      review_after: 2026-12-06
+      review_triggers:
+        - Independent evaluation of the model's cyber capabilities.
+        - Public disclosure or patching of a material share of the reported vulnerabilities.
+        - Policy or industry changes that cite the gated release.
+issue: 110
+submitted_by: ChrisBuilds
