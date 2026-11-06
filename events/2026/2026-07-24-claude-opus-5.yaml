@@ -1,0 +1,151 @@
+id: 2026-07-24-claude-opus-5
+title: Anthropic releases Claude Opus 5
+date: 2026-07-24
+summary: Anthropic released Claude Opus 5, reporting gains over Opus 4.8 across agentic coding, computer use, and long-horizon work; an independent coding test found a higher pass rate on a shared Java task set.
+description: >-
+  Anthropic released Claude Opus 5 as the successor to Opus 4.8. Its launch
+  announcement and system card report gains across agentic coding, computer
+  use, long-horizon knowledge work, mathematics, and science. The announcement
+  describes early-access partners using the model for concrete work, including
+  one account of production adoption; these examples were selected and reported
+  by Anthropic. In a later test, SonarSource reported an 88.6% pass rate for
+  Opus 5 versus 82.9% for Opus 4.8 on the same 544 Java HumanEval and MBPP tasks.
+  That independent result covers a limited coding task set and does not measure
+  use or capability across other fields.
+category: model release
+tags:
+  - language model
+  - coding
+  - agents
+organizations:
+  - Anthropic
+sources:
+  - url: https://www.anthropic.com/news/claude-opus-5
+    title: Introducing Claude Opus 5
+    publisher: Anthropic
+    accessed: 2026-11-06
+  - url: https://www.anthropic.com/claude-opus-5-system-card
+    title: 'System Card: Claude Opus 5'
+    publisher: Anthropic
+    accessed: 2026-11-06
+  - url: https://malob.github.io/ai-system-cards/anthropic/claude-opus-5/
+    title: 'Claude Opus 5 system card: indexed text extraction'
+    publisher: AI System Cards (malob.github.io)
+    accessed: 2026-11-06
+  - url: https://www.sonarsource.com/blog/claude-opus-5/
+    title: 'Claude Opus 5: An evaluation review & metrics benchmarks'
+    publisher: SonarSource
+    accessed: 2026-11-06
+  - url: https://www.reuters.com/technology/anthropic-rolls-out-opus-5-ai-model-efficiency-upgrade-2026-07-24/
+    title: Anthropic rolls out Opus 5 AI model in efficiency upgrade
+    publisher: Reuters
+    accessed: 2026-11-06
+related:
+  - id: 2026-05-28-claude-opus-4-8
+    relation: builds_on
+    source: https://www.anthropic.com/claude-opus-5-system-card
+importance:
+  current: 2026-11-06-v2
+  assessments:
+    - id: 2026-11-06-v2
+      assessed_at: 2026-11-06
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: >-
+        Anthropic reports broad gains over Opus 4.8, and SonarSource's
+        same-task coding evaluation reports a 5.7 percentage-point increase
+        over that predecessor. Anthropic-selected early-access accounts also
+        describe concrete task use, including production adoption. This
+        supports capability 3 and isolated adoption 1, with low confidence
+        because much of the broad-work evidence and all adoption examples are
+        vendor-reported. The sources do not establish sustained use, later
+        influence, or broad societal effects. With influence and society
+        unknown, adoption 1, and capability 3, the provisional score interval
+        is 21–66; the index placement key uses its lower bound, with no
+        accepted point score.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources document the release, evaluations, and early task use
+            but do not establish later technical or institutional changes
+            attributable to Opus 5 itself, apart from subsequent Anthropic
+            releases.
+          evidence:
+            - https://www.anthropic.com/news/claude-opus-5
+            - https://www.sonarsource.com/blog/claude-opus-5/
+        adoption:
+          rating: 1
+          confidence: low
+          rationale: >-
+            Anthropic's announcement quotes named early-access users describing
+            concrete trials and one director saying they are adopting Opus 5
+            for production workloads. These selected vendor-reported accounts
+            support isolated experiment or deployment, the rating-1 anchor;
+            they do not measure sustained or widespread use. Product and API
+            availability alone is not counted as adoption.
+          evidence:
+            - https://www.anthropic.com/news/claude-opus-5
+        capability:
+          rating: 3
+          confidence: low
+          rationale: >-
+            Anthropic's system card reports gains across agentic coding,
+            computer use, long-horizon knowledge work, mathematics, and
+            science, with early-access accounts describing multi-step work
+            that earlier models did not complete. SonarSource independently
+            reports a higher pass rate than Opus 4.8 on a shared 544-task
+            Java coding subset. Together this supports substantial new practical
+            ability in selected work, rather than a foundational new class of
+            work. Confidence is low because the independent test is narrow and
+            the broader evaluation and examples are vendor-reported.
+          evidence:
+            - https://www.anthropic.com/claude-opus-5-system-card
+            - https://malob.github.io/ai-system-cards/anthropic/claude-opus-5/
+            - https://www.anthropic.com/news/claude-opus-5
+            - https://www.sonarsource.com/blog/claude-opus-5/
+        society:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources do not measure public, professional, or institutional
+            effects attributable to Opus 5 beyond selected partner use.
+          evidence:
+            - https://www.anthropic.com/news/claude-opus-5
+            - https://www.reuters.com/technology/anthropic-rolls-out-opus-5-ai-model-efficiency-upgrade-2026-07-24/
+      comparisons:
+        - id: 2026-05-28-claude-opus-4-8
+          rationale: >-
+            Opus 4.8 is the direct predecessor. Its provisional v2 capability
+            rating is 2 for useful gains within established approaches, based
+            on a different benchmark set. SonarSource's same-task evaluation
+            reports a 5.7 percentage-point pass-rate gain for Opus 5 on 544
+            Java coding tasks; Anthropic's broader, vendor-reported examples also
+            support the substantial practical-ability anchor for Opus 5.
+            These results do not establish a general ordering across all
+            capability domains.
+        - id: 2026-04-16-claude-opus-4-7
+          rationale: >-
+            Opus 4.7 is an earlier release in the same hosted model line. Its
+            assessment found incremental gains and isolated early use. Opus 5
+            has broader reported improvements and a narrow independent coding
+            result, supporting capability 3 while adoption remains at the
+            same isolated-use anchor.
+        - id: 2025-01-20-deepseek-r1
+          rationale: >-
+            DeepSeek R1 was released with open weights and a technical report
+            that others could inspect and reuse. Opus 5 is a hosted model with
+            a different contribution; this comparison concerns openness and
+            research reuse, not a direct capability or impact ranking.
+      questions:
+        - What independent, version-specific evidence measures sustained Opus 5 use across products and APIs?
+        - Do independent evaluations reproduce the reported gains on long-horizon, computer-use, and scientific tasks?
+        - Which downstream workflows can be attributed to Opus 5 rather than the Claude 5 family generally?
+      review_after: 2026-12-06
+      review_triggers:
+        - Independent usage evidence that distinguishes Opus 5 and changes the adoption assessment.
+        - Independent evaluations that materially change the capability assessment.
+issue: 104
+submitted_by: ChrisBuilds
