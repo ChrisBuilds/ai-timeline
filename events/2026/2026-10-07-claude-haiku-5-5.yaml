@@ -1,0 +1,124 @@
+id: 2026-10-07-claude-haiku-5-5
+title: Anthropic releases Claude Haiku 5.5
+date: 2026-10-07
+summary: Anthropic released Claude Haiku 5.5, a low-cost small model aimed at high-volume work, subagents and browser use.
+description: >-
+  Anthropic released Claude Haiku 5.5 on October 7, 2026, as the third model in
+  its Claude 5.5 family, available through the Claude API as `claude-haiku-5-5`
+  and on Amazon Web Services, Google Cloud, and Microsoft Azure. It was priced
+  at $0.10 per million input tokens and $0.50 per million output tokens for
+  requests up to 100,000 tokens, with higher rates above that. Anthropic
+  described it as its cheapest, fastest and most capable small model, and the
+  first Haiku-class model with an adjustable effort setting. It positioned the
+  model for high-volume tasks such as summaries and classification, for subagent
+  work alongside Opus 5.5 and Sonnet 5.5, and for speed-sensitive uses such as
+  live customer support and browser use. It said Sonnet 5.5 and Opus 5.5
+  remain better for complex agentic coding. These are the developer's own
+  comparisons. The system card says Haiku 5.5 significantly outperforms Haiku
+  4.5 and usually does not reach Sonnet 5.5. It judges that the model does not
+  cross the Responsible Scaling Policy CB-2 or Autonomy-2 thresholds, and
+  assesses alignment risk as low, while reporting that it over-refused more than
+  any other model in the automated audit.
+  {note: Anthropic's page limits the fastest-model claim to standard speed, since Opus models are faster in Fast Mode.}
+  {note: I read the system card up to its automated behavioral audit and not its later alignment, welfare and capabilities sections, so those are not described here.}
+category: model release
+tags:
+  - language model
+  - agents
+  - computer use
+organizations:
+  - Anthropic
+sources:
+  - url: https://www.anthropic.com/claude-haiku-5-5
+    title: Introducing Claude Haiku 5.5
+    publisher: Anthropic
+    accessed: 2026-11-06
+  - url: https://www.anthropic.com/claude-haiku-5-5-system-card
+    title: 'System Card: Claude Haiku 5.5'
+    publisher: Anthropic
+    accessed: 2026-11-06
+related:
+  - id: 2025-10-15-claude-haiku-4-5
+    relation: builds_on
+    source: https://www.anthropic.com/claude-haiku-5-5
+importance:
+  current: 2026-11-06-v2
+  assessments:
+    - id: 2026-11-06-v2
+      assessed_at: 2026-11-06
+      rubric_version: v2
+      status: provisional
+      reviewer: Claude (editorial assessment prepared for maintainer review)
+      rationale: >-
+        Anthropic's announcement and system card report large gains over Haiku
+        4.5 at a lower price, with availability on three major cloud platforms.
+        These are developer-reported results and availability, not independent
+        evidence of sustained use or downstream change. No third-party
+        evaluation or usage source was checked. With influence and society
+        unknown, adoption 1 and capability 2, the provisional score range is
+        16-61, with no accepted point score.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources describe the release but do not identify later technical
+            or institutional changes attributable to Haiku 5.5 itself, as
+            distinct from other Claude releases.
+          evidence:
+            - https://www.anthropic.com/claude-haiku-5-5
+        adoption:
+          rating: 1
+          confidence: low
+          rationale: >-
+            Availability on the API and three cloud platforms is not counted as
+            adoption. The announcement cites customer tests, which are isolated
+            deployments chosen by the vendor, and no source measures sustained
+            use.
+          evidence:
+            - https://www.anthropic.com/claude-haiku-5-5
+        capability:
+          rating: 2
+          confidence: low
+          rationale: >-
+            The system card reports significant gains over Haiku 4.5 and results
+            usually below Sonnet 5.5, a useful improvement within an established
+            approach. The results are vendor-produced and no independent
+            evaluation was found.
+          evidence:
+            - https://www.anthropic.com/claude-haiku-5-5-system-card
+            - https://www.anthropic.com/claude-haiku-5-5
+        society:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources do not measure public, professional, or institutional
+            effects attributable to Haiku 5.5.
+          evidence:
+            - https://www.anthropic.com/claude-haiku-5-5
+      comparisons:
+        - id: 2025-10-15-claude-haiku-4-5
+          rationale: >-
+            Haiku 4.5 is the direct predecessor in the same line. Both are
+            vendor-reported gains in a small, low-cost model, and available
+            evidence supports a similar placement.
+        - id: 2026-04-16-claude-opus-4-7
+          rationale: >-
+            Opus 4.7 is another vendor-reported incremental release. Haiku 5.5
+            has no independent evidence of its own yet, so a similar low
+            placement fits.
+        - id: 2025-01-20-deepseek-r1
+          rationale: >-
+            DeepSeek R1 shipped open weights and a technical report that others
+            could inspect and reuse. Haiku 5.5 is a closed hosted model, and the
+            evidence does not establish a comparable research contribution.
+      questions:
+        - What independent, version-specific evidence measures sustained use of Haiku 5.5?
+        - Do independent evaluations reproduce the reported gains over Haiku 4.5?
+        - Do the lower price and effort setting change how teams use small models for subagents and browser tasks?
+      review_after: 2026-12-06
+      review_triggers:
+        - Independent usage evidence that distinguishes Haiku 5.5 and changes the adoption assessment.
+        - Independent evaluations that materially change the capability assessment.
+issue: 109
+submitted_by: ChrisBuilds
