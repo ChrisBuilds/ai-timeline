@@ -1,0 +1,100 @@
+id: 2026-09-15-claude-fable-5-1-mythos-5-1
+title: Anthropic releases Claude Fable 5.1 and restricted Mythos 5.1
+date: 2026-09-15
+summary: Anthropic released Fable 5.1 for general use and Mythos 5.1, the same model with more permissive safeguards, to vetted organizations in two trusted-access programs.
+description: >-
+  Anthropic introduced Claude Fable 5.1 and Claude Mythos 5.1 on September 15,
+  2026, describing them as the same model with different levels of safeguards.
+  Fable 5.1 (`claude-fable-5-1`) was made available on the Claude API and on
+  Amazon Web Services, Google Cloud, and Microsoft Azure, at $10 per million
+  input tokens and $50 per million output tokens, the same prices as Fable 5.
+  Mythos 5.1 has more permissive safeguards for cybersecurity and life
+  sciences work and was available only through two verification programs, the
+  Cyber Verification Program and the Life Sciences Verification Program, to a
+  set of US organizations. Anthropic said it was working with the US
+  government to widen access. Anthropic said its newest cyber safeguards
+  produce 60% fewer false positives and let Fable 5.1 be used to find software
+  vulnerabilities but not to develop exploits, and that its biology safeguards
+  fire 85% less often on benign elementary biology and medical questions than
+  at Fable 5's launch. It reported Terminal-Bench 4.0 scores of 55.8% for
+  Fable 5.1 and 60.9% for Mythos 5.1, against 42.0% for Fable 5; these are
+  the developer's own results.
+  {note: The announcement page gives only "September 2026"; the day comes from Anthropic's models index, which lists the entry as dated Sep 15, 2026.}
+  {note: Anthropic said safeguards intervened on some benchmark tasks and likely lowered Fable 5.1's reported scores.}
+category: model release
+tags:
+  - language model
+  - safety
+  - cybersecurity
+  - restricted access
+organizations:
+  - Anthropic
+sources:
+  - url: https://www.anthropic.com/claude-fable-and-mythos-5-1
+    title: Introducing Claude Mythos and Fable 5.1
+    publisher: Anthropic
+    accessed: 2026-11-06
+  - url: https://www.anthropic.com/news/models
+    title: Anthropic models index
+    publisher: Anthropic
+    accessed: 2026-11-06
+importance:
+  current: 2026-11-06-v2
+  assessments:
+    - id: 2026-11-06-v2
+      assessed_at: 2026-11-06
+      rubric_version: v2
+      status: provisional
+      reviewer: Claude (editorial assessment prepared for maintainer review)
+      rationale: >-
+        A point release of a model family, with a tiered-access arrangement
+        carried over from the June 2026 release. The evidence is Anthropic's own
+        announcement and benchmark results, and no independent coverage was
+        checked. Influence and society are unknown, adoption 1 and capability 1.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: No source identifies later practice attributable to this release.
+          evidence:
+            - https://www.anthropic.com/claude-fable-and-mythos-5-1
+        adoption:
+          rating: 1
+          confidence: low
+          rationale: >-
+            Availability on major clouds and an API is not counted as adoption.
+            The announcement quotes two customers, but no source measures
+            sustained use.
+          evidence:
+            - https://www.anthropic.com/claude-fable-and-mythos-5-1
+        capability:
+          rating: 1
+          confidence: low
+          rationale: >-
+            The reported gains over Fable 5 are incremental and
+            developer-reported, with changes to safeguards false-positive rates
+            rather than a new kind of capability.
+          evidence:
+            - https://www.anthropic.com/claude-fable-and-mythos-5-1
+        society:
+          rating: null
+          confidence: low
+          rationale: The source describes access policy but does not measure effects.
+          evidence:
+            - https://www.anthropic.com/claude-fable-and-mythos-5-1
+      comparisons:
+        - id: 2026-04-16-claude-opus-4-7
+          rationale: >-
+            Another incremental Anthropic release with similar vendor-reported
+            evidence.
+        - id: 2026-02-17-claude-sonnet-4-6
+          rationale: >-
+            A point release of an existing family, without a new access model.
+      questions:
+        - Do independent evaluations reproduce the reported benchmark gains?
+        - Did the verification-program model for restricted access spread to other developers?
+      review_after: 2026-12-06
+      review_triggers:
+        - Independent evaluations or usage evidence that changes the ratings.
+issue: 106
+submitted_by: ChrisBuilds
