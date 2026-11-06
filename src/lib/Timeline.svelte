@@ -99,7 +99,13 @@
   // The window clipped to the timeline, so nothing drawn for it makes the page taller.
   const clipTop = $derived(Math.max(0, winTop))
   const clipBottom = $derived(Math.min(scale.height, winBottom))
-  const nodes = $derived(visibleNodes(hidden, winTop, winBottom, 2))
+  // A leaving card's node appears when the card has shrunk back into it.
+  const nodes = $derived.by(() => {
+    const all = visibleNodes(hidden, winTop, winBottom, 2)
+    if (!motion.leaving.length) return all
+    const going = new Set(motion.leaving.map((l) => l.item))
+    return all.filter((n) => !going.has(n.item))
+  })
   const nodePaths = $derived.by(() => {
     const dim = nodes.filter((n) => dimIds.has(n.item.id))
     return { shown: nodePath(dim.length ? nodes.filter((n) => !dimIds.has(n.item.id)) : nodes, NODE_R), dim: nodePath(dim, NODE_R) }
@@ -117,7 +123,7 @@
   // shrink back into it while the others close up. Time-based, so a card never
   // flickers with the zoom frame rate, and CSS transitions, so a card that
   // returns mid-animation turns around from where it is.
-  const REVEAL_MS = 480
+  const REVEAL_MS = 980
   const tracker = new RevealTracker<TimelineEvent>(REVEAL_MS)
   let expired = $state(0)
   // Only zooming reveals cards. A filter change replaces most cards at once,
@@ -243,7 +249,7 @@
 
   const ticks = $derived.by(() => {
     // Dots near the window, sorted by y, so each tick checks its neighbours with a binary search.
-    const dots = shownCards
+    const dots = shownCards.map((c) => ({ y: c.top + ANCHOR })).sort((a, b) => a.y - b.y)
     const nearDot = (y: number) => {
       const i = lowerBound(dots, y - 18)
       return i < dots.length && dots[i].y < y + 18
@@ -272,11 +278,19 @@
     return null
   }
 
-  // A card grows out of its node, or, when the layout has moved it far from
-  // its date, out of the end of its leader, so it never flies across the screen.
-  function revealOrigin(card: PlacedCard<TimelineEvent>, left: number): string {
+  // Nodes mark hidden events only. When an event gets room, its node leaves
+  // the spine and grows into the card; the card's leader runs straight to the
+  // spine beside it. A card the layout has moved far from its date grows from
+  // where its leader meets the spine, so it never flies across the screen.
+  const ANCHOR = 18
+  // The card morphs from its node: its collapsed state is a node-sized circle
+  // centred on the node, as a translate and scale from the card's top-left.
+  function morph(card: PlacedCard<TimelineEvent>, left: number, height: number): string {
     const toNode = card.y - card.top
-    return `${spineX - left}px ${Math.abs(toNode - 18) > 120 ? 18 : toNode}px`
+    const nx = spineX - left
+    const ny = Math.abs(toNode - ANCHOR) > 120 ? ANCHOR : toNode
+    const d = NODE_R * 2
+    return `--tx: ${nx - d / 2}px; --ty: ${ny - d / 2}px; --sx: ${d / cardWidth}; --sy: ${d / height}`
   }
 
   function cardLeft(lane: number): number {
@@ -371,31 +385,31 @@
       <li class:leaving class:reveal={motion.entering.has(ev.id) && selectedId !== ev.id} aria-hidden={leaving || undefined} inert={leaving}>
         <!-- The dot and connector are extra click targets for the card; its button is the keyboard route. -->
         <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-        <span
-          onclick={() => onselect(ev.id)}
-          data-motion-key="dot-{ev.id}"
-          class="dot tier-{ev.tier}"
-          class:selected={selectedId === ev.id}
-          class:related={highlightIds.has(ev.id)}
-          class:dimmed={dimIds.has(ev.id) && selectedId !== ev.id}
-          class:match={matchIds.has(ev.id)}
-          style:top="{card.y}px"
-          style:--c={categoryColor(ev.category)}
-          aria-hidden="true"
-        ></span>
+        {#if selectedId === ev.id}
+          <span
+            onclick={() => onselect(ev.id)}
+            data-motion-key="dot-{ev.id}"
+            class="dot tier-{ev.tier}"
+            class:selected={selectedId === ev.id}
+            class:related={highlightIds.has(ev.id)}
+            class:dimmed={dimIds.has(ev.id) && selectedId !== ev.id}
+            class:match={matchIds.has(ev.id)}
+            style:top="{card.top + ANCHOR}px"
+            style:--c={categoryColor(ev.category)}
+            aria-hidden="true"
+          ></span>
+        {/if}
         <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
         <span
           onclick={() => onselect(ev.id)}
           data-motion-key="connector-{ev.id}"
           class="connector"
-          class:shifted={Math.abs(card.top + 18 - card.y) > 1}
-          class:shifted-up={card.top + 18 < card.y - 1}
           class:dimmed={dimIds.has(ev.id) && selectedId !== ev.id}
           style:--c={categoryColor(ev.category)}
-          style:top="{Math.min(card.y, card.top + 18)}px"
+          style:top="{card.top + ANCHOR}px"
           style:left="{Math.min(spineX, left + cardWidth)}px"
           style:width="{card.lane === 0 ? left - spineX : spineX - (left + cardWidth)}px"
-          style:height="{Math.abs(card.top + 18 - card.y) > 1 ? Math.abs(card.top + 18 - card.y) : 16}px"
+          style:height="16px"
           aria-hidden="true"
         ></span>
         <!-- A card shown only for its date marker, displaced far from it, is left out until it is near. -->
@@ -413,7 +427,7 @@
           style:left="{left}px"
           style:width="{cardWidth}px"
           style:height="{eventHeight(ev)}px"
-          style:transform-origin={revealOrigin(card, left)}
+          style={motion.entering.has(ev.id) || leaving ? morph(card, left, eventHeight(ev)) : undefined}
         >
           <button class="card-button" title={ev.title} onclick={() => onselect(ev.id)} aria-pressed={selectedId === ev.id}>
             {#if selectedId === ev.id}<span class="state-label">Selected</span>{/if}
@@ -439,9 +453,6 @@
 </div>
 
 <style>
-  .connector.shifted { transform: none; background: transparent; border-left: 1px solid var(--c); border-bottom: 1px solid var(--c); opacity: 0.45; }
-  .connector.shifted-up { border-bottom: 0; border-top: 1px solid var(--c); }
-  .connector.shifted::before { display: none; }
   .timeline { position: relative; width: 100%; touch-action: pan-y; }
   .band { position: absolute; left: 0; right: 0; border-top: 1px solid var(--line); pointer-events: none; }
   .era-label { position: absolute; top: var(--label-top); left: var(--label-pad); right: 8px; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; margin: 0; line-height: 1.2; }
@@ -468,23 +479,38 @@
   .node-tip time { display: block; color: var(--muted); font-size: 0.65rem; font-weight: 400; }
   .cards { list-style: none; margin: 0; padding: 0; }
   /*
-   * Reveal: a card that just got room grows out of its node (transform-origin is
-   * set to the node), its leader and dot fading in. A card that just lost its
-   * room shrinks and fades back into the node, under the cards closing up.
+   * Reveal: a card that just got room morphs out of its node. It starts as a
+   * node-sized circle on the spine, stretches into the card's box while its
+   * corners square off, and then its text and leader fade in. The node's fill
+   * fades while the shape is still small, leaving a faint outline to trace the
+   * stretch, so a large box is never a solid block. A card that just lost its
+   * room runs the same morph in reverse, filling back in only as it lands on its
+   * node under the cards closing up. About 0.9s each way.
    */
-  .reveal .card, .reveal .dot { transition: transform 460ms cubic-bezier(0.33, 1, 0.68, 1), opacity 140ms linear; }
-  /* A leader only fades: its transform flips with its shape, and must not slide. */
-  .reveal .connector { transition: opacity 140ms linear; }
-  @starting-style {
-    .reveal .card { transform: scale(0.05); opacity: 0; }
-    .reveal .dot { transform: translate(-50%, -50%) scale(0.4); }
-    .reveal .connector { opacity: 0; }
+  /* Collapsed: a node-sized circle on the spine, in the node's colour, with the text hidden. */
+  .reveal .card, .leaving .card { transform-origin: 0 0; }
+  .reveal .card {
+    transition: transform 900ms cubic-bezier(0.65, 0, 0.25, 1), border-radius 900ms cubic-bezier(0.65, 0, 0.25, 1),
+      background-color 320ms ease-out, border-color 360ms ease-out 560ms;
   }
-  .leaving .card, .leaving .dot { transition: transform 420ms cubic-bezier(0.32, 0, 0.67, 0), opacity 420ms cubic-bezier(0.42, 0, 1, 1); pointer-events: none; }
-  .leaving .connector { transition: opacity 420ms cubic-bezier(0.42, 0, 1, 1); pointer-events: none; }
-  .leaving .card { transform: scale(0.05); opacity: 0; z-index: 0; }
-  .leaving .dot { transform: translate(-50%, -50%) scale(0.4); opacity: 0; }
-  .leaving .connector { opacity: 0; }
+  .reveal .card-button { transition: opacity 380ms ease-out 520ms; }
+  .reveal .connector { transition: opacity 300ms ease-out 560ms; }
+  @starting-style {
+    .reveal .card {
+      transform: translate(var(--tx), var(--ty)) scale(var(--sx), var(--sy)); border-radius: 50%;
+      background-color: var(--muted); border-color: var(--line-strong);
+    }
+    .reveal .card-button, .reveal .connector { opacity: 0; }
+  }
+  .leaving .card {
+    transform: translate(var(--tx), var(--ty)) scale(var(--sx), var(--sy)); border-radius: 50%;
+    background-color: var(--muted); border-color: var(--line-strong); z-index: 0;
+    transition: transform 840ms cubic-bezier(0.65, 0, 0.35, 1) 120ms, border-radius 840ms cubic-bezier(0.65, 0, 0.35, 1) 120ms,
+      border-color 200ms ease-out, background-color 300ms ease-in 660ms;
+  }
+  .leaving .card-button { opacity: 0; transition: opacity 240ms ease-in; }
+  .leaving .connector { opacity: 0; transition: opacity 240ms ease-in; }
+  .leaving .card, .leaving .connector { pointer-events: none; }
   .dot { position: absolute; left: var(--spine); width: 9px; height: 9px; transform: translate(-50%, -50%); background: var(--bg); border: 2px solid var(--muted); border-radius: 50%; z-index: 3; cursor: pointer; }
   .dot.related { border-color: var(--context-accent); }
   .dot.selected { width: 13px; height: 13px; border: 2px solid var(--bg); background: var(--context-accent); border-radius: 1px; transform: translate(-50%, -50%) rotate(45deg); }

@@ -67,7 +67,7 @@ try {
     })
     assert(frames.grown > 0, 'zooming in revealed no cards from their nodes')
     assert.deepEqual(frames.popped, [], 'cards popped in at full size')
-    await page.waitForTimeout(600)
+    await page.waitForTimeout(1200)
     assert.equal(await page.locator('li.leaving, li.reveal').count(), 0, 'reveal animations did not finish')
 
     // Zooming out: cards that lose their room shrink into their node, then go.
@@ -75,7 +75,7 @@ try {
       document.body.dispatchEvent(new KeyboardEvent('keydown', { key: '-', bubbles: true }))
       document.body.dispatchEvent(new KeyboardEvent('keydown', { key: '-', bubbles: true }))
       let most = 0
-      for (let i = 0; i < 30; i++) {
+      for (let i = 0; i < 50; i++) {
         await new Promise((r) => requestAnimationFrame(r))
         for (const li of document.querySelectorAll('li.leaving')) {
           const card = li.querySelector('.card')
@@ -87,12 +87,14 @@ try {
       return most
     })
     assert(leaving > 0.2, 'zooming out did not shrink cards into their nodes')
-    await page.waitForTimeout(600)
+    await page.waitForTimeout(1200)
     assert.equal(await page.locator('li.leaving').count(), 0, 'leaving cards were not removed')
 
     // Leaders stay attached: through a zoom, every card's leader ends at the card.
     const loose = await page.evaluate(async () => {
       const out = []
+      const nodes = document.querySelector('.nodes').getBoundingClientRect()
+      const spine = nodes.left + nodes.width / 2
       document.body.dispatchEvent(new KeyboardEvent('keydown', { key: '+', bubbles: true }))
       for (let i = 0; i < 40; i++) {
         await new Promise((r) => requestAnimationFrame(r))
@@ -102,13 +104,15 @@ try {
           if (!card || getComputedStyle(card).transform !== 'none') continue
           const anchor = card.getBoundingClientRect().top + 18
           const con = li.querySelector('.connector').getBoundingClientRect()
-          if (![con.top, con.bottom, (con.top + con.bottom) / 2].some((y) => Math.abs(y - anchor) < 2)) out.push(card.id)
+          // Nodes stand for hidden events only: a shown card has none, and its leader runs to the spine.
+          if (li.querySelector('.dot') && !card.classList.contains('selected')) out.push(card.id)
+          if (Math.abs((con.top + con.bottom) / 2 - anchor) > 2 || Math.min(Math.abs(con.left - spine), Math.abs(con.right - spine)) > 2) out.push(card.id)
         }
       }
       return [...new Set(out)]
     })
-    assert.deepEqual(loose, [], 'a card came loose from its leader while zooming')
-    await page.waitForTimeout(600)
+    assert.deepEqual(loose, [], 'a card came loose from its leader or node while zooming')
+    await page.waitForTimeout(1200)
 
     // Settled cards never overlap one another or an era heading.
     const collisions = await page.evaluate(() => {
