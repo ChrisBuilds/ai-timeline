@@ -109,7 +109,7 @@ try {
       await page.locator('#space-0.card').scrollIntoViewIfNeeded()
       if (count === 2) {
         await page.locator('#space-1.card').waitFor()
-        assert.equal(await page.locator('.nodes path').first().getAttribute('d'), '', 'a zero-score event was buried despite nearby space')
+        assert.equal(await page.evaluate(() => [...document.querySelectorAll('.nodes path')].map((p) => p.getAttribute('d')).join('')), '', 'a zero-score event was buried despite nearby space')
       } else {
         await page.waitForFunction(() => document.querySelector('.nodes path')?.getAttribute('d'))
         assert.equal(await page.locator('#space-7.card').count(), 0, 'lowest score should yield when space is full')
