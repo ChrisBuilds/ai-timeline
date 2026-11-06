@@ -1,0 +1,148 @@
+id: 2018-06-11-openai-gpt-1
+title: OpenAI releases the original GPT research and model
+date: "2018-06-11"
+summary: OpenAI published a Transformer language model pretrained on unlabeled text and fine-tuned for supervised tasks, a research approach later developed in GPT-2 and other language models.
+description: >-
+  OpenAI reported a two-stage method: first pretrain a Transformer language model
+  on unlabeled text, then fine-tune it for supervised tasks. The paper describes a
+  12-layer decoder-only Transformer trained on BooksCorpus and reports improved
+  results over the previous state of the art on 9 of 12 natural-language tasks.
+  Those benchmark results are the authors' own. OpenAI released the code and
+  pretrained model with the paper. Its later GPT-2 work explicitly followed the
+  original GPT model. The name "GPT-1" was applied later; the paper calls it a
+  "Finetuned Transformer LM"{note: the announcement and paper do not use the name GPT-1}.
+category: model release
+organizations: [ OpenAI ]
+people: [ Alec Radford, Karthik Narasimhan, Tim Salimans, Ilya Sutskever ]
+tags: [ language models, pretraining, transformer, NLP ]
+sources:
+  - url: https://openai.com/index/language-unsupervised/
+    title: Improving language understanding with unsupervised learning
+    publisher: OpenAI
+    accessed: "2026-11-06"
+  - url: https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf
+    title: Improving Language Understanding by Generative Pre-Training
+    publisher: OpenAI
+    accessed: "2026-11-06"
+  - url: https://github.com/openai/finetune-transformer-lm
+    title: finetune-transformer-lm
+    publisher: GitHub
+    accessed: "2026-11-06"
+  - url: https://openai.com/index/better-language-models/
+    title: Better language models and their implications
+    publisher: OpenAI
+    accessed: "2026-11-06"
+  - url: https://aclanthology.org/D19-5602/
+    title: "Hello, It’s GPT-2 - How Can I Help You? Towards the Use of Pretrained Language Models for Task-Oriented Dialogue Systems"
+    publisher: Association for Computational Linguistics
+    accessed: "2026-11-06"
+  - url: https://aclanthology.org/P19-1134/
+    title: Fine-tuning Pre-Trained Transformer Language Models to Distantly Supervised Relation Extraction
+    publisher: Association for Computational Linguistics
+    accessed: "2026-11-06"
+  - url: https://github.com/huggingface/pytorch-openai-transformer-lm
+    title: PyTorch implementation of OpenAI's Finetuned Transformer Language Model
+    publisher: GitHub
+    accessed: "2026-11-06"
+artifacts:
+  - type: paper
+    url: https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf
+    title: Improving Language Understanding by Generative Pre-Training
+  - type: repo
+    url: https://github.com/openai/finetune-transformer-lm
+    title: finetune-transformer-lm
+related:
+  - id: 2017-06-12-attention-is-all-you-need
+    relation: builds_on
+    source: https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf
+importance:
+  current: 2026-11-06-v2
+  assessments:
+    - id: 2026-11-06-v2
+      assessed_at: 2026-11-06
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: >-
+        Evidence available by this assessment date supports substantial influence
+        through the explicitly named GPT-2 successor and external task-specific
+        research using the pretrained model. It does not establish broad adoption
+        or effects on society, nor assign the later GPT family's full influence to
+        this 2018 release. The event records a meaningful advance in applying
+        generative pretraining with a Transformer across language tasks.
+      dimensions:
+        influence:
+          rating: 3
+          confidence: medium
+          rationale: >-
+            GPT-2's authors explicitly describe it as following the original GPT,
+            and independent 2019 NLP studies cite or use the released pretrained
+            GPT for relation extraction and task-oriented dialogue. This supports
+            substantial field-level influence, while not attributing all later
+            GPT-family or generative AI developments to the 2018 event.
+          evidence:
+            - https://openai.com/index/better-language-models/
+            - https://aclanthology.org/D19-5602/
+            - https://aclanthology.org/P19-1134/
+        adoption:
+          rating: 2
+          confidence: low
+          rationale: >-
+            Independent NLP papers applied the released pretrained GPT to at least
+            two specialist tasks, and a third-party PyTorch implementation made its
+            weights loadable outside OpenAI's codebase. This is evidence of repeated
+            specialist research use, not widespread use across NLP or later products.
+          evidence:
+            - https://aclanthology.org/D19-5602/
+            - https://aclanthology.org/P19-1134/
+            - https://github.com/huggingface/pytorch-openai-transformer-lm
+        capability:
+          rating: 3
+          confidence: medium
+          rationale: >-
+            The authors report one task-agnostic Transformer pretrained on raw text
+            and adapted to varied supervised tasks, with previous best results on
+            9 of 12 benchmarks. This broadened practical transfer with limited
+            task-specific architecture changes; the reported benchmarks are not an
+            independent replication and generative pretraining itself predates the
+            event.
+          evidence:
+            - https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf
+            - https://openai.com/index/language-unsupervised/
+        society:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources document research and specialist NLP applications but do
+            not measure broad public, professional, or institutional effects
+            attributable to this specific 2018 release.
+          evidence:
+            - https://aclanthology.org/D19-5602/
+      comparisons:
+        - id: 2017-06-12-attention-is-all-you-need
+          rationale: >-
+            The Transformer paper introduced the architecture that GPT adapted,
+            making it a more foundational capability contribution. This event
+            applies decoder-only Transformer pretraining and task fine-tuning, with
+            evidence of substantial but narrower subsequent influence.
+        - id: 2018-10-11-bert-pretraining
+          rationale: >-
+            BERT later demonstrated strong bidirectional pretraining across eleven
+            NLP benchmarks and has higher assessed adoption and influence. This GPT
+            event preceded it and demonstrated a generative decoder approach, but
+            should receive credit only for evidence tied to this work.
+        - id: 2019-02-14-openai-gpt2-staged-release
+          rationale: >-
+            GPT-2 is the named direct successor and extended autoregressive language
+            modeling at larger scale. Its separate release and later GPT-family
+            uses are not attributed wholesale to this earlier event.
+      questions:
+        - How much use of the original pretrained weights beyond the cited NLP studies can be directly attributed to the 2018 release?
+        - Would broader evidence distinguish the contribution of this release from contemporaneous ULMFiT, ELMo, and later BERT work?
+      review_after: 2026-12-06
+      review_triggers:
+        - Sourced evidence of sustained external use or more direct successor links that changes influence or adoption ratings.
+        - Independent evaluation or replication that changes the capability judgment.
+        - Historical attribution that separates this event's contribution from contemporaneous pretraining work or later GPT products.
+issue: 111
+submitted_by: ChrisBuilds
