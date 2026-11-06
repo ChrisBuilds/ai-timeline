@@ -1,21 +1,22 @@
 id: 2021-01-05-openai-dall-e
-title: OpenAI introduces DALL·E
+title: OpenAI introduces the DALL·E research model
 date: "2021-01-05"
 summary: >-
-  OpenAI announced DALL·E, a 12-billion-parameter transformer that generates images from text
-  descriptions, as a research result without a public image-generation service.
+  OpenAI published examples of DALL·E, a 12-billion-parameter GPT-3 variant that generated images
+  from text by modeling text and image tokens in one stream.
 description: >-
   OpenAI's announcement describes DALL·E as a 12-billion-parameter version of GPT-3 trained to
   generate images from text captions. A single transformer models text and image tokens as one
   stream, with images compressed by a discrete variational autoencoder. OpenAI's examples included
   combining unrelated concepts, rendering text and transforming existing images, and the post notes
   that controllability weakens as more objects are added. Sample images were reranked with CLIP,
-  announced the same day. The post presents these as OpenAI's own results and does not describe a
-  public release or API; the accompanying paper, "Zero-Shot Text-to-Image Generation", was posted to
-  arXiv on 24 February 2021. The successor DALL·E 2 is mentioned by OpenAI as producing more
-  realistic images at higher resolution.{note: This entry records the research announcement only.
-  Comparisons with earlier text-to-image systems are OpenAI's own claims.}
-category: model release
+  announced the same day. The announcement presents these as OpenAI's research results. OpenAI
+  posted the accompanying paper, "Zero-Shot Text-to-Image Generation", to arXiv on 24 February
+  2021. The full 12-billion-parameter transformer was not released; OpenAI later released code and
+  weights for the dVAE image-tokenizer component, explicitly excluding that transformer. An
+  independent developer later said DALL·E inspired DALL·E Mini, a separate system. This entry does
+  not attribute the use of that or later image-generation products to the original model.
+category: research
 organizations: [ OpenAI ]
 people: [ Aditya Ramesh, Mikhail Pavlov, Gabriel Goh, Scott Gray, Chelsea Voss, Alec Radford, Mark Chen, Ilya Sutskever ]
 tags: [ image generation, text-to-image, transformer ]
@@ -34,6 +35,22 @@ sources:
     title: CLIP - Connecting text and images
     publisher: OpenAI
     accessed: "2026-11-06"
+  - url: https://github.com/openai/DALL-E
+    title: PyTorch package for the discrete VAE used for DALL·E
+    publisher: OpenAI
+    accessed: "2026-11-06"
+  - url: https://arxiv.org/abs/2112.10741
+    title: "GLIDE: Towards Photorealistic Image Generation and Editing with Text-Guided Diffusion Models"
+    publisher: arXiv
+    accessed: "2026-11-06"
+  - url: https://www.wired.com/story/dalle-ai-meme-machine/
+    title: DALL-E Mini Is the Internet's Favorite AI Meme Machine
+    publisher: WIRED
+    accessed: "2026-11-06"
+  - url: https://www.axios.com/2021/01/05/openai-artificial-intelligence-model-images-dall-e
+    title: A new AI model draws images from text
+    publisher: Axios
+    accessed: "2026-11-06"
 artifacts:
   - type: post
     url: https://openai.com/index/dall-e/
@@ -41,6 +58,13 @@ artifacts:
   - type: paper
     url: https://arxiv.org/abs/2102.12092
     title: Zero-Shot Text-to-Image Generation
+  - type: repo
+    url: https://github.com/openai/DALL-E
+    title: Official code for DALL·E's discrete VAE component
+related:
+  - id: 2020-05-28-gpt3-few-shot-learners
+    relation: builds_on
+    source: https://openai.com/index/dall-e/
 importance:
   current: 2026-11-06-v2
   assessments:
@@ -48,49 +72,65 @@ importance:
       assessed_at: 2026-11-06
       rubric_version: v2
       status: provisional
-      reviewer: Claude (research assessment, pending maintainer review)
-      rationale: Initial v2 assessment of the announcement and paper only. Later products such as
-        DALL·E 2 and public image generators are separate events and receive no credit here.
+      reviewer: Codex (research assessment, pending maintainer review)
+      rationale: This provisional assessment covers the research model and its documented follow-on
+        influence only. It separates the unpublished 12-billion-parameter transformer from the
+        released dVAE component and later public systems. The launch is notable for demonstrating
+        large-scale autoregressive text-to-image generation, but evidence does not establish that
+        it redirected the field or had broad societal effects on its own.
       dimensions:
         influence:
-          rating: 4
+          rating: 2
           confidence: medium
-          rationale: Showed autoregressive text-to-image generation at scale; OpenAI itself presents DALL·E 2
-            as its successor. Influence on other labs' systems is not established from the cited sources.
+          rationale: >-
+            The work had meaningful niche influence: GLIDE compared its system directly
+            with DALL·E, and the creator of DALL·E Mini said the original paper inspired his
+            independent prototype. This does not establish that later text-to-image systems broadly
+            derived from DALL·E.
           evidence:
-            - https://openai.com/index/dall-e/
-            - https://arxiv.org/abs/2102.12092
+            - https://arxiv.org/abs/2112.10741
+            - https://www.wired.com/story/dalle-ai-meme-machine/
         adoption:
           rating: 1
           confidence: medium
-          rationale: A research announcement with curated samples and no public service described in the
-            sources.
+          rationale: OpenAI trained and demonstrated the model as an isolated research prototype.
+            There is no evidence that others could use the 12-billion-parameter transformer; its
+            code release excluded the transformer and covered only the dVAE component.
           evidence:
             - https://openai.com/index/dall-e/
+            - https://github.com/openai/DALL-E
         capability:
-          rating: 4
+          rating: 3
           confidence: medium
-          rationale: Demonstrated flexible text-conditioned image generation with one transformer, with
-            stated limits in controllability. Quality claims are vendor-reported.
+          rationale: Demonstrated a substantial new practical and conceptual ability by generating
+            varied images from natural-language prompts with one autoregressive transformer over
+            text and image tokens. The examples were selected by OpenAI, and controllability had
+            stated limits.
           evidence:
             - https://openai.com/index/dall-e/
             - https://arxiv.org/abs/2102.12092
         society:
-          rating: 2
-          confidence: low
-          rationale: Drew attention to generated imagery, but the cited sources do not document broad
-            institutional effects for this release.
+          rating: 1
+          confidence: medium
+          rationale: The research announcement received local public and press attention, but the
+            evidence reviewed does not show broad or sustained societal effects from this
+            unreleased model.
           evidence:
             - https://openai.com/index/dall-e/
+            - https://www.axios.com/2021/01/05/openai-artificial-intelligence-model-images-dall-e
       comparisons:
         - id: 2022-08-22-stable-diffusion-public-release
-          rationale: "Lower overall significance under v2. This event: a research preview without public
-            access. Comparison event: public weights enabled wide local use."
+          rationale: "Lower overall significance under v2. This event: demonstrated a closed research
+            prototype with limited evidence of external use. Comparison event: public model weights
+            enabled broad local experimentation and deployment."
         - id: 2020-05-28-gpt3-few-shot-learners
-          rationale: "Lower overall significance under v2. This event: applies the GPT-3 approach to
-            images. Comparison event: broader field-level influence on language modeling."
+          rationale: "Lower overall significance under v2. This event: demonstrated a new image-generation
+            application of autoregressive language modeling. Comparison event: established a much
+            broader field-level direction in language modeling."
       questions:
-        - Which later text-to-image systems cite DALL·E directly as an influence?
+        - What additional independent systems or research works directly attribute their methods to
+          the original DALL·E?
       review_after: 2026-12-06
       review_triggers:
-        - Independent evidence of influence on later systems, or a new event for DALL·E 2.
+        - New attributable evidence of influence or use of the original model, or a separate event
+          for a later DALL·E system.
