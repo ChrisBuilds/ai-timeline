@@ -44,6 +44,10 @@ sources:
     title: Claude release notes
     publisher: Anthropic
     accessed: 2026-11-06
+  - url: https://www.anthropic.com/news/models
+    title: Anthropic models index
+    publisher: Anthropic
+    accessed: 2026-11-06
   - url: https://github.blog/changelog/2026-09-01-claude-fable-5-1-generally-available-in-github-copilot/
     title: Claude Fable 5.1 is generally available in GitHub Copilot
     publisher: GitHub
@@ -54,7 +58,7 @@ sources:
     accessed: 2026-11-06
   - url: https://github.com/tecunningham/ai-rnd-benchmarks/blob/main/cards/anthropic/claude-fable-5-1-claude-mythos-5-1-system-card.txt
     title: Claude Fable 5.1 and Claude Mythos 5.1 System Card (indexed text copy)
-    publisher: Anthropic; tecunningham/ai-rnd-benchmarks
+    publisher: Anthropic source, copied by tecunningham/ai-rnd-benchmarks
     accessed: 2026-11-06
   - url: https://www.tbench.ai/?filters=%7B%22sets%22%3A%7B%22model_display%22%3A%5B%22Fable+5.1%22%2C%22Gemini+3.8+Flash%22%2C%22GPT-6+Astra%22%2C%22Opus+5%22%5D%7D%7D
     title: Terminal-Bench 4.0 leaderboard
