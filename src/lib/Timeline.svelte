@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { untrack } from 'svelte'
   import type { TimelineEvent } from './types'
   import type { TimeScale } from './scale'
   import type { PlacedCard } from './layout'
@@ -116,7 +117,7 @@
   // shrink back into it while the others close up. Time-based, so a card never
   // flickers with the zoom frame rate, and CSS transitions, so a card that
   // returns mid-animation turns around from where it is.
-  const REVEAL_MS = 340
+  const REVEAL_MS = 480
   const tracker = new RevealTracker<TimelineEvent>(REVEAL_MS)
   let expired = $state(0)
   // Only zooming reveals cards. A filter change replaces most cards at once,
@@ -138,11 +139,15 @@
   })
   // A leaving card follows its date marker, so it shrinks into its node even mid-zoom.
   const rows = $derived.by(() => {
-    if (!motion.leaving.length) return shownCards.map((card) => ({ card, leaving: false }))
+    const now = clock
+    const shifted = shifts.size
+      ? shownCards.map((card) => { const d = shiftOf(card.item.id, now); return { card: d ? { ...card, top: card.top + d } : card, leaving: false } })
+      : shownCards.map((card) => ({ card, leaving: false }))
+    if (!motion.leaving.length) return shifted
     const yOf = new Map<TimelineEvent, number>()
     for (const l of motion.leaving) yOf.set(l.item, NaN)
     for (const h of hidden) if (yOf.has(h.item)) yOf.set(h.item, h.y)
-    const out = shownCards.map((card) => ({ card, leaving: false }))
+    const out = shifted
     for (const l of motion.leaving) {
       const y = yOf.get(l.item)!
       const card = { item: l.item, y, lane: 0, top: y + l.offset }
@@ -151,31 +156,56 @@
     return out.sort((a, b) => a.card.y - b.card.y)
   })
 
-  // When a card's neighbours change, the layout moves it by a card's height in
-  // one frame. Ease that jump out instead, with an additive `translate`, so it
-  // composes with the reveal's `transform` and with zoom moving the card.
+  // When a card's neighbours change, the layout moves it by up to a few card
+  // heights in one frame. Ease that jump out: the card keeps a shift that decays
+  // to zero, and its leader is drawn to the shifted card, so the card never
+  // comes loose from its node.
   const JUMP_PX = 40
   const JUMP_MAX = 360
+  const SHIFT_MS = 320
   let offsets = new Map<string, number>()
   let offsetsFor: string | null = null
+  let shifts = $state.raw(new Map<string, { from: number; start: number }>())
+  let clock = $state(0)
+  const easeOut = (t: number) => 1 - (1 - t) ** 3
+  function shiftOf(id: string, now: number): number {
+    const s = shifts.get(id)
+    if (!s) return 0
+    const t = (now - s.start) / SHIFT_MS
+    return t >= 1 ? 0 : s.from * (1 - easeOut(Math.max(0, t)))
+  }
   $effect(() => {
     const cards = shownCards
     // Selecting an event has its own layout animation (selection-motion.ts).
     const enabled = animate && offsetsFor === selectedId
     offsetsFor = selectedId
-    const next = new Map<string, number>()
-    for (const card of cards) {
-      const offset = card.top - card.y
-      next.set(card.item.id, offset)
-      const before = offsets.get(card.item.id)
-      // A longer jump would ease in from outside the rendered window, so it isn't eased.
-      if (!enabled || before === undefined || Math.abs(offset - before) < JUMP_PX || Math.abs(offset - before) > JUMP_MAX) continue
-      const node = root?.querySelector<HTMLElement>(`[data-motion-key="card-${CSS.escape(card.item.id)}"]`)
-      node?.animate([{ translate: `0 ${before - offset}px` }, { translate: '0 0' }], {
-        duration: 320, easing: 'cubic-bezier(0.2, 0.9, 0.25, 1)', composite: 'add',
-      }).finished.catch(() => {})
-    }
-    offsets = next
+    untrack(() => {
+      const now = performance.now()
+      const next = new Map<string, number>()
+      let changed: Map<string, { from: number; start: number }> | null = null
+      for (const card of cards) {
+        const offset = card.top - card.y
+        next.set(card.item.id, offset)
+        const before = offsets.get(card.item.id)
+        // A longer jump would ease in from outside the rendered window, so it isn't eased.
+        if (!enabled || before === undefined || Math.abs(offset - before) < JUMP_PX || Math.abs(offset - before) > JUMP_MAX) continue
+        changed ??= new Map(shifts)
+        changed.set(card.item.id, { from: before + shiftOf(card.item.id, now) - offset, start: now })
+      }
+      offsets = next
+      if (changed) { shifts = changed; clock = now }
+    })
+  })
+  // Drive the shifts while any is running, then drop them.
+  $effect(() => {
+    if (!shifts.size) return
+    let frame = requestAnimationFrame(function step(now) {
+      clock = now
+      const live = [...shifts].filter(([, s]) => now - s.start < SHIFT_MS)
+      if (live.length !== shifts.size) shifts = new Map(live)
+      else frame = requestAnimationFrame(step)
+    })
+    return () => cancelAnimationFrame(frame)
   })
 
   const shownGaps = $derived(scale.gaps.filter((g) => g.top + g.height > winTop && g.top < winBottom))
@@ -222,6 +252,13 @@
     if (free(0)) return 'right'
     if (spineX >= 100 && free(1)) return 'left'
     return null
+  }
+
+  // A card grows out of its node, or, when the layout has moved it far from
+  // its date, out of the end of its leader, so it never flies across the screen.
+  function revealOrigin(card: PlacedCard<TimelineEvent>, left: number): string {
+    const toNode = card.y - card.top
+    return `${spineX - left}px ${Math.abs(toNode - 18) > 120 ? 18 : toNode}px`
   }
 
   function cardLeft(lane: number): number {
@@ -358,7 +395,7 @@
           style:left="{left}px"
           style:width="{cardWidth}px"
           style:height="{eventHeight(ev)}px"
-          style:transform-origin="{spineX - left}px {card.y - card.top}px"
+          style:transform-origin={revealOrigin(card, left)}
         >
           <button class="card-button" title={ev.title} onclick={() => onselect(ev.id)} aria-pressed={selectedId === ev.id}>
             {#if selectedId === ev.id}<span class="state-label">Selected</span>{/if}
@@ -417,14 +454,14 @@
    * set to the node), its leader and dot fading in. A card that just lost its
    * room shrinks and fades back into the node, under the cards closing up.
    */
-  .reveal .card, .reveal .dot, .reveal .connector { transition: transform 340ms cubic-bezier(0.2, 0.9, 0.25, 1), opacity 240ms ease-out 60ms; }
+  .reveal .card, .reveal .dot, .reveal .connector { transition: transform 460ms cubic-bezier(0.33, 1, 0.68, 1), opacity 140ms linear; }
   @starting-style {
-    .reveal .card { transform: scale(0.04); opacity: 0; }
+    .reveal .card { transform: scale(0.05); opacity: 0; }
     .reveal .dot { transform: translate(-50%, -50%) scale(0.4); }
     .reveal .connector { opacity: 0; }
   }
-  .leaving .card, .leaving .dot, .leaving .connector { transition: transform 300ms cubic-bezier(0.5, 0, 0.75, 0), opacity 180ms ease-in; pointer-events: none; }
-  .leaving .card { transform: scale(0.04); opacity: 0; z-index: 0; }
+  .leaving .card, .leaving .dot, .leaving .connector { transition: transform 420ms cubic-bezier(0.32, 0, 0.67, 0), opacity 420ms cubic-bezier(0.42, 0, 1, 1); pointer-events: none; }
+  .leaving .card { transform: scale(0.05); opacity: 0; z-index: 0; }
   .leaving .dot { transform: translate(-50%, -50%) scale(0.4); opacity: 0; }
   .leaving .connector { opacity: 0; }
   .dot { position: absolute; left: var(--spine); width: 9px; height: 9px; transform: translate(-50%, -50%); background: var(--bg); border: 2px solid var(--muted); border-radius: 50%; z-index: 3; cursor: pointer; }

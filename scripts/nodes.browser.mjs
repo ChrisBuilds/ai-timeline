@@ -90,6 +90,26 @@ try {
     await page.waitForTimeout(600)
     assert.equal(await page.locator('li.leaving').count(), 0, 'leaving cards were not removed')
 
+    // Leaders stay attached: through a zoom, every card's leader ends at the card.
+    const loose = await page.evaluate(async () => {
+      const out = []
+      document.body.dispatchEvent(new KeyboardEvent('keydown', { key: '+', bubbles: true }))
+      for (let i = 0; i < 40; i++) {
+        await new Promise((r) => requestAnimationFrame(r))
+        for (const li of document.querySelectorAll('ol.cards li:not(.reveal):not(.leaving)')) {
+          const card = li.querySelector('.card')
+          // Skip cards still growing or shrinking: their box is scaled.
+          if (!card || getComputedStyle(card).transform !== 'none') continue
+          const anchor = card.getBoundingClientRect().top + 18
+          const con = li.querySelector('.connector').getBoundingClientRect()
+          if (![con.top, con.bottom, (con.top + con.bottom) / 2].some((y) => Math.abs(y - anchor) < 2)) out.push(card.id)
+        }
+      }
+      return [...new Set(out)]
+    })
+    assert.deepEqual(loose, [], 'a card came loose from its leader while zooming')
+    await page.waitForTimeout(600)
+
     // Settled cards never overlap one another or an era heading.
     const collisions = await page.evaluate(() => {
       const rows = [...document.querySelectorAll('.card')].map((e) => e.getBoundingClientRect()).sort((a, b) => a.top - b.top)
@@ -147,7 +167,7 @@ try {
     await page.close()
   }
   assert.deepEqual(errors, [])
-  console.log('Node reveal checks passed: era totals, hidden nodes, cards growing from and shrinking into nodes, collision-free settled cards, node hover and click, reduced motion, in both themes at desktop/phone/320px widths.')
+  console.log('Node reveal checks passed: era totals, hidden nodes, cards growing from and shrinking into nodes, collision-free settled cards, attached leaders while zooming, node hover and click, reduced motion, in both themes at desktop/phone/320px widths.')
 } finally {
   await browser?.close()
   server.kill()
