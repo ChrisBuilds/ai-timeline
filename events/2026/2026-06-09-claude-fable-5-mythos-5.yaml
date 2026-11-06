@@ -1,0 +1,138 @@
+id: 2026-06-09-claude-fable-5-mythos-5
+title: Anthropic introduces Claude Fable 5 and restricted Mythos 5
+date: 2026-06-09
+summary: Anthropic released Fable 5, a Mythos-class model with safeguards for general use, and Mythos 5, the same model with safeguards lifted for approved partners.
+description: >-
+  Anthropic introduced two configurations of one underlying model on June 9,
+  2026. Claude Fable 5 (`claude-fable-5`) was released for general use on the
+  Claude API and in Claude subscriptions, with classifiers that route
+  high-risk cybersecurity, biology, chemistry, and distillation requests to
+  Claude Opus 4.8 instead of refusing them. Anthropic said the fallback
+  triggers in less than 5% of sessions on average. Claude Mythos 5 is the same
+  model with some safeguards lifted: it was deployed first to existing Claude
+  Mythos Preview users, such as Project Glasswing cybersecurity partners, with
+  a trusted-access program for biomedical researchers announced as planned
+  rather than yet running. It was not generally available. Both models were
+  priced at $10 per million input tokens and $50 per million output tokens.
+  Anthropic called Fable 5 the most capable model it had made generally
+  available and reported state-of-the-art results on nearly all tested
+  benchmarks; these are the developer's own comparisons. Its system card
+  describes Mythos 5 as the most capable model Anthropic has trained, applies
+  ASL-3 protections to Fable 5, and judges the models not to cross the
+  automated AI R&D threshold. Access to both models was suspended on June 12
+  and restored on July 1, 2026, and GitHub re-enabled Fable 5 in Copilot that
+  day.
+  {note: Anthropic's announcement page records the suspension and redeployment only as dated sidebar items without a reason, and was modified after launch. This entry describes the June 9 launch and keeps the later chronology separate.}
+  {note: The system card was read through its AI R&D section; the cyber, alignment, and capability sections were not read.}
+category: model release
+tags:
+  - language model
+  - safety
+  - cybersecurity
+  - restricted access
+organizations:
+  - Anthropic
+sources:
+  - url: https://www.anthropic.com/news/claude-fable-5-mythos-5
+    title: Introducing Claude Fable 5 and Claude Mythos 5
+    publisher: Anthropic
+    accessed: 2026-11-06
+  - url: https://www.anthropic.com/claude-fable-5-system-card
+    title: 'System Card: Claude Mythos 5 and Claude Fable 5'
+    publisher: Anthropic
+    accessed: 2026-11-06
+  - url: https://github.blog/changelog/2026-06-09-claude-fable-5-is-generally-available-for-github-copilot/
+    title: Claude Fable 5 is generally available for GitHub Copilot
+    publisher: GitHub
+    accessed: 2026-11-06
+  - url: https://www.eweek.com/news/anthropic-claude-fable-5-safety-fallbacks/
+    title: Anthropic Releases Claude 'Fable 5' Publicly, Keeps Mythos 5 for Select Partners
+    publisher: eWeek
+    accessed: 2026-11-06
+importance:
+  current: 2026-11-06-v2
+  assessments:
+    - id: 2026-11-06-v2
+      assessed_at: 2026-11-06
+      rubric_version: v2
+      status: provisional
+      reviewer: Claude (editorial assessment prepared for maintainer review)
+      rationale: >-
+        Anthropic's announcement and system card describe a Mythos-class model
+        released in two access tiers, with classifier-based fallback for the
+        general-use version. The evidence is mostly developer-produced and
+        partner-quoted, and the only secondary coverage found repeats
+        Anthropic's figures. Distribution was interrupted by the June 12
+        suspension. With influence and society unknown, adoption 1 and
+        capability 2, the provisional score range is 16–61; the index
+        placement key uses the lower bound, with no accepted point score.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: >-
+            No source identifies later practice or releases attributable to
+            this launch, as distinct from the Mythos model family generally.
+          evidence:
+            - https://www.anthropic.com/news/claude-fable-5-mythos-5
+            - https://www.anthropic.com/claude-fable-5-system-card
+        adoption:
+          rating: 1
+          confidence: low
+          rationale: >-
+            Fable 5 was available through the API, subscriptions, and GitHub
+            Copilot, and Mythos 5 to a restricted partner group. This is
+            availability, which is not counted as adoption. Partner quotes
+            describe isolated deployments, and no source measures sustained
+            use.
+          evidence:
+            - https://www.anthropic.com/news/claude-fable-5-mythos-5
+            - https://github.blog/changelog/2026-06-09-claude-fable-5-is-generally-available-for-github-copilot/
+        capability:
+          rating: 2
+          confidence: low
+          rationale: >-
+            The system card reports Mythos 5 as modestly above Mythos Preview
+            on cyber and autonomy evaluations and far above Opus 4.8 on
+            exploit development, and the tiered release is a new deployment
+            arrangement. These are developer-reported results and no
+            independent evaluation was found, so the evidence supports a
+            useful improvement; a higher rating is possible if independent
+            evidence appears.
+          evidence:
+            - https://www.anthropic.com/claude-fable-5-system-card
+            - https://www.anthropic.com/news/claude-fable-5-mythos-5
+        society:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources describe access policy and safeguards but do not
+            measure public, professional, or institutional effects.
+          evidence:
+            - https://www.anthropic.com/news/claude-fable-5-mythos-5
+      comparisons:
+        - id: 2026-04-16-claude-opus-4-7
+          rationale: >-
+            Opus 4.7 was also released below a limited-access Mythos Preview.
+            Fable 5 and Mythos 5 move that top tier to a broader but still
+            gated release, on similarly vendor-reported evidence.
+        - id: 2025-05-22-anthropic-claude-4
+          rationale: >-
+            Claude 4 was an earlier Anthropic generation release. This release
+            adds restricted access for one configuration, but neither has
+            independent evidence of downstream change in these sources.
+        - id: 2023-03-14-openai-gpt-4
+          rationale: >-
+            GPT-4 was a cross-organization frontier release with a system card
+            and broad external evaluation. The Fable 5 evidence is narrower,
+            mostly from Anthropic and its partners.
+      questions:
+        - Do independent evaluations reproduce Anthropic's reported results for Fable 5 and Mythos 5?
+        - What sustained use of Fable 5 and Mythos 5 can be shown after the June 12 to July 1 suspension?
+        - Did other developers adopt classifier fallback or restricted-access tiers because of this release?
+      review_after: 2026-12-06
+      review_triggers:
+        - Independent evaluations or usage evidence that changes the capability or adoption ratings.
+        - Direct later releases or policies that adopt this tiered-access design.
+issue: 105
+submitted_by: ChrisBuilds
