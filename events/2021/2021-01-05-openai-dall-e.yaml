@@ -12,8 +12,8 @@ description: >-
   that controllability weakens as more objects are added. Sample images were reranked with CLIP,
   announced the same day. The announcement presents these as OpenAI's research results. OpenAI
   posted the accompanying paper, "Zero-Shot Text-to-Image Generation", to arXiv on 24 February
-  2021. The full 12-billion-parameter transformer was not released; OpenAI later released code and
-  weights for the dVAE image-tokenizer component, explicitly excluding that transformer. An
+  2021. The full 12-billion-parameter transformer was not publicly released; OpenAI later released
+  code and weights for the dVAE image-tokenizer component, explicitly excluding that transformer. An
   independent developer later said DALL·E inspired DALL·E Mini, a separate system. This entry does
   not attribute the use of that or later image-generation products to the original model.
 category: research
@@ -112,7 +112,7 @@ importance:
         society:
           rating: 1
           confidence: medium
-          rationale: The research announcement received local public and press attention, but the
+          rationale: The research announcement received limited early press attention, but the
             evidence reviewed does not show broad or sustained societal effects from this
             unreleased model.
           evidence:
