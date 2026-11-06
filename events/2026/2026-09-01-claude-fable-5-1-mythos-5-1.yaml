@@ -3,10 +3,13 @@ title: Anthropic releases Claude Fable 5.1 and restricted Mythos 5.1
 date: 2026-09-01
 summary: Anthropic released Fable 5.1 for general use and Mythos 5.1, the same model with less restrictive safeguards for vetted cybersecurity and life-sciences work.
 description: >-
-  Anthropic released Claude Fable 5.1 for general use and Claude Mythos 5.1
-  to vetted individuals and organizations through trusted-access programs.
-  The two configurations use the same underlying model, but Mythos 5.1 has
-  more permissive cybersecurity and life-sciences safeguards. Anthropic
+  Anthropic released Claude Fable 5.1 for general use and announced Claude
+  Mythos 5.1, the same underlying model with more permissive cybersecurity
+  and life-sciences safeguards. At launch, Anthropic said the Life Sciences
+  Verification Program had enrolled its first participants in partnership
+  with the US government; the Cyber Verification Program would add access to
+  Mythos-class models in the near future. Mythos 5.1 also powered Claude
+  Security for enterprise customers. Anthropic
   reported a 52.6% result for Fable 5.1 on Terminal-Bench-Science 0.1, versus
   24.7% for Fable 5 on the same benchmark, and 55.8% versus 42.0% on its
   Terminal-Bench 4.0 evaluation; it said safeguard interventions lowered the
@@ -87,9 +90,10 @@ importance:
         selected or produced by the vendor. A Terminal-Bench maintainer run
         supports strong coding performance, while CRUX's independent open-ended
         research trial found improved experiment design but a rejected paper
-        and persistent research limitations. With influence and societal
-        effects attributable specifically to this release unknown, adoption 1
-        and capability 3 give a provisional score range of 21–66.
+        and persistent research limitations. With downstream influence
+        unknown, adoption 1, capability 3, and the first enrolled participants
+        in the Life Sciences Verification Program as a local institutional
+        effect (society 1), the provisional score range is 23–58.
       dimensions:
         influence:
           rating: null
@@ -135,12 +139,14 @@ importance:
             - https://www.tbench.ai/?filters=%7B%22sets%22%3A%7B%22model_display%22%3A%5B%22Fable+5.1%22%2C%22Gemini+3.8+Flash%22%2C%22GPT-6+Astra%22%2C%22Opus+5%22%5D%7D%7D
             - https://cruxevals.com/research-notes/crux-2-follow-up/
         society:
-          rating: null
+          rating: 1
           confidence: low
           rationale: >-
-            The sources describe safeguards and restricted access, but provide
-            no measured societal effect or implemented institutional outcome
-            attributable specifically to this release.
+            Anthropic said the Life Sciences Verification Program developed
+            with the US government had enrolled its first participants at
+            launch. This is a small, concrete institutional effect attributable
+            to Mythos 5.1, supporting the local organizational-effect anchor;
+            no wider societal outcome or measurable benefit is established.
           evidence:
             - https://www.anthropic.com/claude-fable-and-mythos-5-1
             - https://support.claude.com/en/articles/12138966-release-notes
