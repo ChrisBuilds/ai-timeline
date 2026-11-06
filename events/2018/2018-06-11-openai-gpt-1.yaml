@@ -1,0 +1,118 @@
+id: 2018-06-11-openai-gpt-1
+title: OpenAI releases the original GPT research and model
+date: "2018-06-11"
+summary: OpenAI published a Transformer language model pretrained on unlabeled text and then fine-tuned on supervised tasks, later known as GPT-1.
+description: >-
+  OpenAI announced a two-stage approach that first trains a Transformer on
+  unlabeled text with a language-modeling objective and then fine-tunes it on
+  smaller supervised datasets. The accompanying paper by Alec Radford, Karthik
+  Narasimhan, Tim Salimans and Ilya Sutskever, "Improving Language Understanding
+  by Generative Pre-Training", describes a 12-layer decoder-only Transformer
+  trained on BooksCorpus. The authors reported that this single task-agnostic
+  model outperformed models with architectures crafted for each task, improving
+  on the previous best results on 9 of the 12 tasks they studied. These results
+  are the authors' own. OpenAI also published code and a model for reproducing
+  one of the results. The name "GPT" was applied later; the paper calls the
+  model a "Finetuned Transformer LM"{note: the name GPT-1 is a later label, and
+  the announcement page and paper do not use it}.
+category: model release
+organizations: [ OpenAI ]
+people: [ Alec Radford, Karthik Narasimhan, Tim Salimans, Ilya Sutskever ]
+tags: [ language models, pretraining, transformer, NLP ]
+sources:
+  - url: https://openai.com/index/language-unsupervised/
+    title: Improving language understanding with unsupervised learning
+    publisher: OpenAI
+    accessed: "2026-11-06"
+  - url: https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf
+    title: Improving Language Understanding by Generative Pre-Training
+    publisher: OpenAI
+    accessed: "2026-11-06"
+  - url: https://github.com/openai/finetune-transformer-lm
+    title: finetune-transformer-lm
+    publisher: GitHub
+    accessed: "2026-11-06"
+artifacts:
+  - type: paper
+    url: https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf
+    title: Improving Language Understanding by Generative Pre-Training
+  - type: repo
+    url: https://github.com/openai/finetune-transformer-lm
+    title: finetune-transformer-lm
+related:
+  - id: 2017-06-12-attention-is-all-you-need
+    relation: builds_on
+    source: https://openai.com/index/language-unsupervised/
+importance:
+  current: 2026-11-06-v2
+  assessments:
+    - id: 2026-11-06-v2
+      assessed_at: 2026-11-06
+      rubric_version: v2
+      status: provisional
+      reviewer: Claude (editorial assessment prepared for maintainer review)
+      rationale: >-
+        The paper reports that one pretrained Transformer, fine-tuned per task,
+        improved on the previous best results on 9 of 12 tasks, on public
+        benchmarks, which supports a substantial capability rating. The sources
+        do not themselves measure later influence or use, and the code release
+        is a reproduction aid for one result, so influence and society are
+        unknown and adoption is rated at the isolated-use anchor.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources describe the approach but do not trace later technical
+            changes to this release. OpenAI's later GPT models and BERT are
+            plausible followers, but that needs separate sources.
+          evidence:
+            - https://openai.com/index/language-unsupervised/
+        adoption:
+          rating: 1
+          confidence: low
+          rationale: >-
+            OpenAI published code and a model, and the README says the code
+            reproduces one of the paper's results. No source here measures use
+            by others.
+          evidence:
+            - https://github.com/openai/finetune-transformer-lm
+        capability:
+          rating: 3
+          confidence: medium
+          rationale: >-
+            The authors report a single task-agnostic model improving on the
+            previous best results on 9 of 12 tasks. The results are the
+            authors' own and were not independently checked here.
+          evidence:
+            - https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf
+            - https://openai.com/index/language-unsupervised/
+        society:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources describe a research result with no stated public,
+            professional or institutional effects.
+          evidence:
+            - https://openai.com/index/language-unsupervised/
+      comparisons:
+        - id: 2018-10-11-bert-pretraining
+          rationale: >-
+            BERT, from a different organization, reported results on eleven
+            benchmarks with bidirectional pretraining and is rated higher
+            under v2. This record is provisional and rated lower on the
+            evidence in its own sources.
+        - id: 2019-02-14-openai-gpt2-staged-release
+          rationale: >-
+            GPT-2 is a later, larger model in the same research line with a
+            separately documented staged release. This event is the earlier
+            and smaller step.
+      questions:
+        - Which later models and papers cite or build directly on this approach, with sources?
+        - Does independent evidence confirm the reported gains on the benchmarks?
+      review_after: 2026-12-06
+      review_triggers:
+        - Sourced evidence of downstream influence that changes the influence rating.
+        - Independent replication or evaluation that changes the capability rating.
+issue: 111
+submitted_by: ChrisBuilds
