@@ -8,19 +8,16 @@ description: >-
   and on Amazon Web Services, Google Cloud, and Microsoft Azure. It was priced
   at $0.10 per million input tokens and $0.50 per million output tokens for
   requests up to 100,000 tokens, with higher rates above that. Anthropic
-  described it as its cheapest, fastest and most capable small model, and the
-  first Haiku-class model with an adjustable effort setting. It positioned the
-  model for high-volume tasks such as summaries and classification, for subagent
-  work alongside Opus 5.5 and Sonnet 5.5, and for speed-sensitive uses such as
-  live customer support and browser use. It said Sonnet 5.5 and Opus 5.5
-  remain better for complex agentic coding. These are the developer's own
-  comparisons. The system card says Haiku 5.5 significantly outperforms Haiku
-  4.5 and usually does not reach Sonnet 5.5. It judges that the model does not
-  cross the Responsible Scaling Policy CB-2 or Autonomy-2 thresholds, and
-  assesses alignment risk as low, while reporting that it over-refused more than
-  any other model in the automated audit.
-  {note: Anthropic's page limits the fastest-model claim to standard speed, since Opus models are faster in Fast Mode.}
-  {note: I read the system card up to its automated behavioral audit and not its later alignment, welfare and capabilities sections, so those are not described here.}
+  introduced adjustable effort for the first time in a Haiku model and positioned
+  it for high-volume, cost-sensitive tasks, including summaries, classification,
+  subagent work and browser use. The announcement included evaluations from
+  named customers: Asana tested AI Teammate tasks, HubSpot used simulated CRM
+  portals, AlphaSense ran 400 queries, and Box tested analytical work. These
+  were launch-period tests reported by Anthropic; they do not establish broad or
+  sustained use. Anthropic said Sonnet 5.5 and Opus 5.5 remain better for
+  complex agentic coding. Artificial Analysis and Vals AI later evaluated the
+  model independently across their benchmark suites, with results varying by
+  task and effort setting.
 category: model release
 tags:
   - language model
@@ -32,6 +29,14 @@ sources:
   - url: https://www.anthropic.com/claude-haiku-5-5
     title: Introducing Claude Haiku 5.5
     publisher: Anthropic
+    accessed: 2026-11-06
+  - url: https://artificialanalysis.ai/articles/claude-haiku-5-5
+    title: Anthropic has released Claude Haiku 5.5
+    publisher: Artificial Analysis
+    accessed: 2026-11-06
+  - url: https://www.vals.ai/models/anthropic_claude-haiku-5-5
+    title: Claude Haiku 5.5 Benchmarks, Cost and Capabilities
+    publisher: Vals AI
     accessed: 2026-11-06
   - url: https://www.anthropic.com/claude-haiku-5-5-system-card
     title: 'System Card: Claude Haiku 5.5'
@@ -48,15 +53,17 @@ importance:
       assessed_at: 2026-11-06
       rubric_version: v2
       status: provisional
-      reviewer: Claude (editorial assessment prepared for maintainer review)
+      reviewer: Codex (editorial reassessment prepared for maintainer review)
       rationale: >-
-        Anthropic's announcement and system card report large gains over Haiku
-        4.5 at a lower price, with availability on three major cloud platforms.
-        These are developer-reported results and availability, not independent
-        evidence of sustained use or downstream change. No third-party
-        evaluation or usage source was checked. With influence and society
-        unknown, adoption 1 and capability 2, the provisional score range is
-        16-61, with no accepted point score.
+        Independent evaluations by Artificial Analysis and Vals AI, together
+        with launch-period customer task tests reported by Anthropic, support
+        substantial new practical ability on bounded computer-use, coding,
+        knowledge-work and business-task evaluations (capability 3). Vals AI
+        reports a broad suite result with max effort and no refusal fallback;
+        these evaluations do not establish broad autonomous ability. Named
+        customer evaluations support isolated testing (adoption 1), not
+        sustained use. Influence and societal effects remain unknown. The
+        provisional score range is 21–66, with no accepted point score.
       dimensions:
         influence:
           rating: null
@@ -71,22 +78,33 @@ importance:
           rating: 1
           confidence: low
           rationale: >-
-            Availability on the API and three cloud platforms is not counted as
-            adoption. The announcement cites customer tests, which are isolated
-            deployments chosen by the vendor, and no source measures sustained
-            use.
+            Anthropic reports named customer evaluations: Asana tested AI
+            Teammate tasks, HubSpot used simulated CRM portals, AlphaSense ran
+            400 queries, and Box tested analytical work. These are concrete,
+            vendor-selected experiments supporting the rating-1 isolated-test
+            anchor. They do not show Haiku 5.5 deployed in AlphaSense's
+            production service or sustained, broad use; platform availability
+            is not counted.
           evidence:
             - https://www.anthropic.com/claude-haiku-5-5
         capability:
-          rating: 2
-          confidence: low
+          rating: 3
+          confidence: medium
           rationale: >-
-            The system card reports significant gains over Haiku 4.5 and results
-            usually below Sonnet 5.5, a useful improvement within an established
-            approach. The results are vendor-produced and no independent
-            evaluation was found.
+            Vals AI reports 90.44% on Vibe Code Bench v1.1 (rank 3 of 125) and
+            36.36% on Terminal-Bench 4.0, both at max effort without refusal
+            fallback. Anthropic reports HubSpot's result of 92.8% averaged over
+            three runs on simulated CRM tasks and AlphaSense's 0.84 versus 0.76
+            on 400 queries compared with Haiku 4.5. The independent coding
+            results and concrete customer task tests support substantially new
+            practical ability on bounded tasks, the rating-3 anchor. Results
+            vary by task and effort; benchmark scores and vendor-selected
+            customer tests do not establish general autonomous competence.
+            These limits constrain confidence, not the magnitude supported by
+            the observed tasks.
           evidence:
-            - https://www.anthropic.com/claude-haiku-5-5-system-card
+            - https://artificialanalysis.ai/articles/claude-haiku-5-5
+            - https://www.vals.ai/models/anthropic_claude-haiku-5-5
             - https://www.anthropic.com/claude-haiku-5-5
         society:
           rating: null
@@ -99,26 +117,36 @@ importance:
       comparisons:
         - id: 2025-10-15-claude-haiku-4-5
           rationale: >-
-            Haiku 4.5 is the direct predecessor in the same line. Both are
-            vendor-reported gains in a small, low-cost model, and available
-            evidence supports a similar placement.
-        - id: 2026-04-16-claude-opus-4-7
+            Haiku 4.5 is the direct predecessor. Its current assessment rates
+            capability 2 for a useful refinement in an established approach
+            and adoption as unknown. Vals AI's same-suite comparisons and the
+            named Haiku 5.5 evaluations indicate substantially greater
+            performance on several bounded tasks and at least isolated testing,
+            supporting higher ratings for Haiku 5.5 without establishing
+            sustained adoption.
+        - id: 2026-09-28-claude-sonnet-5-5
           rationale: >-
-            Opus 4.7 is another vendor-reported incremental release. Haiku 5.5
-            has no independent evidence of its own yet, so a similar low
-            placement fits.
+            Sonnet 5.5 also meets the substantial-practical-ability anchor
+            based on independent benchmark results and customer task evaluations.
+            Anthropic positions it for well-scoped everyday work and Haiku 5.5
+            for high-volume, narrower tasks; Sonnet's stronger performance on
+            complex coding benchmarks is consistent with that division. These
+            related roles do not establish equal capability or use.
         - id: 2025-01-20-deepseek-r1
           rationale: >-
-            DeepSeek R1 shipped open weights and a technical report that others
-            could inspect and reuse. Haiku 5.5 is a closed hosted model, and the
-            evidence does not establish a comparable research contribution.
+            DeepSeek R1's open weights, technical report and documented market
+            effects support higher influence, adoption and societal ratings.
+            Haiku 5.5's evidence is stronger for bounded task capability than
+            for downstream effects, and it remains a closed hosted model without
+            a comparable open research artifact.
       questions:
-        - What independent, version-specific evidence measures sustained use of Haiku 5.5?
-        - Do independent evaluations reproduce the reported gains over Haiku 4.5?
-        - Do the lower price and effort setting change how teams use small models for subagents and browser tasks?
+        - Does independent version-specific evidence show use beyond launch-period customer evaluations?
+        - What downstream product or workflow changes can be attributed to Haiku 5.5 itself?
+        - Do further independent evaluations replicate its performance across varied real-world tasks and effort settings?
       review_after: 2026-12-06
       review_triggers:
-        - Independent usage evidence that distinguishes Haiku 5.5 and changes the adoption assessment.
-        - Independent evaluations that materially change the capability assessment.
+        - Independent usage evidence that distinguishes Haiku 5.5 and materially changes the adoption assessment.
+        - Replicated evaluations across varied tasks or effort settings that materially change the capability assessment.
+        - Measured downstream product or workflow changes attributable to Haiku 5.5.
 issue: 109
 submitted_by: ChrisBuilds
