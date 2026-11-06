@@ -125,7 +125,7 @@ try {
 
     // Clicking a node opens that event.
     const target = await page.evaluate(() => {
-      const path = document.querySelector('.nodes path').getAttribute('d')
+      const path = [...document.querySelectorAll('.nodes path')].map((p) => p.getAttribute('d')).join('')
       const svg = document.querySelector('.nodes').getBoundingClientRect()
       const box = document.querySelector('.timeline').getBoundingClientRect()
       const ys = [...path.matchAll(/M[-\d.]+,([-\d.]+)/g)].map((m) => Number(m[1]) + box.top)
@@ -136,6 +136,7 @@ try {
     if (!phone) {
       await page.mouse.move(target.x, target.y)
       await page.locator('.node-tip').waitFor()
+      assert((await page.locator('.node-tip').innerText()).trim().split('\n').length >= 2, 'the node hover card lacks a date and title')
     }
     await page.mouse.click(target.x, target.y)
     await page.locator('.card.selected').waitFor()

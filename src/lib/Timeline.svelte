@@ -93,22 +93,32 @@
   const shownCards = $derived(placed.filter(inWindow))
   const ribbon = $derived(buildRibbon(scale, hiddenYears, spineX < 50 ? 12 : 16))
 
-  // Hidden events as nodes: one SVG path for the window, so thousands of them
-  // cost one element. Nodes within 2px of each other are drawn once.
-  const NODE_R = 3
+  // Hidden events as nodes: one SVG path per category for the window, so
+  // thousands of them cost a dozen elements. Rings ring their category's colour.
+  // Nodes within 3px of each other are drawn once.
+  const NODE_R = 4.5
   // The window clipped to the timeline, so nothing drawn for it makes the page taller.
   const clipTop = $derived(Math.max(0, winTop))
   const clipBottom = $derived(Math.min(scale.height, winBottom))
   // A leaving card's node appears when the card has shrunk back into it.
   const nodes = $derived.by(() => {
-    const all = visibleNodes(hidden, winTop, winBottom, 2)
+    const all = visibleNodes(hidden, winTop, winBottom, 3)
     if (!motion.leaving.length) return all
     const going = new Set(motion.leaving.map((l) => l.item))
     return all.filter((n) => !going.has(n.item))
   })
   const nodePaths = $derived.by(() => {
-    const dim = nodes.filter((n) => dimIds.has(n.item.id))
-    return { shown: nodePath(dim.length ? nodes.filter((n) => !dimIds.has(n.item.id)) : nodes, NODE_R), dim: nodePath(dim, NODE_R) }
+    const groups = new Map<string, { y: number }[]>()
+    for (const n of nodes) {
+      const key = `${dimIds.has(n.item.id) ? 'dim' : 'on'}|${n.item.category}`
+      let list = groups.get(key)
+      if (!list) groups.set(key, (list = []))
+      list.push(n)
+    }
+    return [...groups].map(([key, list]) => {
+      const [state, category] = key.split('|')
+      return { key, dim: state === 'dim', color: categoryColor(category), d: nodePath(list, NODE_R) }
+    })
   })
   let hoverNode = $state.raw<Node<TimelineEvent> | null>(null)
   let root: HTMLDivElement | undefined = $state()
@@ -321,6 +331,7 @@
       data-motion-key="era-{band.era.id}"
       style:top="{band.top}px"
       style:height="{band.height}px"
+      style:--hue={band.era.hue ?? 230}
       aria-label={band.era.name}
     >
       <h2 class="era-label" bind:clientHeight={labelHeights[i]}>
@@ -331,19 +342,20 @@
     </section>
   {/each}
 
-  <Ribbon spans={ribbon} {spineX} viewTop={clipTop} viewBottom={clipBottom} />
+  <Ribbon spans={ribbon} {spineX} viewTop={clipTop} viewBottom={clipBottom}
+    stops={scale.bands.map((b) => ({ y: b.top + b.height / 2, hue: b.era.hue ?? 230 }))} />
 
   <svg class="nodes" aria-hidden="true" width="16" height={Math.max(0, clipBottom - clipTop)}
     style:left="{spineX - 8}px" style:top="{clipTop}px" viewBox="-8 {clipTop} 16 {Math.max(1, clipBottom - clipTop)}">
-    <path d={nodePaths.shown} /><path class="dim" d={nodePaths.dim} />
+    {#each nodePaths as group (group.key)}<path class:dim={group.dim} style:--c={group.color} d={group.d} />{/each}
   </svg>
   <!-- Pointer route to a hidden event: the node nearest the pointer. Keyboard users reach the same events through search and the arrow keys. -->
   <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
   <div class="node-hits" style:top="{clipTop}px" style:height="{Math.max(0, clipBottom - clipTop)}px"
     class:active={hovered !== null}
-    onpointermove={(e) => { if (e.pointerType === 'mouse') hoverNode = nodeAt(e, 8) }}
+    onpointermove={(e) => { if (e.pointerType === 'mouse') hoverNode = nodeAt(e, 11) }}
     onpointerleave={() => (hoverNode = null)}
-    onclick={(e) => { const node = nodeAt(e, 12); if (node) { hoverNode = null; onselect(node.item.id) } }}
+    onclick={(e) => { const node = nodeAt(e, 14); if (node) { hoverNode = null; onselect(node.item.id) } }}
   ></div>
   {#if hovered}
     <div class="node-hover" style:top="{hovered.y}px" style:--c={categoryColor(hovered.item.category)} aria-hidden="true">
@@ -454,14 +466,19 @@
 
 <style>
   .timeline { position: relative; width: 100%; touch-action: pan-y; }
-  .band { position: absolute; left: 0; right: 0; border-top: 1px solid var(--line); pointer-events: none; }
+  .band {
+    position: absolute; left: 0; right: 0; pointer-events: none;
+    --era: oklch(var(--era-l) var(--era-c) var(--hue));
+    border-top: 1px solid color-mix(in oklab, var(--era) 35%, var(--line));
+    background: radial-gradient(1100px 480px at 40% 0, oklch(var(--era-l) calc(var(--era-c) * 1.6) var(--hue) / var(--era-wash)), transparent);
+  }
   .era-label { position: absolute; top: var(--label-top); left: var(--label-pad); right: 8px; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; margin: 0; line-height: 1.2; }
-  .era-name { font-family: var(--font-display); font-size: clamp(1.1rem, 2.4vw, 1.65rem); font-weight: 600; letter-spacing: -0.025em; }
+  .era-name { color: color-mix(in oklab, var(--era) 30%, var(--text)); font-family: var(--font-display); font-size: clamp(1.1rem, 2.4vw, 1.65rem); font-weight: 600; letter-spacing: -0.025em; }
   .era-count { flex-basis: 100%; color: var(--muted); font-family: var(--font-ui); font-size: 0.69rem; font-weight: 400; line-height: 1.4; }
-  .era-years { color: var(--muted); font-size: 0.7rem; font-weight: 500; white-space: nowrap; }
+  .era-years { color: var(--era); font-size: 0.7rem; font-weight: 600; white-space: nowrap; }
   .now { position: absolute; left: var(--spine); transform: translate(-50%, -50%); z-index: 3; }
-  .now-dot { display: block; width: 8px; height: 8px; background: var(--muted); border: 2px solid var(--bg); border-radius: 50%; }
-  .now-label { position: absolute; right: 24px; top: -2px; font-size: 0.7rem; color: var(--muted); }
+  .now-dot { display: block; width: 10px; height: 10px; background: var(--accent-2); border: 2px solid var(--bg); border-radius: 50%; box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent-2) 28%, transparent); }
+  .now-label { position: absolute; right: 24px; top: -2px; font-size: 0.7rem; font-weight: 600; color: var(--accent-2); }
   .tick { position: absolute; left: calc(var(--spine) - 20px); transform: translate(-100%, -50%); color: var(--muted); font-size: 0.7rem; font-variant-numeric: tabular-nums; pointer-events: none; }
   .gap { position: absolute; left: 0; right: 0; pointer-events: none; }
   .gap-line { position: absolute; inset: 4px auto 4px calc(var(--spine) - 1px); width: 2px; background: repeating-linear-gradient(to bottom, var(--line-strong) 0 3px, transparent 3px 8px); }
@@ -469,14 +486,14 @@
   .gap-label { position: absolute; left: calc(var(--spine) + 30px); top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 0.72rem; font-style: italic; }
   /* Hidden events: nodes on the spine, and the nearest one under the pointer. */
   .nodes { position: absolute; overflow: visible; pointer-events: none; z-index: 2; }
-  .nodes path { fill: var(--muted); }
+  .nodes path { fill: var(--bg); stroke: var(--c); stroke-width: 2; }
   .nodes path.dim { opacity: 0.35; }
-  .node-hits { position: absolute; left: calc(var(--spine) - 12px); width: 24px; z-index: 2; }
+  .node-hits { position: absolute; left: calc(var(--spine) - 14px); width: 28px; z-index: 2; }
   .node-hits.active { cursor: pointer; }
   .node-hover { position: absolute; left: var(--spine); z-index: 4; pointer-events: none; }
-  .node-ring { position: absolute; width: 11px; height: 11px; transform: translate(-50%, -50%); border: 2px solid var(--c); background: var(--bg); border-radius: 50%; box-sizing: border-box; }
-  .node-tip { position: absolute; left: 16px; top: 0; transform: translateY(-50%); width: max-content; max-width: min(320px, calc(100vw - var(--spine) - 40px)); padding: 6px 10px; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--surface); box-shadow: var(--shadow-sm); font-size: 0.78rem; font-weight: 600; line-height: 1.3; }
-  .node-tip time { display: block; color: var(--muted); font-size: 0.65rem; font-weight: 400; }
+  .node-ring { position: absolute; width: 15px; height: 15px; transform: translate(-50%, -50%); border: 2px solid var(--c); background: var(--c); box-shadow: 0 0 0 4px color-mix(in oklab, var(--c) 25%, transparent); border-radius: 50%; box-sizing: border-box; }
+  .node-tip { position: absolute; left: 16px; top: 0; transform: translateY(-50%); width: max-content; max-width: min(320px, calc(100vw - var(--spine) - 40px)); padding: 6px 10px 6px 11px; border: 1px solid var(--line-strong); border-left: 3px solid var(--c); border-radius: 6px; background: var(--surface); box-shadow: var(--shadow-md); font-size: 0.78rem; font-weight: 600; line-height: 1.3; }
+  .node-tip time { display: block; color: color-mix(in oklab, var(--c) 55%, var(--muted)); font-size: 0.65rem; font-weight: 500; }
   .cards { list-style: none; margin: 0; padding: 0; }
   /*
    * Reveal: a card that just got room morphs out of its node. It starts as a
@@ -487,7 +504,7 @@
    * room runs the same morph in reverse, filling back in only as it lands on its
    * node under the cards closing up. About 0.9s each way.
    */
-  /* Collapsed: a node-sized circle on the spine, in the node's colour, with the text hidden. */
+  /* Collapsed: a node-sized circle on the spine, in the event's category colour, with the text hidden. */
   .reveal .card, .leaving .card { transform-origin: 0 0; }
   .reveal .card {
     transition: transform 900ms cubic-bezier(0.65, 0, 0.25, 1), border-radius 900ms cubic-bezier(0.65, 0, 0.25, 1),
@@ -498,13 +515,13 @@
   @starting-style {
     .reveal .card {
       transform: translate(var(--tx), var(--ty)) scale(var(--sx), var(--sy)); border-radius: 50%;
-      background-color: var(--muted); border-color: var(--line-strong);
+      background-color: var(--c); border-color: color-mix(in oklab, var(--c) 55%, transparent);
     }
     .reveal .card-button, .reveal .connector { opacity: 0; }
   }
   .leaving .card {
     transform: translate(var(--tx), var(--ty)) scale(var(--sx), var(--sy)); border-radius: 50%;
-    background-color: var(--muted); border-color: var(--line-strong); z-index: 0;
+    background-color: var(--c); border-color: color-mix(in oklab, var(--c) 55%, transparent); z-index: 0;
     transition: transform 840ms cubic-bezier(0.65, 0, 0.35, 1) 120ms, border-radius 840ms cubic-bezier(0.65, 0, 0.35, 1) 120ms,
       border-color 200ms ease-out, background-color 300ms ease-in 660ms;
   }
@@ -515,10 +532,10 @@
   .dot.related { border-color: var(--context-accent); }
   .dot.selected { width: 13px; height: 13px; border: 2px solid var(--bg); background: var(--context-accent); border-radius: 1px; transform: translate(-50%, -50%) rotate(45deg); }
   .connector { position: absolute; height: 16px; transform: translateY(-50%); cursor: pointer; }
-  .connector::before { content: ''; position: absolute; left: 0; right: 0; top: 7px; height: 1px; background: var(--line); }
+  .connector::before { content: ''; position: absolute; left: 0; right: 0; top: 7px; height: 1px; background: color-mix(in oklab, var(--c) 45%, var(--line)); }
   li:has(.dot.selected) .connector::before { background: var(--context-accent); }
   .card { position: absolute; contain: strict; border: 1px solid transparent; border-radius: 7px; z-index: 1; background: transparent; overflow: hidden; }
-  .card:hover { background: var(--surface-2); }
+  .card:hover { background: color-mix(in oklab, var(--c) 8%, var(--surface-2)); }
   .card.related { border-color: var(--context-accent); }
   .card.selected { background: var(--focus-surface); color: var(--focus-text); box-shadow: var(--shadow-sm); }
   .card-button { all: unset; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px; width: 100%; height: 100%; padding: 10px 16px; cursor: pointer; }
@@ -526,8 +543,8 @@
   .card.selected .card-button { padding: 18px 22px; gap: 8px; }
   .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 10px; font-size: 0.67rem; line-height: 1.4; color: var(--muted); }
   .meta time { font-variant-numeric: tabular-nums; }
-  .category { display: inline-flex; align-items: center; gap: 5px; text-transform: capitalize; }
-  .swatch { width: 5px; height: 5px; background: var(--c); border-radius: 1px; }
+  .category { display: inline-flex; align-items: center; gap: 5px; padding: 0 7px 0 6px; border-radius: 999px; background: color-mix(in oklab, var(--c) 13%, transparent); color: color-mix(in oklab, var(--c) var(--cat-ink), var(--text)); font-weight: 500; text-transform: capitalize; }
+  .swatch { width: 6px; height: 6px; background: var(--c); border-radius: 50%; }
   .badge { font-size: 0.65rem; border-bottom: 1px solid currentColor; }
   .badge.warn { color: var(--warn); }
   .title { font-size: 1rem; font-weight: 600; line-height: 1.25; letter-spacing: -0.02em; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }

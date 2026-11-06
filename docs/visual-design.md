@@ -17,15 +17,19 @@ Width means events hidden by the current layout, including nonmatching events re
 
 `ribbon.ts` constructs equal-duration calendar bins within each era, selecting month, quarter, half-year, year or multi-year windows according to zoom. Partial end bins are clipped. Counts use an absolute capped logarithmic mapping from 2 to 16 pixels (12 on narrow layouts); extreme counts cannot make the ribbon dominate the interface. Cubic smoothstep joins avoid width overshoot. Paths end at era headers and compressed gaps, so density never bleeds across those spaces.
 
-The ribbon is neutral in both themes. Category, selection and filter colors do not alter its width or fill. Nodes on the spine provide discovery and interaction; the ribbon supplies a secondary density cue.
+The ribbon takes each era's hue, blended between era midpoints by one SVG gradient. Category, selection and filter colors do not alter its width or fill. Nodes on the spine provide discovery and interaction; the ribbon supplies a secondary density cue.
 
 ## Hidden events as nodes
 
-Events without a card at the current zoom are small neutral nodes on the spine, at their true dates. `nodes.ts` draws every node in the rendered window into one SVG path, skipping a node within 2px of the previous one, so thousands of hidden events cost one DOM element. Era headings show registered totals and the number shown as cards at this zoom. Hidden events add no display space: the timeline's scale is the calendar scale.
+Events without a card at the current zoom are nodes on the spine, at their true dates: 9px rings in their category's colour, filled with the page background so they stand off the line. `nodes.ts` draws the rendered window's nodes into one SVG path per category, skipping a node within 3px of the previous one, so thousands of hidden events cost about a dozen DOM elements. Era headings show registered totals and the number shown as cards at this zoom. Hidden events add no display space: the timeline's scale is the calendar scale.
 
-Hovering near a node rings it and shows its date and title; clicking it selects the event, which pins a card for it. Keyboard users reach the same events through search and `j`/`k` stepping.
+Hovering within 11px of a node fills it, haloes it and shows a small card with its date and title; clicking it selects the event, which pins a card for it. Keyboard users reach the same events through search and `j`/`k` stepping.
 
 Nodes stand only for hidden events. When an event gets a card, its node leaves the spine and becomes the card, and the card's leader runs straight to the spine. The layout may move a card off its date to make room for its neighbours, so a node beside a card would not always line up with it, and nodes never move with cards. A selected card shows its diamond marker where its leader meets the spine.
+
+## Colour
+
+Colour carries meaning and stays light. Each era band has its own hue (`hue` in `eras.ts`), shown in the era's years, a faint wash under its heading, a tinted top rule and the spine. `--era-l`, `--era-c` and `--era-wash` set its lightness, chroma and wash strength per theme. Each category's colour marks its node ring, its card's leader, a tinted category pill and the card's hover fill. The header has a soft glow of the two accents, the "AI" wordmark runs from one accent to the other, and the Now marker uses the second accent. Text stays in the neutral ink for contrast.
 
 ## Reveal motion
 
