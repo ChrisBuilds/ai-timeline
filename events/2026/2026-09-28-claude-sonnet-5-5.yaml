@@ -1,0 +1,118 @@
+id: 2026-09-28-claude-sonnet-5-5
+title: Anthropic releases Claude Sonnet 5.5
+date: 2026-09-28
+summary: Anthropic released Claude Sonnet 5.5, a faster, lower-cost Claude model priced at $2 and $10 per million tokens.
+description: >-
+  Anthropic released Claude Sonnet 5.5 on September 28, 2026, as the second
+  model in its Claude 5.5 family, available through the Claude API as
+  `claude-sonnet-5-5` and on Amazon Web Services, Google Cloud, and Microsoft
+  Azure. It was priced at $2 per million input tokens and $10 per million
+  output tokens, half the price of Opus 5.5. Anthropic described it as a faster,
+  lower-cost complement to Opus 5.5, with output more than 30% faster than
+  Sonnet 5 and up to 30% lower cost per task in its own testing. It said Opus
+  5.5 remains stronger at complex, open-ended work. These are the developer's
+  own comparisons. Higher-risk cybersecurity requests fall back to Sonnet 5,
+  which Anthropic said makes it the first Sonnet model launched with such
+  fallbacks. The system card says Sonnet 5.5 significantly outperforms Sonnet 5,
+  is usually below Opus 5.5, does not cross the Responsible Scaling Policy
+  threshold for automated AI R&D, and is assessed as low risk for
+  misalignment. It also says the model is less robust than Opus 5 or Fable 5.1
+  under adversarial red-teaming.
+  {note: I read the first 100,000 of about 113,000 characters of the system card, so its later capabilities and model welfare sections are not described here.}
+category: model release
+tags:
+  - language model
+  - coding
+  - agents
+organizations:
+  - Anthropic
+sources:
+  - url: https://www.anthropic.com/claude-sonnet-5-5
+    title: Introducing Claude Sonnet 5.5
+    publisher: Anthropic
+    accessed: 2026-11-06
+  - url: https://www.anthropic.com/claude-sonnet-5-5-system-card
+    title: 'System Card: Claude Sonnet 5.5'
+    publisher: Anthropic
+    accessed: 2026-11-06
+importance:
+  current: 2026-11-06-v2
+  assessments:
+    - id: 2026-11-06-v2
+      assessed_at: 2026-11-06
+      rubric_version: v2
+      status: provisional
+      reviewer: Claude (editorial assessment prepared for maintainer review)
+      rationale: >-
+        Anthropic's announcement and system card report gains over Sonnet 5 at
+        a lower price, with availability on three major cloud platforms. These
+        are developer-reported results and availability, not independent
+        evidence of sustained use or downstream change. No third-party
+        evaluation or usage source was checked. With influence and society
+        unknown, adoption 1 and capability 2, the provisional score range is
+        16-61, with no accepted point score.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources describe the release but do not identify later technical
+            or institutional changes attributable to Sonnet 5.5 itself, as
+            distinct from other Claude releases.
+          evidence:
+            - https://www.anthropic.com/claude-sonnet-5-5
+        adoption:
+          rating: 1
+          confidence: low
+          rationale: >-
+            Availability on the API and three cloud platforms is not counted as
+            adoption. The announcement cites customer tests, which are isolated
+            deployments chosen by the vendor, and no source measures sustained
+            use.
+          evidence:
+            - https://www.anthropic.com/claude-sonnet-5-5
+        capability:
+          rating: 2
+          confidence: low
+          rationale: >-
+            The system card reports significant gains over Sonnet 5 and results
+            usually below Opus 5.5, a useful improvement within an established
+            approach. The results are vendor-produced and no independent
+            evaluation was found.
+          evidence:
+            - https://www.anthropic.com/claude-sonnet-5-5-system-card
+            - https://www.anthropic.com/claude-sonnet-5-5
+        society:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources do not measure public, professional, or institutional
+            effects attributable to Sonnet 5.5.
+          evidence:
+            - https://www.anthropic.com/claude-sonnet-5-5
+      comparisons:
+        - id: 2026-02-17-claude-sonnet-4-6
+          rationale: >-
+            Sonnet 4.6 is an earlier release in the same line. Both are
+            vendor-reported incremental gains within the Sonnet family, and
+            available evidence supports a similar placement.
+        - id: 2026-04-16-claude-opus-4-7
+          rationale: >-
+            Opus 4.7 is another vendor-reported incremental release. Sonnet 5.5
+            has no independent evidence of its own yet, so a similar low
+            placement fits.
+        - id: 2025-01-20-deepseek-r1
+          rationale: >-
+            DeepSeek R1 shipped open weights and a technical report that others
+            could inspect and reuse. Sonnet 5.5 is a closed hosted model, and
+            the evidence does not establish a comparable research contribution.
+      questions:
+        - What independent, version-specific evidence measures sustained use of Sonnet 5.5?
+        - Do independent evaluations reproduce the reported gains over Sonnet 5?
+        - Do the lower price and speed change how teams choose between model tiers?
+      review_after: 2026-12-06
+      review_triggers:
+        - Independent usage evidence that distinguishes Sonnet 5.5 and changes the adoption assessment.
+        - Independent evaluations that materially change the capability assessment.
+issue: 108
+submitted_by: ChrisBuilds
