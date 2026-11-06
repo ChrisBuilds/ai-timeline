@@ -150,7 +150,8 @@
     const out = shifted
     for (const l of motion.leaving) {
       const y = yOf.get(l.item)!
-      const card = { item: l.item, y, lane: 0, top: y + l.offset }
+      // A card that leaves mid-shift starts shrinking from where it is drawn.
+      const card = { item: l.item, y, lane: 0, top: y + l.offset + shiftOf(l.item.id, now) }
       if (Number.isFinite(y) && inWindow(card)) out.push({ card, leaving: true })
     }
     return out.sort((a, b) => a.card.y - b.card.y)
