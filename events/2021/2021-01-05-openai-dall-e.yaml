@@ -1,0 +1,96 @@
+id: 2021-01-05-openai-dall-e
+title: OpenAI introduces DALL·E
+date: "2021-01-05"
+summary: >-
+  OpenAI announced DALL·E, a 12-billion-parameter transformer that generates images from text
+  descriptions, as a research result without a public image-generation service.
+description: >-
+  OpenAI's announcement describes DALL·E as a 12-billion-parameter version of GPT-3 trained to
+  generate images from text captions. A single transformer models text and image tokens as one
+  stream, with images compressed by a discrete variational autoencoder. OpenAI's examples included
+  combining unrelated concepts, rendering text and transforming existing images, and the post notes
+  that controllability weakens as more objects are added. Sample images were reranked with CLIP,
+  announced the same day. The post presents these as OpenAI's own results and does not describe a
+  public release or API; the accompanying paper, "Zero-Shot Text-to-Image Generation", was posted to
+  arXiv on 24 February 2021. The successor DALL·E 2 is mentioned by OpenAI as producing more
+  realistic images at higher resolution.{note: This entry records the research announcement only.
+  Comparisons with earlier text-to-image systems are OpenAI's own claims.}
+category: model release
+organizations: [ OpenAI ]
+people: [ Aditya Ramesh, Mikhail Pavlov, Gabriel Goh, Scott Gray, Chelsea Voss, Alec Radford, Mark Chen, Ilya Sutskever ]
+tags: [ image generation, text-to-image, transformer ]
+issue: 112
+submitted_by: ChrisBuilds
+sources:
+  - url: https://openai.com/index/dall-e/
+    title: DALL·E - Creating images from text
+    publisher: OpenAI
+    accessed: "2026-11-06"
+  - url: https://arxiv.org/abs/2102.12092
+    title: Zero-Shot Text-to-Image Generation
+    publisher: arXiv
+    accessed: "2026-11-06"
+  - url: https://openai.com/index/clip/
+    title: CLIP - Connecting text and images
+    publisher: OpenAI
+    accessed: "2026-11-06"
+artifacts:
+  - type: post
+    url: https://openai.com/index/dall-e/
+    title: DALL·E - Creating images from text
+  - type: paper
+    url: https://arxiv.org/abs/2102.12092
+    title: Zero-Shot Text-to-Image Generation
+importance:
+  current: 2026-11-06-v2
+  assessments:
+    - id: 2026-11-06-v2
+      assessed_at: 2026-11-06
+      rubric_version: v2
+      status: provisional
+      reviewer: Claude (research assessment, pending maintainer review)
+      rationale: Initial v2 assessment of the announcement and paper only. Later products such as
+        DALL·E 2 and public image generators are separate events and receive no credit here.
+      dimensions:
+        influence:
+          rating: 4
+          confidence: medium
+          rationale: Showed autoregressive text-to-image generation at scale; OpenAI itself presents DALL·E 2
+            as its successor. Influence on other labs' systems is not established from the cited sources.
+          evidence:
+            - https://openai.com/index/dall-e/
+            - https://arxiv.org/abs/2102.12092
+        adoption:
+          rating: 1
+          confidence: medium
+          rationale: A research announcement with curated samples and no public service described in the
+            sources.
+          evidence:
+            - https://openai.com/index/dall-e/
+        capability:
+          rating: 4
+          confidence: medium
+          rationale: Demonstrated flexible text-conditioned image generation with one transformer, with
+            stated limits in controllability. Quality claims are vendor-reported.
+          evidence:
+            - https://openai.com/index/dall-e/
+            - https://arxiv.org/abs/2102.12092
+        society:
+          rating: 2
+          confidence: low
+          rationale: Drew attention to generated imagery, but the cited sources do not document broad
+            institutional effects for this release.
+          evidence:
+            - https://openai.com/index/dall-e/
+      comparisons:
+        - id: 2022-08-22-stable-diffusion-public-release
+          rationale: "Lower overall significance under v2. This event: a research preview without public
+            access. Comparison event: public weights enabled wide local use."
+        - id: 2020-05-28-gpt3-few-shot-learners
+          rationale: "Lower overall significance under v2. This event: applies the GPT-3 approach to
+            images. Comparison event: broader field-level influence on language modeling."
+      questions:
+        - Which later text-to-image systems cite DALL·E directly as an influence?
+      review_after: 2026-12-06
+      review_triggers:
+        - Independent evidence of influence on later systems, or a new event for DALL·E 2.
