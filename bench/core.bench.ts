@@ -9,7 +9,7 @@ import { buildIndex, search } from '../src/lib/search'
 import { facets, matches, NO_FILTERS } from '../src/lib/filters'
 import { toYear } from '../src/lib/time'
 import { buildRibbon } from '../src/lib/ribbon'
-import { buildGroups } from '../src/lib/groups'
+import { nodePath, visibleNodes } from '../src/lib/nodes'
 import type { TimelineEvent } from '../src/lib/types'
 
 const NOW = 2026.84
@@ -35,21 +35,20 @@ for (const size of SIZES) {
         layout(items, OPTS)
       }, { time: TIME })
       const arranged = layout(items, OPTS)
-      const grouped = buildGroups(scale, arranged.placed, arranged.clusters, yearMap, () => OPTS.cardHeight)
-      bench(`collapsed groups, zoom ${zoom}`, () => {
-        buildGroups(scale, arranged.placed, arranged.clusters, yearMap, () => OPTS.cardHeight)
+      const hidden = arranged.hidden.map(({ item }) => ({ item, year: yearMap.get(item.id)! }))
+      bench(`ribbon, zoom ${zoom}`, () => { buildRibbon(scale, hidden, 16) }, { time: TIME })
+      bench(`hidden nodes for a 2,000px window, zoom ${zoom}`, () => {
+        nodePath(visibleNodes(arranged.hidden, scale.height / 2, scale.height / 2 + 2000), 3)
       }, { time: TIME })
-      const hidden = grouped.hidden
-      bench(`ribbon, zoom ${zoom}`, () => { buildRibbon(scale, hidden, 16, grouped.project) }, { time: TIME })
       const order = priorityOrder(events.map((e, i) => ({ item: e, y: -years[i], score: e.score })))
-      bench(`one zoom frame (scale, layout, groups, ribbon), zoom ${zoom}`, () => {
+      bench(`one zoom frame (scale, layout, ribbon, nodes), zoom ${zoom}`, () => {
         const s = buildScale(ERAS, years, NOW, zoom)
         const arranged = layout(
           events.map((e, i) => ({ item: e, y: s.y(years[i]), score: e.score })),
           { ...OPTS, order },
         )
-        const groups = buildGroups(s, arranged.placed, arranged.clusters, yearMap, () => OPTS.cardHeight)
-        buildRibbon(s, groups.hidden, 16, groups.project)
+        buildRibbon(s, arranged.hidden.map(({ item }) => ({ item, year: yearMap.get(item.id)! })), 16)
+        nodePath(visibleNodes(arranged.hidden, s.height / 2, s.height / 2 + 2000), 3)
       }, { time: TIME })
     }
     bench('buildIndex', () => {

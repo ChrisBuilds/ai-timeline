@@ -20,7 +20,12 @@
   --shadow-md: 0 1px 2px rgb(25 25 23 / 0.05), 0 6px 16px -4px rgb(25 25 23 / 0.1);
   --shadow-lg: 0 2px 6px rgb(25 25 23 / 0.06), 0 18px 40px -8px rgb(25 25 23 / 0.18);
   --glass: rgb(247 244 237 / 0.94);
-  --era-art-opacity: 0.55;
+  /* Era tints: each era's hue (eras.ts) at this lightness and chroma. */
+  --era-l: 0.56;
+  --era-c: 0.12;
+  --era-wash: 12%;
+  --cat-ink: 72%;
+  --glow: 11%;
 
   /* Category colours, used for card edges, dots and chips. */
   --cat-research: #4f46e5;
@@ -61,7 +66,11 @@
     --shadow-md: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 20px -6px rgb(0 0 0 / 0.55);
     --shadow-lg: 0 2px 8px rgb(0 0 0 / 0.45), 0 24px 48px -10px rgb(0 0 0 / 0.7);
     --glass: rgb(20 26 34 / 0.94);
-    --era-art-opacity: 0.68;
+    --era-l: 0.76;
+    --era-c: 0.1;
+    --era-wash: 10%;
+    --cat-ink: 80%;
+    --glow: 14%;
     --cat-research: #a5b4fc;
     --cat-model-release: #c4b5fd;
     --cat-product: #5eead4;
@@ -94,7 +103,11 @@
   --shadow-md: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 20px -6px rgb(0 0 0 / 0.55);
   --shadow-lg: 0 2px 8px rgb(0 0 0 / 0.45), 0 24px 48px -10px rgb(0 0 0 / 0.7);
   --glass: rgb(20 26 34 / 0.94);
-  --era-art-opacity: 0.68;
+  --era-l: 0.76;
+  --era-c: 0.1;
+  --era-wash: 10%;
+  --cat-ink: 80%;
+  --glow: 14%;
   --cat-research: #a5b4fc;
   --cat-model-release: #c4b5fd;
   --cat-product: #5eead4;
@@ -138,6 +151,11 @@ body {
   margin: 0;
   min-height: 100vh;
   background-color: var(--bg);
+  /* A soft wash of the two accents behind the header, fading out before the timeline. */
+  background-image:
+    radial-gradient(ellipse 700px 420px at 12% -80px, color-mix(in oklab, var(--accent) var(--glow), transparent), transparent),
+    radial-gradient(ellipse 620px 380px at 70% -120px, color-mix(in oklab, var(--accent-2) var(--glow), transparent), transparent);
+  background-repeat: no-repeat;
   color: var(--text);
 }
 
@@ -198,8 +216,8 @@ kbd {
   text-transform: uppercase;
   letter-spacing: 0.09em;
   font-size: 0.66rem;
-  font-weight: 500;
-  color: var(--muted);
+  font-weight: 600;
+  color: var(--accent-2);
 }
 .eyebrow .live {
   width: 8px;
@@ -218,6 +236,10 @@ kbd {
 }
 .site-header h1 .grad {
   color: var(--accent);
+  background: linear-gradient(120deg, var(--accent) 20%, var(--accent-2) 95%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 .help {
   margin: 20px 0 0;

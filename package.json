@@ -11,7 +11,7 @@
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
     "test": "vitest run",
-    "test:groups": "npm run build && node scripts/groups.browser.mjs",
+    "test:nodes": "npm run build && node scripts/nodes.browser.mjs",
     "test:motion": "npm run build && node scripts/selection-motion.browser.mjs",
     "bench": "vitest bench --run",
     "bench:browser": "node bench/browser.mjs",

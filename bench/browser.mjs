@@ -113,6 +113,13 @@ async function measure(browser, size, device) {
       if (n % 6 === 0 && n < 24) document.body.dispatchEvent(new KeyboardEvent('keydown', { key: '+', bubbles: true }))
     }),
   )
+  // With the CPU throttled, the zoom glide can outlast the 1.6s window. Let it
+  // and the reveal animations settle, so the scroll sample measures scrolling.
+  await page.waitForFunction(() => new Promise((resolve) => {
+    const label = document.querySelector('.zoom-level')?.textContent
+    setTimeout(() => resolve(label === document.querySelector('.zoom-level')?.textContent &&
+      !document.querySelector('li.reveal, li.leaving')), 300)
+  }), null, { timeout: 10_000, polling: 100 }).catch(() => {})
   const zoomedNodes = await page.evaluate(() => document.getElementsByTagName('*').length)
 
   // Scroll down steadily, 30px a frame.

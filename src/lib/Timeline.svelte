@@ -1,23 +1,27 @@
 <script lang="ts">
-  import { tick } from 'svelte'
+  import { untrack } from 'svelte'
   import type { TimelineEvent } from './types'
   import type { TimeScale } from './scale'
-  import type { Cluster, PlacedCard } from './layout'
+  import type { PlacedCard } from './layout'
   import { formatDate, formatRange } from './dates'
   import { categoryColor } from './categories'
   import { buildRibbon } from './ribbon'
-  import { formatCount, type EventGroup, type EraStats } from './groups'
+  import { nearestNode, nodePath, RevealTracker, visibleNodes, type Node } from './nodes'
   import Ribbon from './Ribbon.svelte'
-  import { containScroll } from './scroll-containment'
+
+  const numbers = new Intl.NumberFormat('en')
+  const formatCount = (count: number) => numbers.format(count)
 
   interface Props {
     scale: TimeScale
     placed: PlacedCard<TimelineEvent>[]
-    groups: EventGroup<TimelineEvent>[]
-    eraStats: Map<string, EraStats>
-    hidden: { item: TimelineEvent; year: number }[]
-    ribbonScale: TimeScale
-    ribbonProject: (y: number, after?: boolean) => number
+    /** Events without a card at this zoom, by y. They are drawn as nodes on the spine. */
+    hidden: Node<TimelineEvent>[]
+    /** The same events with their dates, for the density ribbon. */
+    hiddenYears: { item: TimelineEvent; year: number }[]
+    eraStats: Map<string, { total: number; shown: number }>
+    /** Cards grow out of their node when they appear, and shrink back into it when they go. */
+    animate: boolean
     spineX: number
     cardWidth: number
     selectedId: string | null
@@ -29,7 +33,6 @@
     /** Events that match the active filters; empty when no filter is on. */
     matchIds: Set<string>
     onselect: (id: string, scroll?: boolean) => void
-    onexpand: (cluster: Cluster<TimelineEvent>) => void
     /** A card was hovered or focused, so it may be opened next. */
     onpreview?: (id: string) => void
     /** Rendered height of each era's name, so the layout can keep cards off it. */
@@ -44,11 +47,10 @@
   let {
     scale,
     placed,
-    groups,
-    eraStats,
     hidden,
-    ribbonScale,
-    ribbonProject,
+    hiddenYears,
+    eraStats,
+    animate,
     spineX,
     cardWidth,
     selectedId,
@@ -58,7 +60,6 @@
     dimIds,
     matchIds,
     onselect,
-    onexpand,
     onpreview,
     labelHeights = $bindable([]),
     labelTop,
@@ -73,13 +74,6 @@
   const winTop = $derived(Math.floor((viewTop - viewHeight / 2) / CHUNK) * CHUNK)
   const winBottom = $derived(Math.ceil((viewTop + 1.5 * viewHeight) / CHUNK) * CHUNK)
 
-  /** Items whose `y` lies in [from, to); `list` is sorted by y. */
-  function within<T extends { y: number }>(list: T[], from: number, to: number): T[] {
-    const start = lowerBound(list, from)
-    let end = start
-    while (end < list.length && list[end].y < to) end++
-    return list.slice(start, end)
-  }
   function lowerBound(list: { y: number }[], y: number): number {
     let lo = 0
     let hi = list.length
@@ -93,61 +87,161 @@
 
   // Include the largest entry height above the rendering window.
   // Include displaced overview cards by their displayed position as well as date.
-  const shownCards = $derived(placed.filter((c) =>
+  const inWindow = (c: PlacedCard<TimelineEvent>) =>
     (c.top + eventHeight(c.item) >= winTop && c.top <= winBottom) ||
-    (c.y >= winTop - 320 && c.y <= winBottom + 320)))
-  const shownGroups = $derived(within(groups, winTop - 64, winBottom + 64))
-  const ribbon = $derived(buildRibbon(ribbonScale, hidden, spineX < 50 ? 12 : 16, ribbonProject))
-  let activeGroupId = $state<string | null>(null)
-  let query = $state('')
-  let page = $state(0)
-  let menuTop = $state(0)
-  let menuHeight = $state(480)
-  const PAGE_SIZE = 12
-  const activeGroup = $derived(groups.find((g) => g.id === activeGroupId) ?? null)
-  const searchable = $derived(activeGroup?.items.map((item) => ({ item, text: `${item.title} ${item.date}`.toLowerCase() })) ?? [])
-  const filtered = $derived(query.trim() ? searchable.filter((e) => e.text.includes(query.trim().toLowerCase())).map((e) => e.item) : activeGroup?.items ?? [])
-  const pages = $derived(Math.max(1, Math.ceil(filtered.length / PAGE_SIZE)))
-  const menuItems = $derived(filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE))
-  // Scrolling never rebuilds groups. Layout changes invalidate an open browser.
-  $effect(() => { void groups; activeGroupId = null; query = ''; page = 0 })
-  $effect(() => {
-    if (activeGroupId && !shownGroups.some((g) => g.id === activeGroupId)) activeGroupId = null
+    (c.y >= winTop - 320 && c.y <= winBottom + 320)
+  const shownCards = $derived(placed.filter(inWindow))
+  const ribbon = $derived(buildRibbon(scale, hiddenYears, spineX < 50 ? 12 : 16))
+
+  // Hidden events as nodes: one SVG path per category for the window, so
+  // thousands of them cost a dozen elements. Rings ring their category's colour.
+  // Nodes within 3px of each other are drawn once.
+  const NODE_R = 4.5
+  // The window clipped to the timeline, so nothing drawn for it makes the page taller.
+  const clipTop = $derived(Math.max(0, winTop))
+  const clipBottom = $derived(Math.min(scale.height, winBottom))
+  // A leaving card's node appears when the card has shrunk back into it.
+  const nodes = $derived.by(() => {
+    const all = visibleNodes(hidden, winTop, winBottom, 3)
+    if (!motion.leaving.length) return all
+    const going = new Set(motion.leaving.map((l) => l.item))
+    return all.filter((n) => !going.has(n.item))
   })
-  async function activate(group: EventGroup<TimelineEvent>) {
-    if (activeGroupId === group.id) { activeGroupId = null; return }
-    const target = document.getElementById(`group-${group.id}`)
-    const timeline = target?.closest('.timeline')
-    if (!target || !timeline) return
-    const at = target.getBoundingClientRect()
-    const toolbarBottom = document.querySelector('.toolbar-wrap')?.getBoundingClientRect().bottom ?? 0
-    const sheetHeight = selectedId && innerWidth < 720 ? document.querySelector<HTMLElement>('aside.panel')?.offsetHeight ?? 0 : 0
-    const bottom = innerHeight - sheetHeight - 12
-    menuHeight = Math.max(120, Math.min(480, 116 + Math.min(group.items.length, PAGE_SIZE) * 64 + (group.items.length > PAGE_SIZE ? 72 : 0), bottom - toolbarBottom - 16))
-    menuTop = Math.max(toolbarBottom + 8, Math.min(at.bottom + 6, bottom - menuHeight)) - timeline.getBoundingClientRect().top
-    activeGroupId = group.id
-    query = ''
-    page = 0
-    await tick()
-    document.getElementById('group-browser')?.focus({ preventScroll: true })
+  const nodePaths = $derived.by(() => {
+    const groups = new Map<string, { y: number }[]>()
+    for (const n of nodes) {
+      const key = `${dimIds.has(n.item.id) ? 'dim' : 'on'}|${n.item.category}`
+      let list = groups.get(key)
+      if (!list) groups.set(key, (list = []))
+      list.push(n)
+    }
+    return [...groups].map(([key, list]) => {
+      const [state, category] = key.split('|')
+      return { key, dim: state === 'dim', color: categoryColor(category), d: nodePath(list, NODE_R) }
+    })
+  })
+  let hoverNode = $state.raw<Node<TimelineEvent> | null>(null)
+  let root: HTMLDivElement | undefined = $state()
+  function nodeAt(e: PointerEvent | MouseEvent, reach: number): Node<TimelineEvent> | null {
+    if (!root) return null
+    return nearestNode(nodes, e.clientY - root.getBoundingClientRect().top, reach)
   }
-  function changePage(next: number) {
-    page = next
-    document.getElementById('group-browser')?.scrollTo({ top: 0, behavior: 'instant' })
+  // Keep the hover on the event, not on a y position, as zoom moves the nodes.
+  const hovered = $derived(hoverNode && nodes.find((n) => n.item === hoverNode!.item) || null)
+
+  // Cards that just got room grow out of their node; cards that just lost it
+  // shrink back into it while the others close up. Time-based, so a card never
+  // flickers with the zoom frame rate, and CSS transitions, so a card that
+  // returns mid-animation turns around from where it is.
+  const REVEAL_MS = 980
+  const tracker = new RevealTracker<TimelineEvent>(REVEAL_MS)
+  let expired = $state(0)
+  // Only zooming reveals cards. A filter change replaces most cards at once,
+  // and animating all of them would be noise, and slow.
+  let motionFilter: unknown = null
+  const motion = $derived.by(() => {
+    void expired
+    const filterChanged = motionFilter !== matchIds
+    motionFilter = matchIds
+    tracker.update(placed, performance.now(), animate && !filterChanged)
+    return { entering: new Set(tracker.entering.keys()), leaving: [...tracker.leaving.values()] }
+  })
+  $effect(() => {
+    void motion
+    const next = tracker.nextExpiry()
+    if (next === null) return
+    const t = setTimeout(() => { if (tracker.prune(performance.now())) expired++ }, Math.max(0, next - performance.now()) + 20)
+    return () => clearTimeout(t)
+  })
+  // A leaving card follows its date marker, so it shrinks into its node even mid-zoom.
+  const rowOf = new WeakMap<PlacedCard<TimelineEvent>, { card: PlacedCard<TimelineEvent>; leaving: boolean }>()
+  const rows = $derived.by(() => {
+    void clock
+    // Read the time here, so a zoom frame that rebuilds the rows anyway also
+    // advances the shifts, and the shift loop below has nothing left to do.
+    const now = performance.now()
+    if (!ticked) rebuilt = true
+    ticked = false
+    // Rows keep their identity while their card is unchanged, so a frame that
+    // only moves a few shifting cards doesn't update every row.
+    const shifted = shownCards.map((card) => {
+      const d = shifts.size ? shiftOf(card.item.id, now) : 0
+      if (d) return { card: { ...card, top: card.top + d }, leaving: false }
+      let row = rowOf.get(card)
+      if (!row) rowOf.set(card, row = { card, leaving: false })
+      return row
+    })
+    if (!motion.leaving.length) return shifted
+    const yOf = new Map<TimelineEvent, number>()
+    for (const l of motion.leaving) yOf.set(l.item, NaN)
+    for (const h of hidden) if (yOf.has(h.item)) yOf.set(h.item, h.y)
+    const out = shifted
+    for (const l of motion.leaving) {
+      const y = yOf.get(l.item)!
+      // A card that leaves mid-shift starts shrinking from where it is drawn.
+      const card = { item: l.item, y, lane: 0, top: y + l.offset + shiftOf(l.item.id, now) }
+      if (Number.isFinite(y) && inWindow(card)) out.push({ card, leaving: true })
+    }
+    return out.sort((a, b) => a.card.y - b.card.y)
+  })
+
+  // When a card's neighbours change, the layout moves it by up to a few card
+  // heights in one frame. Ease that jump out: the card keeps a shift that decays
+  // to zero, and its leader is drawn to the shifted card, so the card never
+  // comes loose from its node.
+  const JUMP_PX = 40
+  const JUMP_MAX = 360
+  const SHIFT_MS = 320
+  let offsets = new Map<string, number>()
+  let offsetsFor: string | null = null
+  let shifts = $state.raw(new Map<string, { from: number; start: number }>())
+  let clock = $state(0)
+  let rebuilt = false
+  let ticked = false
+  const easeOut = (t: number) => 1 - (1 - t) ** 3
+  function shiftOf(id: string, now: number): number {
+    const s = shifts.get(id)
+    if (!s) return 0
+    const t = (now - s.start) / SHIFT_MS
+    return t >= 1 ? 0 : s.from * (1 - easeOut(Math.max(0, t)))
   }
-  function dismissGroup(refocus = false) {
-    const id = activeGroupId
-    activeGroupId = null
-    if (refocus && id) document.getElementById(`group-${id}`)?.focus({ preventScroll: true })
-  }
-  function closeMenu(e: KeyboardEvent) {
-    if (e.key !== 'Escape') return
-    e.stopPropagation()
-    dismissGroup(true)
-  }
-  function closeOutside(e: PointerEvent) {
-    if (!(e.target as Element).closest('.event-group, .cluster-menu')) dismissGroup()
-  }
+  $effect(() => {
+    const cards = shownCards
+    // Selecting an event has its own layout animation (selection-motion.ts).
+    const enabled = animate && offsetsFor === selectedId
+    offsetsFor = selectedId
+    untrack(() => {
+      const now = performance.now()
+      const next = new Map<string, number>()
+      let changed: Map<string, { from: number; start: number }> | null = null
+      for (const card of cards) {
+        const offset = card.top - card.y
+        next.set(card.item.id, offset)
+        const before = offsets.get(card.item.id)
+        // A longer jump would ease in from outside the rendered window, so it isn't eased.
+        if (!enabled || before === undefined || Math.abs(offset - before) < JUMP_PX || Math.abs(offset - before) > JUMP_MAX) continue
+        changed ??= new Map(shifts)
+        changed.set(card.item.id, { from: before + shiftOf(card.item.id, now) - offset, start: now })
+      }
+      offsets = next
+      if (changed) { shifts = changed; clock = now }
+    })
+  })
+  // Drive the shifts while any is running, then drop them.
+  $effect(() => {
+    if (!shifts.size) return
+    let frame = requestAnimationFrame(function step(now) {
+      // When something else, such as a zoom frame, rebuilt the rows since the
+      // last step, the shifts already moved; don't add a second render.
+      if (rebuilt) rebuilt = false
+      else { ticked = true; clock = now }
+      const live = [...shifts].filter(([, s]) => now - s.start < SHIFT_MS)
+      if (live.length !== shifts.size) shifts = new Map(live)
+      else frame = requestAnimationFrame(step)
+    })
+    return () => cancelAnimationFrame(frame)
+  })
+
   const shownGaps = $derived(scale.gaps.filter((g) => g.top + g.height > winTop && g.top < winBottom))
 
   // Year labels sit beside the spine; skip any that would land near an event dot,
@@ -165,7 +259,7 @@
 
   const ticks = $derived.by(() => {
     // Dots near the window, sorted by y, so each tick checks its neighbours with a binary search.
-    const dots = [...shownCards, ...shownGroups].map((c) => ({ y: c.y })).sort((a, b) => a.y - b.y)
+    const dots = shownCards.map((c) => ({ y: c.top + ANCHOR })).sort((a, b) => a.y - b.y)
     const nearDot = (y: number) => {
       const i = lowerBound(dots, y - 18)
       return i < dots.length && dots[i].y < y + 18
@@ -194,6 +288,21 @@
     return null
   }
 
+  // Nodes mark hidden events only. When an event gets room, its node leaves
+  // the spine and grows into the card; the card's leader runs straight to the
+  // spine beside it. A card the layout has moved far from its date grows from
+  // where its leader meets the spine, so it never flies across the screen.
+  const ANCHOR = 18
+  // The card morphs from its node: its collapsed state is a node-sized circle
+  // centred on the node, as a translate and scale from the card's top-left.
+  function morph(card: PlacedCard<TimelineEvent>, left: number, height: number): string {
+    const toNode = card.y - card.top
+    const nx = spineX - left
+    const ny = Math.abs(toNode - ANCHOR) > 120 ? ANCHOR : toNode
+    const d = NODE_R * 2
+    return `--tx: ${nx - d / 2}px; --ty: ${ny - d / 2}px; --sx: ${d / cardWidth}; --sy: ${d / height}`
+  }
+
   function cardLeft(lane: number): number {
     return lane === 0 ? spineX + 24 : spineX - 24 - cardWidth
   }
@@ -208,12 +317,11 @@
   }
 </script>
 
-<svelte:window onpointerdown={closeOutside} onkeydown={(e) => { if (e.key === 'Escape') dismissGroup() }} />
-
 <!-- Hovering or focusing a card starts loading its details, so opening it is instant. -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
   class="timeline"
+  bind:this={root}
   onpointerover={previewFrom}
   onfocusin={previewFrom}
   style:height="{scale.height}px" style:--spine="{spineX}px" style:--label-pad="{spineX + 28}px" style:--label-max={'100%'} style:--label-top="{labelTop}px">
@@ -223,6 +331,7 @@
       data-motion-key="era-{band.era.id}"
       style:top="{band.top}px"
       style:height="{band.height}px"
+      style:--hue={band.era.hue ?? 230}
       aria-label={band.era.name}
     >
       <h2 class="era-label" bind:clientHeight={labelHeights[i]}>
@@ -233,7 +342,27 @@
     </section>
   {/each}
 
-  <Ribbon spans={ribbon} {spineX} viewTop={Math.max(0, winTop)} viewBottom={Math.min(scale.height, winBottom)} />
+  <Ribbon spans={ribbon} {spineX} viewTop={clipTop} viewBottom={clipBottom}
+    stops={scale.bands.map((b) => ({ y: b.top + b.height / 2, hue: b.era.hue ?? 230 }))} />
+
+  <svg class="nodes" aria-hidden="true" width="16" height={Math.max(0, clipBottom - clipTop)}
+    style:left="{spineX - 8}px" style:top="{clipTop}px" viewBox="-8 {clipTop} 16 {Math.max(1, clipBottom - clipTop)}">
+    {#each nodePaths as group (group.key)}<path class:dim={group.dim} style:--c={group.color} d={group.d} />{/each}
+  </svg>
+  <!-- Pointer route to a hidden event: the node nearest the pointer. Keyboard users reach the same events through search and the arrow keys. -->
+  <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
+  <div class="node-hits" style:top="{clipTop}px" style:height="{Math.max(0, clipBottom - clipTop)}px"
+    class:active={hovered !== null}
+    onpointermove={(e) => { if (e.pointerType === 'mouse') hoverNode = nodeAt(e, 11) }}
+    onpointerleave={() => (hoverNode = null)}
+    onclick={(e) => { const node = nodeAt(e, 14); if (node) { hoverNode = null; onselect(node.item.id) } }}
+  ></div>
+  {#if hovered}
+    <div class="node-hover" style:top="{hovered.y}px" style:--c={categoryColor(hovered.item.category)} aria-hidden="true">
+      <span class="node-ring"></span>
+      <span class="node-tip"><time>{formatRange(hovered.item.date, hovered.item.end_date)}</time>{hovered.item.title}</span>
+    </div>
+  {/if}
 
   <div data-motion-key="now" class="now" style:top="{scale.y(scale.bands[0].end)}px" aria-hidden="true">
     <span class="now-dot"></span><span class="now-label">Now</span>
@@ -261,83 +390,42 @@
     <span data-motion-key="tick-{tick.year}" class="tick" style:top="{tick.y}px" aria-hidden="true">{tick.year}</span>
   {/each}
 
-  {#each shownGroups as group (group.id)}
-    <button id="group-{group.id}" data-motion-key="group-{group.id}" class="event-group"
-      class:dimmed={group.items.every((e) => dimIds.has(e.id))}
-      style:top="{group.top}px" style:left="{cardLeft(0)}px" style:width="{cardWidth}px" style:height="{group.height}px"
-      aria-expanded={activeGroupId === group.id} aria-haspopup="dialog" aria-controls={activeGroupId === group.id ? 'group-browser' : undefined}
-      onclick={() => activate(group)}>
-      <svg class="stack" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 4h14M2 9h14M2 14h14" /></svg>
-      <span class="group-copy"><strong>{formatCount(group.items.length)} more {group.items.length === 1 ? 'event' : 'events'}</strong><span>{group.label}</span></span>
-      <span class="group-chevron" aria-hidden="true">›</span>
-    </button>
-  {/each}
-
-  {#if activeGroup}
-    <div use:containScroll id="group-browser" class="cluster-menu" onkeydown={closeMenu} tabindex="-1"
-      style:top="{menuTop}px" style:left="{cardLeft(0)}px" style:width="{Math.min(cardWidth, 420)}px" style:max-height="{menuHeight}px"
-      role="dialog" aria-modal="false" aria-label="Events in this group" aria-describedby="group-heading">
-      <div class="menu-tools">
-        <div class="menu-heading"><p id="group-heading">{formatCount(activeGroup.items.length)} {activeGroup.items.length === 1 ? 'event' : 'events'}<span>{activeGroup.label}</span></p>
-          <button class="group-close" aria-label="Close group" onclick={() => dismissGroup(true)}>×</button>
-        </div>
-        {#if activeGroup.items.length > PAGE_SIZE}
-          <input id="group-search" type="search" aria-label="Find an event in this group" placeholder="Find in this group…" bind:value={query} oninput={() => changePage(0)} />
-          <p class="result-count">{query.trim() ? `${formatCount(filtered.length)} matching ${filtered.length === 1 ? 'event' : 'events'}` : 'Browse without changing zoom'}</p>
-        {/if}
-      </div>
-      <ol class="group-events" start={page * PAGE_SIZE + 1}>
-        {#each menuItems as ev (ev.id)}
-          <li><button class:dimmed={dimIds.has(ev.id)} class:match={matchIds.has(ev.id)} onclick={() => { dismissGroup(); onselect(ev.id, true) }}>
-            <time class="menu-date" datetime={ev.date}>{formatRange(ev.date, ev.end_date)}</time>{ev.title}
-          </button></li>
-        {:else}<li class="group-empty">No events match this search.</li>{/each}
-      </ol>
-      <div class="menu-footer">
-        {#if pages > 1}<nav class="group-pagination" aria-label="Group pages">
-          <button aria-label="Previous page" disabled={page === 0} onclick={() => changePage(page - 1)}>←</button>
-          <span>{filtered.length ? `${formatCount(page * PAGE_SIZE + 1)}–${formatCount(Math.min((page + 1) * PAGE_SIZE, filtered.length))} of ${formatCount(filtered.length)}` : '0 events'}</span>
-          <button aria-label="Next page" disabled={page >= pages - 1} onclick={() => changePage(page + 1)}>→</button>
-        </nav>{/if}
-        <button class="menu-zoom" onclick={() => { const group = activeGroup!; dismissGroup(); onexpand(group) }}>Zoom into this period →</button>
-      </div>
-    </div>
-  {/if}
-
   <ol class="cards" aria-label="Events">
-    {#each shownCards as card (card.item.id)}
+    {#each rows as { card, leaving } (card.item.id)}
       {@const ev = card.item}
       {@const left = cardLeft(card.lane)}
-      <li class="appear">
+      <li class:leaving class:reveal={motion.entering.has(ev.id) && selectedId !== ev.id} aria-hidden={leaving || undefined} inert={leaving}>
         <!-- The dot and connector are extra click targets for the card; its button is the keyboard route. -->
         <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-        <span
-          onclick={() => onselect(ev.id)}
-          data-motion-key="dot-{ev.id}"
-          class="dot tier-{ev.tier}"
-          class:selected={selectedId === ev.id}
-          class:related={highlightIds.has(ev.id)}
-          class:dimmed={dimIds.has(ev.id) && selectedId !== ev.id}
-          class:match={matchIds.has(ev.id)}
-          style:top="{card.y}px"
-          style:--c={categoryColor(ev.category)}
-          aria-hidden="true"
-        ></span>
+        {#if selectedId === ev.id}
+          <span
+            onclick={() => onselect(ev.id)}
+            data-motion-key="dot-{ev.id}"
+            class="dot tier-{ev.tier}"
+            class:selected={selectedId === ev.id}
+            class:related={highlightIds.has(ev.id)}
+            class:dimmed={dimIds.has(ev.id) && selectedId !== ev.id}
+            class:match={matchIds.has(ev.id)}
+            style:top="{card.top + ANCHOR}px"
+            style:--c={categoryColor(ev.category)}
+            aria-hidden="true"
+          ></span>
+        {/if}
         <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
         <span
           onclick={() => onselect(ev.id)}
           data-motion-key="connector-{ev.id}"
           class="connector"
-          class:shifted={Math.abs(card.top + 18 - card.y) > 1}
-          class:shifted-up={card.top + 18 < card.y - 1}
           class:dimmed={dimIds.has(ev.id) && selectedId !== ev.id}
           style:--c={categoryColor(ev.category)}
-          style:top="{Math.min(card.y, card.top + 18)}px"
+          style:top="{card.top + ANCHOR}px"
           style:left="{Math.min(spineX, left + cardWidth)}px"
           style:width="{card.lane === 0 ? left - spineX : spineX - (left + cardWidth)}px"
-          style:height="{Math.abs(card.top + 18 - card.y) > 1 ? Math.abs(card.top + 18 - card.y) : 16}px"
+          style:height="16px"
           aria-hidden="true"
         ></span>
+        <!-- A card shown only for its date marker, displaced far from it, is left out until it is near. -->
+        {#if selectedId === ev.id || (card.top + eventHeight(ev) >= winTop - 320 && card.top <= winBottom + 320)}
         <article
           id={ev.id}
           data-motion-key="card-{ev.id}"
@@ -351,7 +439,7 @@
           style:left="{left}px"
           style:width="{cardWidth}px"
           style:height="{eventHeight(ev)}px"
-
+          style={motion.entering.has(ev.id) || leaving ? morph(card, left, eventHeight(ev)) : undefined}
         >
           <button class="card-button" title={ev.title} onclick={() => onselect(ev.id)} aria-pressed={selectedId === ev.id}>
             {#if selectedId === ev.id}<span class="state-label">Selected</span>{/if}
@@ -370,70 +458,84 @@
             {/if}
           </button>
         </article>
+        {/if}
       </li>
     {/each}
   </ol>
 </div>
 
 <style>
-  .connector.shifted { transform: none; background: transparent; border-left: 1px solid var(--c); border-bottom: 1px solid var(--c); opacity: 0.45; }
-  .connector.shifted-up { border-bottom: 0; border-top: 1px solid var(--c); }
-  .connector.shifted::before { display: none; }
   .timeline { position: relative; width: 100%; touch-action: pan-y; }
-  .band { position: absolute; left: 0; right: 0; border-top: 1px solid var(--line); pointer-events: none; }
+  .band {
+    position: absolute; left: 0; right: 0; pointer-events: none;
+    --era: oklch(var(--era-l) var(--era-c) var(--hue));
+    border-top: 1px solid color-mix(in oklab, var(--era) 35%, var(--line));
+    background: radial-gradient(1100px 480px at 40% 0, oklch(var(--era-l) calc(var(--era-c) * 1.6) var(--hue) / var(--era-wash)), transparent);
+  }
   .era-label { position: absolute; top: var(--label-top); left: var(--label-pad); right: 8px; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; margin: 0; line-height: 1.2; }
-  .era-name { font-family: var(--font-display); font-size: clamp(1.1rem, 2.4vw, 1.65rem); font-weight: 600; letter-spacing: -0.025em; }
+  .era-name { color: color-mix(in oklab, var(--era) 30%, var(--text)); font-family: var(--font-display); font-size: clamp(1.1rem, 2.4vw, 1.65rem); font-weight: 600; letter-spacing: -0.025em; }
   .era-count { flex-basis: 100%; color: var(--muted); font-family: var(--font-ui); font-size: 0.69rem; font-weight: 400; line-height: 1.4; }
-  .era-years { color: var(--muted); font-size: 0.7rem; font-weight: 500; white-space: nowrap; }
+  .era-years { color: var(--era); font-size: 0.7rem; font-weight: 600; white-space: nowrap; }
   .now { position: absolute; left: var(--spine); transform: translate(-50%, -50%); z-index: 3; }
-  .now-dot { display: block; width: 8px; height: 8px; background: var(--muted); border: 2px solid var(--bg); border-radius: 50%; }
-  .now-label { position: absolute; right: 24px; top: -2px; font-size: 0.7rem; color: var(--muted); }
+  .now-dot { display: block; width: 10px; height: 10px; background: var(--accent-2); border: 2px solid var(--bg); border-radius: 50%; box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent-2) 28%, transparent); }
+  .now-label { position: absolute; right: 24px; top: -2px; font-size: 0.7rem; font-weight: 600; color: var(--accent-2); }
   .tick { position: absolute; left: calc(var(--spine) - 20px); transform: translate(-100%, -50%); color: var(--muted); font-size: 0.7rem; font-variant-numeric: tabular-nums; pointer-events: none; }
   .gap { position: absolute; left: 0; right: 0; pointer-events: none; }
   .gap-line { position: absolute; inset: 4px auto 4px calc(var(--spine) - 1px); width: 2px; background: repeating-linear-gradient(to bottom, var(--line-strong) 0 3px, transparent 3px 8px); }
   .gap-line::after { content: '//'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; background: var(--bg); color: var(--muted); }
   .gap-label { position: absolute; left: calc(var(--spine) + 30px); top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 0.72rem; font-style: italic; }
-  .event-group { box-sizing: border-box; position: absolute; display: flex; align-items: center; gap: 12px; padding: 10px 14px; border: 1px solid transparent; border-radius: 6px; background: var(--surface-2); color: var(--text); text-align: left; cursor: pointer; z-index: 2; font: inherit; }
-  .event-group::before { content: ''; position: absolute; left: -24px; width: 24px; height: 1px; top: 50%; background: var(--line-strong); }
-  .event-group::after { content: ''; position: absolute; left: -28px; top: calc(50% - 4px); width: 7px; height: 7px; border: 1px solid var(--muted); border-radius: 1px; background: var(--bg); }
-  .event-group:hover, .event-group[aria-expanded='true'] { border-color: var(--line-strong); }
-  .event-group:focus-visible { outline: 2px solid var(--context-accent); outline-offset: 2px; }
-  .stack { flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; }
-  .group-copy { display: grid; gap: 3px; min-width: 0; }
-  .group-copy strong { font-size: 0.85rem; font-weight: 600; }
-  .group-copy > span { font-size: 0.66rem; color: var(--muted); line-height: 1.25; }
-  .group-chevron { margin-left: auto; font-size: 1.5rem; color: var(--muted); }
-  .event-group.dimmed { opacity: 0.55; }
-  .event-group.dimmed:hover, .event-group.dimmed:focus-visible { opacity: 1; }
-  .cluster-menu { position: absolute; z-index: 12; overflow-y: auto; overscroll-behavior: contain; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 8px; box-shadow: var(--shadow-lg); }
-  .menu-tools { position: sticky; top: 0; padding: 10px 12px 0; background: var(--surface); z-index: 1; }
-  .menu-heading { display: flex; align-items: start; gap: 12px; }
-  .menu-heading p { margin: 0 0 8px; font-size: 0.85rem; font-weight: 600; line-height: 1.4; }
-  .menu-heading p span { display: block; color: var(--muted); font-weight: 400; font-size: 0.7rem; }
-  .cluster-menu button { font: inherit; cursor: pointer; color: var(--text); }
-  .group-close { flex: none; margin-left: auto; width: 30px; height: 30px; padding: 0; border: 0; background: transparent; font-size: 1.25rem !important; border-radius: 4px; }
-  .cluster-menu button:focus-visible { outline: 2px solid var(--context-accent); outline-offset: -2px; }
-  #group-search { width: 100%; min-width: 0; padding: 8px 10px; border: 1px solid var(--line-strong); border-radius: 5px; background: var(--bg); color: var(--text); font: inherit; font-size: 0.8rem; }
-  .result-count { margin: 6px 0 0; padding-bottom: 8px; font-size: 0.65rem; color: var(--muted); border-bottom: 1px solid var(--line); }
-  .group-events { list-style: none; padding: 4px 6px; margin: 0; }
-  .group-events button { display: block; width: 100%; padding: 9px 8px; text-align: left; border: 0; border-radius: 4px; background: transparent; font-size: 0.8rem; line-height: 1.4; }
-  .group-events button:hover, .group-close:hover { background: var(--surface-2); }
-  .menu-date { display: block; font-size: 0.66rem; color: var(--muted); }
-  .group-empty { padding: 16px 8px; font-size: 0.8rem; color: var(--muted); }
-  .menu-footer { position: sticky; bottom: 0; padding: 6px 12px; background: var(--surface); border-top: 1px solid var(--line); }
-  .group-pagination { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 0.65rem; }
-  .group-pagination button { padding: 4px 8px; border: 0; border-radius: 4px; background: var(--surface-2); }
-  .group-pagination button:disabled { opacity: 0.3; cursor: default; }
-  .menu-zoom { display: block; padding: 7px 0 2px; border: 0; background: transparent; color: var(--context-accent) !important; font-size: 0.72rem !important; }
+  /* Hidden events: nodes on the spine, and the nearest one under the pointer. */
+  .nodes { position: absolute; overflow: visible; pointer-events: none; z-index: 2; }
+  .nodes path { fill: var(--bg); stroke: var(--c); stroke-width: 2; }
+  .nodes path.dim { opacity: 0.35; }
+  .node-hits { position: absolute; left: calc(var(--spine) - 14px); width: 28px; z-index: 2; }
+  .node-hits.active { cursor: pointer; }
+  .node-hover { position: absolute; left: var(--spine); z-index: 4; pointer-events: none; }
+  .node-ring { position: absolute; width: 15px; height: 15px; transform: translate(-50%, -50%); border: 2px solid var(--c); background: var(--c); box-shadow: 0 0 0 4px color-mix(in oklab, var(--c) 25%, transparent); border-radius: 50%; box-sizing: border-box; }
+  .node-tip { position: absolute; left: 16px; top: 0; transform: translateY(-50%); width: max-content; max-width: min(320px, calc(100vw - var(--spine) - 40px)); padding: 6px 10px 6px 11px; border: 1px solid var(--line-strong); border-left: 3px solid var(--c); border-radius: 6px; background: var(--surface); box-shadow: var(--shadow-md); font-size: 0.78rem; font-weight: 600; line-height: 1.3; }
+  .node-tip time { display: block; color: color-mix(in oklab, var(--c) 55%, var(--muted)); font-size: 0.65rem; font-weight: 500; }
   .cards { list-style: none; margin: 0; padding: 0; }
+  /*
+   * Reveal: a card that just got room morphs out of its node. It starts as a
+   * node-sized circle on the spine, stretches into the card's box while its
+   * corners square off, and then its text and leader fade in. The node's fill
+   * fades while the shape is still small, leaving a faint outline to trace the
+   * stretch, so a large box is never a solid block. A card that just lost its
+   * room runs the same morph in reverse, filling back in only as it lands on its
+   * node under the cards closing up. About 0.9s each way.
+   */
+  /* Collapsed: a node-sized circle on the spine, in the event's category colour, with the text hidden. */
+  .reveal .card, .leaving .card { transform-origin: 0 0; }
+  .reveal .card {
+    transition: transform 900ms cubic-bezier(0.65, 0, 0.25, 1), border-radius 900ms cubic-bezier(0.65, 0, 0.25, 1),
+      background-color 320ms ease-out, border-color 360ms ease-out 560ms;
+  }
+  .reveal .card-button { transition: opacity 380ms ease-out 520ms; }
+  .reveal .connector { transition: opacity 300ms ease-out 560ms; }
+  @starting-style {
+    .reveal .card {
+      transform: translate(var(--tx), var(--ty)) scale(var(--sx), var(--sy)); border-radius: 50%;
+      background-color: var(--c); border-color: color-mix(in oklab, var(--c) 55%, transparent);
+    }
+    .reveal .card-button, .reveal .connector { opacity: 0; }
+  }
+  .leaving .card {
+    transform: translate(var(--tx), var(--ty)) scale(var(--sx), var(--sy)); border-radius: 50%;
+    background-color: var(--c); border-color: color-mix(in oklab, var(--c) 55%, transparent); z-index: 0;
+    transition: transform 840ms cubic-bezier(0.65, 0, 0.35, 1) 120ms, border-radius 840ms cubic-bezier(0.65, 0, 0.35, 1) 120ms,
+      border-color 200ms ease-out, background-color 300ms ease-in 660ms;
+  }
+  .leaving .card-button { opacity: 0; transition: opacity 240ms ease-in; }
+  .leaving .connector { opacity: 0; transition: opacity 240ms ease-in; }
+  .leaving .card, .leaving .connector { pointer-events: none; }
   .dot { position: absolute; left: var(--spine); width: 9px; height: 9px; transform: translate(-50%, -50%); background: var(--bg); border: 2px solid var(--muted); border-radius: 50%; z-index: 3; cursor: pointer; }
   .dot.related { border-color: var(--context-accent); }
   .dot.selected { width: 13px; height: 13px; border: 2px solid var(--bg); background: var(--context-accent); border-radius: 1px; transform: translate(-50%, -50%) rotate(45deg); }
   .connector { position: absolute; height: 16px; transform: translateY(-50%); cursor: pointer; }
-  .connector::before { content: ''; position: absolute; left: 0; right: 0; top: 7px; height: 1px; background: var(--line); }
+  .connector::before { content: ''; position: absolute; left: 0; right: 0; top: 7px; height: 1px; background: color-mix(in oklab, var(--c) 45%, var(--line)); }
   li:has(.dot.selected) .connector::before { background: var(--context-accent); }
   .card { position: absolute; contain: strict; border: 1px solid transparent; border-radius: 7px; z-index: 1; background: transparent; overflow: hidden; }
-  .card:hover { background: var(--surface-2); }
+  .card:hover { background: color-mix(in oklab, var(--c) 8%, var(--surface-2)); }
   .card.related { border-color: var(--context-accent); }
   .card.selected { background: var(--focus-surface); color: var(--focus-text); box-shadow: var(--shadow-sm); }
   .card-button { all: unset; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px; width: 100%; height: 100%; padding: 10px 16px; cursor: pointer; }
@@ -441,8 +543,8 @@
   .card.selected .card-button { padding: 18px 22px; gap: 8px; }
   .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 10px; font-size: 0.67rem; line-height: 1.4; color: var(--muted); }
   .meta time { font-variant-numeric: tabular-nums; }
-  .category { display: inline-flex; align-items: center; gap: 5px; text-transform: capitalize; }
-  .swatch { width: 5px; height: 5px; background: var(--c); border-radius: 1px; }
+  .category { display: inline-flex; align-items: center; gap: 5px; padding: 0 7px 0 6px; border-radius: 999px; background: color-mix(in oklab, var(--c) 13%, transparent); color: color-mix(in oklab, var(--c) var(--cat-ink), var(--text)); font-weight: 500; text-transform: capitalize; }
+  .swatch { width: 6px; height: 6px; background: var(--c); border-radius: 50%; }
   .badge { font-size: 0.65rem; border-bottom: 1px solid currentColor; }
   .badge.warn { color: var(--warn); }
   .title { font-size: 1rem; font-weight: 600; line-height: 1.25; letter-spacing: -0.02em; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
@@ -453,10 +555,9 @@
   .event-summary { font-size: 0.85rem; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   .story-link { font-size: 0.73rem; font-weight: 600; margin-top: auto; }
   .relation-label { color: var(--context-accent); font-size: 0.65rem; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .card.dimmed, .dot.dimmed, .connector.dimmed, .cluster-menu button.dimmed { opacity: 0.32; }
+  .card.dimmed, .dot.dimmed, .connector.dimmed { opacity: 0.32; }
   .card.dimmed:hover, .card.dimmed:focus-within { opacity: 1; }
   .card.match:not(.selected) .title { text-decoration: underline; text-decoration-color: var(--context-accent); text-underline-offset: 4px; }
-  .cluster-menu button.match { font-weight: 600; }
   @media (max-width: 600px) {
     .tick { left: calc(var(--spine) - 10px); font-size: 0.57rem; }
     .now-label { right: 12px; font-size: 0.57rem; }

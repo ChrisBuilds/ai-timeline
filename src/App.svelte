@@ -3,10 +3,9 @@
   import type { EventDetails, TimelineData, TimelineEvent, RemovedEvent } from './lib/types'
   import { createDetailsLoader } from './lib/details'
   import { ERAS } from './lib/eras'
-  import { buildGroups } from './lib/groups'
   import { animateSelection, captureSelection, selectionScroll } from './lib/selection-motion'
   import { buildScale, DEFAULT_SCALE } from './lib/scale'
-  import { layout, priorityOrder, type Cluster } from './lib/layout'
+  import { layout, priorityOrder } from './lib/layout'
   import { nowYear, toYear } from './lib/time'
   import { MAX_ZOOM, MIN_ZOOM, clampZoom, formatHash, parseHash } from './lib/url'
   import Timeline from './lib/Timeline.svelte'
@@ -170,8 +169,20 @@
     )
   })
 
-  const grouped = $derived(buildGroups(baseScale, arranged.placed, arranged.clusters, years, eventHeight))
-  const scale = $derived(grouped.scale)
+  const scale = $derived(baseScale)
+  // The ribbon bins hidden events by calendar date.
+  const hiddenYears = $derived(arranged.hidden.map(({ item }) => ({ item, year: years.get(item.id)! })))
+  // Each era's event count, and how many of them have a card at this zoom.
+  const eraTotals = $derived.by(() => {
+    const totals = new Array<number>(ERAS.length).fill(0)
+    for (const index of eraIndexes.values()) totals[index]++
+    return totals
+  })
+  const eraStats = $derived.by(() => {
+    const shown = new Array<number>(ERAS.length).fill(0)
+    for (const card of arranged.placed) shown[eraIndexes.get(card.item)!]++
+    return new Map(ERAS.map((era, i) => [era.id, { total: eraTotals[i], shown: shown[i] }]))
+  })
 
   const selected = $derived(selectedId ? byId.get(selectedId) ?? null : null)
   const backlinks = $derived(
@@ -302,7 +313,7 @@
     if (year === undefined) return
     // A zoom glide re-anchors the scroll every frame, which would cancel this scroll.
     stopZoomAnimation()
-    const cardY = grouped.placed.find((p) => p.item.id === id)?.top
+    const cardY = arranged.placed.find((p) => p.item.id === id)?.top
     scrollTo({ top: timelineTop() + (cardY === undefined ? scale.y(year) : cardY + ANCHOR_OFFSET) - (innerWidth < 720 ? toolbarHeight + 40 : innerHeight / 3), behavior })
   }
 
@@ -349,12 +360,6 @@
     await tick()
     if (run !== selectionRun) return
     if (before && root?.isConnected) cancelSelectionMotion = animateSelection(root, before)
-  }
-
-  function expand(cluster: Cluster<TimelineEvent>) {
-    const top = timelineTop()
-    const anchor = Math.min(Math.max(top + cluster.y - scrollY, 80), innerHeight - 80)
-    zoomBy(cluster.items.length > 3 ? ZOOM_STEP * ZOOM_STEP : ZOOM_STEP * 1.4, anchor)
   }
 
   function applyHash(hash = location.hash) {
@@ -496,7 +501,7 @@
     Scroll back in time. Zoom with <kbd>Ctrl</kbd> + scroll, a pinch, or <kbd>+</kbd> <kbd>−</kbd>. Press <kbd>/</kbd> to
     search. Missing something?
     <a href="https://github.com/ChrisBuilds/ai-timeline/issues/new/choose">Suggest an event</a>.
-    <span class="ribbon-help">Open a group to browse the events hidden at this zoom.</span>
+    <span class="ribbon-help">Dots on the line are events hidden at this zoom: zoom in to reveal them, or click one to open it.</span>
   </p>
 </header>
 
@@ -540,12 +545,11 @@
     <div bind:this={timelineEl}>
       <Timeline
         {scale}
-        placed={grouped.placed}
-        groups={grouped.groups}
-        eraStats={grouped.stats}
-        hidden={grouped.hidden}
-        ribbonScale={baseScale}
-        ribbonProject={grouped.project}
+        placed={arranged.placed}
+        hidden={arranged.hidden}
+        {eraStats}
+        {hiddenYears}
+        animate={ready && !reducedMotion}
         {spineX}
         {cardWidth}
         {selectedId}
@@ -555,7 +559,6 @@
         {dimIds}
         matchIds={filtering ? matchIds : NONE}
         onselect={(id, scroll = false) => select(id, scroll)}
-        onexpand={expand}
         onpreview={preview}
         labelTop={LABEL_TOP}
         {viewTop}
