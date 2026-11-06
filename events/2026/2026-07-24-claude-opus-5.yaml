@@ -1,0 +1,126 @@
+id: 2026-07-24-claude-opus-5
+title: Anthropic releases Claude Opus 5
+date: 2026-07-24
+summary: Anthropic released Claude Opus 5, a new Opus generation for coding, professional work, and long-running agents, at the same API price as Opus 4.8.
+description: >-
+  Anthropic released Claude Opus 5, which it called a thoughtful and proactive
+  model, as the successor to Opus 4.8. It became the default model on the Max
+  plan and was available through the Claude API as `claude-opus-5`, at $5 per
+  million input tokens and $25 per million output tokens, the same as Opus 4.8.
+  A Fast mode that Anthropic said runs about 2.5 times faster was offered at
+  twice the base price on the Claude Platform. Anthropic said Opus 5 comes close
+  to the intelligence of its Fable 5 model at half the price and is
+  state-of-the-art on Frontier-Bench and GDPval-AA, while remaining behind
+  Mythos 5 on cybersecurity. It reported results from its own runs, including
+  more than double Opus 4.8's performance on Frontier-Bench v0.1. These are the
+  developer's own comparisons. Its system card reports broad gains over Opus 4.8,
+  largest in agentic coding, computer use, and long-horizon knowledge work, and
+  also reports that the model hallucinates factual claims slightly more than
+  Opus 4.8. The card treats the model as ASL-3, concludes that it does not
+  cross Anthropic's automated AI R&D threshold, and says its cyber capabilities
+  exceed Opus 4.8 but fall short of Mythos 5. Anthropic said it deliberately did
+  not train the model on cyber tasks, and that flagged requests fall back to
+  Opus 4.8 by default.
+  {note: Anthropic's announcement page was modified after July 24 without saying what changed; this entry describes the launch and its system card, whose later sections I could not read in full.}
+category: model release
+tags:
+  - language model
+  - coding
+  - agents
+  - computer use
+organizations:
+  - Anthropic
+sources:
+  - url: https://www.anthropic.com/news/claude-opus-5
+    title: Introducing Claude Opus 5
+    publisher: Anthropic
+    accessed: 2026-11-06
+  - url: https://www.anthropic.com/claude-opus-5-system-card
+    title: 'System Card: Claude Opus 5'
+    publisher: Anthropic
+    accessed: 2026-11-06
+importance:
+  current: 2026-11-06-v2
+  assessments:
+    - id: 2026-11-06-v2
+      assessed_at: 2026-11-06
+      rubric_version: v2
+      status: provisional
+      reviewer: Claude (editorial assessment prepared for maintainer review)
+      rationale: >-
+        Anthropic's announcement and system card report broad gains over Opus
+        4.8 and make Opus 5 the default model on the Max plan at an unchanged
+        API price. These are developer-reported results and availability, not
+        independent evidence of sustained use or downstream change. No
+        third-party evaluation or usage source could be fetched. With influence
+        and society unknown, adoption 1 and capability 2, the provisional score
+        range is 16–61; the index placement key uses the lower bound, with no
+        accepted point score.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources describe the release but do not identify later technical
+            or institutional changes attributable to Opus 5 itself, as distinct
+            from other Claude releases.
+          evidence:
+            - https://www.anthropic.com/news/claude-opus-5
+        adoption:
+          rating: 1
+          confidence: low
+          rationale: >-
+            Opus 5 was offered across Claude plans and the API. This is
+            availability, which is not counted as adoption. No source measures
+            sustained or widespread use, so the rating reflects only the
+            isolated-deployment anchor.
+          evidence:
+            - https://www.anthropic.com/news/claude-opus-5
+        capability:
+          rating: 2
+          confidence: low
+          rationale: >-
+            The system card reports broad gains over Opus 4.8, but also says the
+            model trails Mythos 5 on cyber capabilities and does not advance the
+            frontier in risky dual-use capabilities, so the evidence is of a
+            useful improvement within an established approach. The results are
+            vendor-produced and no independent evaluation was found.
+          evidence:
+            - https://www.anthropic.com/claude-opus-5-system-card
+            - https://www.anthropic.com/news/claude-opus-5
+        society:
+          rating: null
+          confidence: low
+          rationale: >-
+            The sources do not measure public, professional, or institutional
+            effects attributable to Opus 5.
+          evidence:
+            - https://www.anthropic.com/news/claude-opus-5
+      comparisons:
+        - id: 2026-04-16-claude-opus-4-7
+          rationale: >-
+            Opus 4.7 is an earlier release in the same line. Both are
+            vendor-reported incremental gains within the Opus family, and
+            available evidence supports a similar placement.
+        - id: 2026-02-05-claude-opus-4-6
+          rationale: >-
+            Opus 4.6 was assessed on a broader set of reported improvements
+            including third-party task-horizon evidence. Opus 5 has no
+            comparable independent evidence yet, so it is rated lower on
+            capability.
+        - id: 2025-01-20-deepseek-r1
+          rationale: >-
+            DeepSeek R1 shipped open weights and a technical report that others
+            could inspect and reuse. Opus 5 is a closed hosted model, and the
+            evidence does not establish a comparable research or open-ecosystem
+            contribution.
+      questions:
+        - What independent, version-specific evidence measures sustained use of Opus 5 across products and APIs?
+        - Do independent evaluations reproduce the reported gains over Opus 4.8?
+        - Which downstream workflows can be attributed to Opus 5 rather than to the Claude 5 family generally?
+      review_after: 2026-12-06
+      review_triggers:
+        - Independent usage evidence that distinguishes Opus 5 and changes the adoption assessment.
+        - Independent evaluations that materially change the capability assessment.
+issue: 104
+submitted_by: ChrisBuilds
