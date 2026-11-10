@@ -1,0 +1,115 @@
+id: 2026-11-09-claude-fable-5-2-mythos-5-2
+title: Anthropic releases Claude Fable 5.2 and restricted Mythos 5.2
+date: 2026-11-09
+summary: Anthropic released Claude Fable 5.2 for demanding reasoning and long-running agentic work, alongside Mythos 5.2 for verified organizations.
+description: >-
+  Anthropic released Claude Fable 5.2 and Claude Mythos 5.2, sharing an
+  underlying model with different cybersecurity and biology safeguards.
+  Fable was available broadly; Mythos access required organizational
+  verification. Anthropic reported Fable 5.2 scoring 49.1% on FrontierCode
+  2.0 versus 32.4% for Fable 5.1, and 74.6% on Terminal-Bench-Science 0.1
+  versus 52.6%. These are vendor evaluations, not independent replications.
+  The API documentation lists a one-million-token context window, a
+  128,000-token output limit, and standard prices of $8 per million input
+  tokens and $40 per million output tokens. The release continued the
+  paired general-access and restricted-access approach used for version 5.1.
+category: model release
+tags:
+  - language model
+  - agentic coding
+  - restricted access
+organizations:
+  - Anthropic
+related:
+  - id: 2026-09-01-claude-fable-5-1-mythos-5-1
+    relation: builds_on
+    source: https://platform.claude.com/docs/en/models/fable-5-2/whats-new-fable-5-2
+sources:
+  - url: https://www.anthropic.com/claude-fable-and-mythos-5-2
+    title: Introducing Claude Fable 5.2 and Claude Mythos 5.2
+    publisher: Anthropic
+    accessed: 2026-11-09
+  - url: https://platform.claude.com/docs/en/models/fable-5-2/overview
+    title: Claude Fable 5.2 model overview
+    publisher: Anthropic
+    accessed: 2026-11-09
+  - url: https://platform.claude.com/docs/en/models/fable-5-2/whats-new-fable-5-2
+    title: What's new in Claude Fable 5.2
+    publisher: Anthropic
+    accessed: 2026-11-09
+  - url: https://www.reuters.com/technology/anthropic-unveils-new-fable-mythos-models-competition-heats-up-ahead-ipo-2026-11-09/
+    title: Anthropic unveils new Fable, Mythos models as competition heats up ahead of IPO
+    publisher: Reuters
+    accessed: 2026-11-09
+importance:
+  current: 2026-11-09-v2
+  assessments:
+    - id: 2026-11-09-v2
+      assessed_at: 2026-11-09
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex
+      rationale: >-
+        Initial assessment for developers and technical researchers. Early
+        trials support adoption 1 and vendor evaluations support capability
+        3 with medium confidence. Influence and societal effects remain
+        unknown. The weighted interval is 21–66, with no accepted point
+        score or overview designation. Later products receive separate credit.
+      dimensions:
+        influence:
+          rating: null
+          confidence: low
+          rationale: No attributable downstream changes are established by launch-day reporting.
+          evidence:
+            - https://www.reuters.com/technology/anthropic-unveils-new-fable-mythos-models-competition-heats-up-ahead-ipo-2026-11-09/
+        adoption:
+          rating: 1
+          confidence: low
+          rationale: >-
+            Vendor-selected prerelease engineering trials support isolated
+            use, without evidence of repeated specialist adoption.
+          evidence:
+            - https://www.anthropic.com/claude-fable-and-mythos-5-2
+        capability:
+          rating: 3
+          confidence: medium
+          rationale: >-
+            Reported matched coding and scientific-agent gains support a
+            substantial practical advance; independent replication is pending.
+          evidence:
+            - https://www.anthropic.com/claude-fable-and-mythos-5-2
+        society:
+          rating: null
+          confidence: low
+          rationale: >-
+            Restricted availability does not establish institutional outcomes;
+            launch coverage supplies no measured societal effect of this version.
+          evidence:
+            - https://www.reuters.com/technology/anthropic-unveils-new-fable-mythos-models-competition-heats-up-ahead-ipo-2026-11-09/
+      comparisons:
+        - id: 2026-09-01-claude-fable-5-1-mythos-5-1
+          rationale: >-
+            Direct predecessor with the same access split. Capability remains
+            at anchor 3; stronger benchmark results alone do not establish
+            a new category of work or transfer the predecessor's uptake.
+        - id: 2026-09-22-claude-opus-5-5
+          rationale: >-
+            A broadly available daily-work model provides a contemporary
+            comparison. Fable targets harder technical tasks; audience size
+            and availability alone do not establish relative significance.
+        - id: 2023-03-14-openai-gpt-4
+          rationale: >-
+            GPT-4 provides a cross-company frontier-release comparison with
+            broader established historical reach. This launch has insufficient
+            evidence for comparable downstream or societal significance.
+      questions:
+        - Will independent matched evaluations reproduce the reported gains?
+        - Will model-specific evidence establish repeated specialist adoption?
+        - What downstream or institutional outcomes are attributable to this version?
+      review_after: 2026-12-09
+      review_triggers:
+        - Independent capability or safeguard evaluations.
+        - Sustained model-specific adoption evidence.
+        - Documented downstream or institutional outcomes.
+issue: 311
+submitted_by: ChrisBuilds
