@@ -1,0 +1,140 @@
+id: 2021-08-10-openai-codex-api-beta
+title: OpenAI opens Codex to developers through a private API beta
+date: "2021-08-10"
+summary: >-
+  OpenAI began a private API beta for an improved Codex model that translated natural-language
+  instructions into code.
+description: >-
+  OpenAI invited selected businesses and developers to try an improved Codex model through its API
+  and build applications with it. The API version could turn plain-language requests into code in
+  more than a dozen programming languages. Access began as a free, application-reviewed private
+  beta. OpenAI later deprecated the original Codex API model IDs in March 2023; this is separate from
+  the newer Codex coding-agent products. This is the API access milestone, separate from the Codex
+  research paper published in July 2021 and GitHub Copilot's June 2021 technical preview, which used
+  a distinct production version of Codex.
+category: model release
+organizations: [ OpenAI ]
+tags: [ code generation, API, private beta ]
+sources:
+  - url: https://openai.com/index/openai-codex/
+    title: OpenAI Codex
+    publisher: OpenAI
+    accessed: "2026-11-06"
+  - url: https://openai.com/index/evaluating-large-language-models-trained-on-code/
+    title: Evaluating large language models trained on code
+    publisher: OpenAI
+    accessed: "2026-11-06"
+  - url: https://github.blog/news-insights/product-news/introducing-github-copilot-ai-pair-programmer/
+    title: "Introducing GitHub Copilot: your AI pair programmer"
+    publisher: GitHub Blog
+    accessed: "2026-11-06"
+  - url: https://techcrunch.com/2021/08/10/openai-upgrades-its-natural-language-ai-coder-codex-and-kicks-off-private-beta/
+    title: OpenAI upgrades its natural language AI coder Codex and kicks off private beta
+    publisher: TechCrunch
+    accessed: "2026-11-06"
+  - url: https://arxiv.org/abs/2211.03622
+    title: Do Users Write More Insecure Code with AI Assistants?
+    publisher: arXiv
+    accessed: "2026-11-06"
+  - url: https://pubs.rsc.org/en/content/articlehtml/2023/dd/d2dd00087c
+    title: Assessment of chemistry knowledge in large language models that generate code
+    publisher: Digital Discovery
+    accessed: "2026-11-06"
+  - url: https://developers.openai.com/api/docs/deprecations
+    title: OpenAI API deprecations
+    publisher: OpenAI
+    accessed: "2026-11-06"
+artifacts:
+  - type: post
+    url: https://openai.com/index/openai-codex/
+    title: OpenAI Codex
+related:
+  - id: 2020-05-28-gpt3-few-shot-learners
+    relation: builds_on
+    source: https://openai.com/index/openai-codex/
+importance:
+  current: 2026-11-06-v2
+  assessments:
+    - id: 2026-11-06-v2
+      assessed_at: 2026-11-06
+      rubric_version: v2
+      status: provisional
+      reviewer: Codex (editorial assessment prepared for maintainer review)
+      rationale: >-
+        Initial v2 assessment of the API access event, distinct from the earlier Codex research paper,
+        GitHub Copilot preview, and later coding-agent products. Evidence supports a modest capability
+        refinement and niche research use, while broad product adoption or wider effects attributable
+        to this private beta remain unestablished. Ratings are editorial judgments, with confidence
+        recorded separately.
+      dimensions:
+        influence:
+          rating: 1
+          confidence: low
+          rationale: >-
+            Later research used named Codex API model variants for code and domain-specific generation
+            studies. These are later revisions in the API model line, and the papers do not trace their
+            work to the August 2021 beta specifically. They support only local follow-on research, with
+            low confidence that this event itself redirected practice.
+          evidence:
+            - https://arxiv.org/abs/2211.03622
+            - https://pubs.rsc.org/en/content/articlehtml/2023/dd/d2dd00087c
+        adoption:
+          rating: 1
+          confidence: low
+          rationale: >-
+            Later API revisions in the Codex model line were used in a controlled user study and
+            specialist research. This supports isolated experiments with the Codex API line, but the
+            sources do not show that those studies used the August 2021 snapshot or establish how many
+            beta users used it. Copilot's earlier use of a distinct production version is excluded.
+          evidence:
+            - https://arxiv.org/abs/2211.03622
+            - https://pubs.rsc.org/en/content/articlehtml/2023/dd/d2dd00087c
+        capability:
+          rating: 2
+          confidence: medium
+          rationale: >-
+            The API version accepted plain-language instructions and generated code across many
+            languages, a useful step from code completion toward natural-language interfaces for
+            applications. The underlying Codex research and benchmark results were already public in
+            July, and the August API announcement gives no directly comparable score for this improved
+            version.
+          evidence:
+            - https://openai.com/index/openai-codex/
+            - https://techcrunch.com/2021/08/10/openai-upgrades-its-natural-language-ai-coder-codex-and-kicks-off-private-beta/
+        society:
+          rating: 1
+          confidence: low
+          rationale: >-
+            The reviewed launch coverage documents professional discussion of natural-language code
+            generation and software safety. The available sources show no broader measured effects on
+            institutions or public expectations attributable to this API access milestone.
+          evidence:
+            - https://techcrunch.com/2021/08/10/openai-upgrades-its-natural-language-ai-coder-codex-and-kicks-off-private-beta/
+            - https://openai.com/index/openai-codex/
+      comparisons:
+        - id: 2020-05-28-gpt3-few-shot-learners
+          rationale: >-
+            Lower overall significance under v2. This API beta offered a narrower, programming-focused
+            interface and documented only niche experiments. The GPT-3 research release established a
+            broader general-purpose, few-shot learning contribution with wider downstream reach.
+        - id: 2022-11-30-chatgpt-launch
+          rationale: >-
+            Lower overall significance under v2. Codex offered a more specialized code-generation
+            capability, but access required beta selection and there is little attributable evidence of
+            audience scale. ChatGPT's public preview reached a much broader audience and had sustained
+            effects across personal and professional use.
+        - id: 2025-02-24-claude-code-research-preview
+          rationale: >-
+            Lower overall significance under v2. Codex made a model API available for developers to
+            build with, while Claude Code introduced a tool that directly read and modified codebases
+            from the terminal and later showed substantial adoption. That later product represents a
+            wider workflow change than this limited model beta.
+      questions:
+        - What share of Codex API beta users deployed products beyond research prototypes?
+        - Did the API beta lead to lasting applications distinct from GitHub Copilot?
+      review_after: "2026-12-06"
+      review_triggers:
+        - New attributable evidence of sustained Codex API deployments or commercial products.
+        - Independent history tracing downstream coding tools to this API beta rather than the July paper or Copilot preview.
+submitted_by: ChrisBuilds
+issue: 113
